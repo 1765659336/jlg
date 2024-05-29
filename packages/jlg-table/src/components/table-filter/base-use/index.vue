@@ -200,6 +200,8 @@ interface ListItem {
 	label: string;
 }
 
+const schoolOptions = ref([{ data: { vals: [], sVal: '', fMenu: '', f1Type: '', f1Val: '', fMode: 'and', f2Type: '', f2Val: '' } }]);
+
 onMounted(() => {
 	/// 模拟异步请求
 	setTimeout(() => {
@@ -327,6 +329,8 @@ const gridOptions = reactive<I_Table_Grid_Props<RowVO>>({
 			field: 'school',
 			title: '毕业院校',
 			width: 160,
+			filters: schoolOptions,
+			filterRender: { name: 'FilterExtend' },
 		},
 		{
 			field: 'specialty',
@@ -582,6 +586,9 @@ function handleEdit(row: RowVO) {
 			escClosable: true,
 			// 是否允许窗口边缘拖动调整窗口大小
 			resize: true,
+			showShrink: true,
+			showCustom: true,
+			showHide: true,
 			showHeader: true,
 			showFooter: true,
 			// 标题是否标显示最大化与还原按钮

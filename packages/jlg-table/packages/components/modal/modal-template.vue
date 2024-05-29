@@ -1,5 +1,5 @@
 <template>
-	<vxe-modal ref="xModalRef" v-bind="modalOptions" type="modal" :destroy-on-close="false">
+	<vxe-modal ref="xModalRef" v-bind="modalOptions" type="modal" :destroy-on-close="false" :show-close="showClose" :show-zoom="showZoom">
 		<template #default>
 			<slot></slot>
 		</template>
@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineOptions, nextTick, onMounted, reactive, useAttrs, watch } from 'vue';
+import { computed, defineOptions, nextTick, onMounted, reactive, useAttrs, watch } from 'vue';
 import { T_Buttons, T_Jlg_Modal_Instance, T_Modal_Options } from './type';
 import { VxeModalDefines, VxeModalInstance } from 'vxe-table';
 import { dynamicModalStore, useDynamicModal } from './index';
@@ -331,20 +331,21 @@ const confirm = (event: Event) => {
 };
 
 const _buttonsMap: { [key in T_Buttons]?: boolean } = reactive({
-	shrink: true,
-	zoom: true,
-	custom: true,
-	hide: true,
-	close: true,
+	shrink: attrs?.modalOptions['showShrink'] ?? true,
+	custom: attrs?.modalOptions['showCustom'] ?? true,
+	hide: attrs?.modalOptions['showHide'] ?? true,
+	zoom: attrs?.modalOptions['showZoom'] ?? false,
+	close: attrs?.modalOptions['showClose'] ?? false,
 });
-
+const showClose = computed(() => _buttonsMap.close);
+const showZoom = computed(() => _buttonsMap.zoom);
 watch(
 	() => _buttonsMap,
 	(newVal) => {
 		modalOptions.value.showZoom = newVal.zoom;
 		modalOptions.value.showClose = newVal.close;
 	},
-	{ deep: true, immediate: true }
+	{ deep: true }
 );
 
 const toggleCorner = (buttons: boolean | T_Buttons[]) => {

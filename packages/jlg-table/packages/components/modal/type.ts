@@ -7,6 +7,18 @@ export interface I_Options {
 export interface T_Modal_Options
 	extends Omit<VxeModalProps, 'type' | 'duration' | 'top' | 'storage' | 'storageKey' | 'content' | 'remember' | 'destroyOnClose'>,
 		VxeModalEventProps {
+	/**
+	 * 是否显示右上角的收缩按钮
+	 */
+	showShrink?: boolean;
+	/**
+	 * 是否显示右上角的自定义按钮
+	 */
+	showCustom?: boolean;
+	/**
+	 * 是否显示右上角的最小化按钮
+	 */
+	showHide?: boolean;
 	onHide?: () => void;
 	onClose?: () => void;
 }
