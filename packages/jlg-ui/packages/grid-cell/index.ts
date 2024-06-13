@@ -6,3 +6,4 @@ JlgGridCell.install = (Vue: App) => {
 };
 
 export default JlgGridCell;
+export * from './type';

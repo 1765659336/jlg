@@ -6,3 +6,4 @@ JlgFlexCell.install = (Vue: App) => {
 };
 
 export default JlgFlexCell;
+export * from './type';

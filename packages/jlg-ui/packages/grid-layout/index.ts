@@ -6,3 +6,4 @@ JlgGridLayout.install = (Vue: App) => {
 };
 
 export default JlgGridLayout;
+export * from './type';

@@ -8,6 +8,7 @@ import JlgCollapseItem from './collapse-item';
 import JlgFlexLayout from './flex-layout';
 import JlgFlexCell from './flex-cell';
 
+export * from './component';
 export { JlgMenu, JlgGridLayout, JlgGridCell, JlgCollapse, JlgCollapseItem, JlgFlexLayout, JlgFlexCell }; //实现按需引入*
 
 const components = [JlgMenu, JlgGridLayout, JlgGridCell, JlgCollapse, JlgCollapseItem, JlgFlexLayout, JlgFlexCell]; // 将来如果有其它组件,都可以写到这个数组里
