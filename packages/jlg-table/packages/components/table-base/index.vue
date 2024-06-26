@@ -235,13 +235,14 @@ const beforeColumn = (args) => {
 const beforeQuery = async (args) => {
 	const getSysConfig = props.proxyConfig?.getSysConfig ? props.proxyConfig.getSysConfig : GlobalConfig.table.proxyConfig.getSysConfig;
 	if (args.isInited && typeof getSysConfig == 'function') {
-		const { searchData = [], columns = [], globalConfig = {} } = await getSysConfig();
+		const { searchData = [], columns = [], globalConfig = {}, merged = null } = await getSysConfig();
 		setTableGlobalConfig(globalConfig);
 		if (columns.length > 0) {
 			eachTree(columns, (column) => {
 				columnResizeWidthMap.set(column.id, column.resizeWidth);
 			});
-			const _columns = mergedList(flattenArray(propsColumns.value, 'field'), flattenArray(columns, 'field'), fieldList, 'field', 'renderSortNumber');
+			const _merged = merged ? merged : mergedList;
+			const _columns = _merged(flattenArray(propsColumns.value, 'field'), flattenArray(columns, 'field'), fieldList, 'field', 'renderSortNumber');
 			// rawColumns = clone<VxeGridPropTypes.Columns>(_columns, true);
 			await xGrid.value?.loadColumn(_columns);
 		}
