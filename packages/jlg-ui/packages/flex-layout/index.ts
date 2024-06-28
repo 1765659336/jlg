@@ -6,3 +6,4 @@ JlgFlexLayout.install = (Vue: App) => {
 };
 
 export default JlgFlexLayout;
+export * from './type';

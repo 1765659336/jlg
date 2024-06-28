@@ -4,5 +4,5 @@ import type { App } from 'vue';
 JlgMenu.install = (Vue: App) => {
 	Vue.component(JlgMenu.name as string, JlgMenu);
 };
-
+export * from './type';
 export default JlgMenu;

@@ -12,7 +12,7 @@
 			v-if="dynamicModalStore.modals.length > 0"
 			popper-class="minimize-popper-container"
 			placement="left"
-			title="最小化窗体栏"
+			title="模态管理"
 			width="280"
 			trigger="click"
 			:disabled="disabled"

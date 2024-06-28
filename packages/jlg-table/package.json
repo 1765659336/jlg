@@ -1,7 +1,7 @@
 {
 	"name": "jlg-table",
 	"private": false,
-	"version": "0.0.6",
+	"version": "0.0.10",
 	"type": "commonjs",
 	"scripts": {
 		"dev": "vite",

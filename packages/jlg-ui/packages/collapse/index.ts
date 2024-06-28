@@ -6,3 +6,4 @@ JlgCollapse.install = (Vue: App) => {
 };
 
 export default JlgCollapse;
+export * from './type';
