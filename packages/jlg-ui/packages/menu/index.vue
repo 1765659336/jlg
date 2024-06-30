@@ -30,7 +30,7 @@
 						<p class="jlg-menu-first-level-menu-text">{{ firstLevelMenu[menuDataRecordComputed.title] }}</p>
 					</div>
 				</template>
-				<dir class="jlg-menu-popover">
+				<div class="jlg-menu-popover">
 					<div
 						v-for="secondLevelMenu in firstLevelMenu[menuDataRecordComputed.children]"
 						:key="secondLevelMenu[menuDataRecordComputed.key]"
@@ -67,7 +67,7 @@
 							</div>
 						</div>
 					</div>
-				</dir>
+				</div>
 			</el-popover>
 		</div>
 	</div>

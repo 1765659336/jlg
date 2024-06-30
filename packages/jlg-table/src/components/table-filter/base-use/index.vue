@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import TableGrid from '@pac/components/table-base/index.vue';
-import { Component, onMounted, reactive, ref } from 'vue';
+import { Component, onMounted, reactive, ref, defineAsyncComponent } from 'vue';
 import { I_Table_Grid_Props } from '@pac/components/table-base/type';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
@@ -40,7 +40,7 @@ import { useGetSysConfig, useSaveSysConfig } from '@/hooks/useMock';
 import { Refresh, Setting, ArrowDown } from '@element-plus/icons-vue';
 import { useTableComponent } from '../hooks/useTable';
 import { useDynamicModal } from '@pac/components/modal';
-import BaseModal from '../../modal/BaseModal.vue';
+// import BaseModal from '../../modal/BaseModal.vue';
 
 defineOptions({
 	name: 'TableFilterBaseUse',
@@ -566,7 +566,7 @@ const { openModal } = useDynamicModal();
 function handleEdit(row: RowVO) {
 	console.log(row);
 	openModal({
-		component: BaseModal,
+		component: defineAsyncComponent(() => import('../../modal/BaseModal.vue')),
 		modalOptions: {
 			size: 'mini',
 			status: 'error',
