@@ -14,7 +14,7 @@
 				@resizable-change="handleResizableChange"
 			>
 				<template #top>
-					<div v-if="tableFilterConfig.items.length > 0" ref="formElemRef" class="jlg-grid--form-wrapper">
+					<div v-if="tableFilterConfig.items" ref="formElemRef" class="jlg-grid--form-wrapper">
 						<table-filter
 							ref="tableFilterRef"
 							v-bind="props.tableFilterConfig"
@@ -62,7 +62,7 @@ import toArrayTree from 'xe-utils/toArrayTree';
 import findIndexOf from 'xe-utils/findIndexOf';
 import TableFilter from '../table-filter/index.vue';
 import type { I_Table_Grid_Props, T_Msg, T_RenderCustomTemplate, T_Save_Config_Type } from './type';
-import type { I_Table_Filter_Item, I_Table_Filter_Props } from '../../components/table-filter/type';
+import type { I_Table_Filter_Props } from '../../components/table-filter/type';
 import { computed, nextTick, reactive, Ref, useAttrs } from 'vue';
 import GlobalConfig from '../../../lib/useGlobalConfig';
 import { VxeGridEventProps, VxeGridInstance, VxeGridPropTypes, VxeGridDefines, VxeTableDefines } from 'vxe-table';
@@ -235,7 +235,7 @@ const beforeColumn = (args) => {
 const beforeQuery = async (args) => {
 	const getSysConfig = props.proxyConfig?.getSysConfig ? props.proxyConfig.getSysConfig : GlobalConfig.table.proxyConfig.getSysConfig;
 	if (args.isInited && typeof getSysConfig == 'function') {
-		const { searchData = [], columns = [], globalConfig = {}, merged = null } = await getSysConfig();
+		const { searchData = [], columns = [], globalConfig = {}, merged = null, filterMerged } = await getSysConfig();
 		setTableGlobalConfig(globalConfig);
 		if (columns.length > 0) {
 			eachTree(columns, (column) => {
@@ -247,7 +247,8 @@ const beforeQuery = async (args) => {
 			await xGrid.value?.loadColumn(_columns);
 		}
 		if (searchData.length > 0) {
-			const _items = mergedList<I_Table_Filter_Item>(tableFilterConfig.value?.items || [], searchData, ['visible', 'sortNumber'], 'field');
+			const _filterMerged = filterMerged ? filterMerged : mergedList;
+			const _items = _filterMerged(tableFilterConfig.value?.items || [], searchData, ['visible', 'sortNumber'], 'field');
 			const formData: any = {};
 			_items.forEach((item) => {
 				formData[item.field] = item.defaultValue;
@@ -255,12 +256,20 @@ const beforeQuery = async (args) => {
 			tableFilterConfig.value.items = _items;
 			args.form = formData;
 		} else {
-			args.form = props.tableFilterConfig?.items ?? [];
+			args.form = tableFilterRef.value?.getFormData() || null;
 		}
 	} else {
 		args.form = tableFilterRef.value?.getFormData() || null;
 	}
-	tableFilterRef.value?.handleInitialValue();
+	args.form = {
+		items: tableFilterConfig.value.items,
+		data: args.form,
+	};
+	if (args.isInited) {
+		await nextTick(() => {
+			tableFilterRef.value?.handleInitialValue();
+		});
+	}
 	reactData.$grid = args.$grid;
 	reactData.isInited = args.isInited;
 	reactData.isReload = args.isReload;
@@ -268,9 +277,6 @@ const beforeQuery = async (args) => {
 	reactData.sort = args.sort;
 	reactData.sorts = args.sorts;
 	reactData.form = args.form;
-	if (props.proxyConfig && props.proxyConfig.beforeQuery) {
-		return props.proxyConfig.beforeQuery();
-	}
 	const beforeQuery = props.proxyConfig?.beforeQuery ? props.proxyConfig.beforeQuery : GlobalConfig.table.proxyConfig.beforeQuery;
 	if (beforeQuery && typeof beforeQuery === 'function') {
 		return beforeQuery(args);
@@ -377,7 +383,7 @@ const handleDeleteRow = (code: string, msg: T_Msg, callback: () => void): Promis
 				return Promise.resolve();
 			}
 		}
-		ElMessageBox.confirm('您确定要删除所选记录吗？', '消息提示', {
+		ElMessageBox.confirm('您确定要删除所选数据吗？', '消息提示', {
 			confirmButtonText: '确认',
 			cancelButtonText: '取消',
 			type: 'warning',
@@ -590,24 +596,30 @@ function setTableFilterConfig(config: I_Table_Filter_Props) {
 }
 
 //  重置表格列配置
-function resetCustomEvent() {
+function resetCustomEvent({ filter = true, global = true }: { filter?: boolean; global?: boolean }) {
 	// 重置表单配置
-	tableFilterConfig.value = clone(rawTableFilterConfig, true);
-	// 重置表格全局配置
-	setTableGlobalConfig({
-		// 是否带有斑马纹
-		stripe: false,
-		// 表格的尺寸
-		size: 'medium',
-		// 所有的列对齐方式
-		align: 'center',
-	});
+	if (filter) {
+		tableFilterConfig.value = clone(rawTableFilterConfig, true);
+	}
+	if (global) {
+		// 重置表格全局配置
+		setTableGlobalConfig({
+			// 是否带有斑马纹
+			stripe: false,
+			// 表格的尺寸
+			size: 'medium',
+			// 所有的列对齐方式
+			align: 'center',
+		});
+	}
 	return xGrid.value.loadColumn(rawColumns);
 }
 
 // 加载列配置，如果有操作列配置，自动插入操作列
 function saveCustomEvent(columns: (VxeTableDefines.ColumnOptions<any> | VxeTableDefines.ColumnInfo<any>)[]) {
-	const _columns = clone(columns, true);
+	const leftColList = props.columns.filter((item) => !!item.type);
+	const _columns = clone(leftColList.concat(columns), true);
+
 	// 如果存在操作列配置
 	if (props.operationConfig) {
 		_columns.push(operationColumn.value);

@@ -83,7 +83,8 @@ watch(
 watch(
 	[startTime, endTime],
 	([newStartTime, newEndTime]) => {
-		modelValue.value = [newStartTime ?? '', newEndTime ?? ''];
+		const isEmpty = !newStartTime && !newEndTime;
+		modelValue.value = isEmpty ? [] : [newStartTime ?? '', newEndTime ?? ''];
 	},
 	{ deep: true }
 );

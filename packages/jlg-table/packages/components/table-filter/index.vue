@@ -63,6 +63,7 @@
 			placement="bottom"
 			:disabled="props.disabled || itemsValue.length === 0"
 			:manual="true"
+			@hide="onHide"
 		>
 			<div v-show="isShowQuickSearch" class="jlg-popover__wrapper">
 				<div class="jlg-popover__title">
@@ -91,7 +92,7 @@
 				<div class="jlg-popover__footer">
 					<div></div>
 					<div>
-						<el-button @click="isShowQuickSearch = false">关闭</el-button>
+						<el-button @click="onHide">关闭</el-button>
 						<el-button @click="handleReset">重置</el-button>
 						<el-button type="primary" @click="handleSave">查询</el-button>
 					</div>
@@ -116,6 +117,7 @@ import FilterTime from './compontent/filter-time.vue';
 import FilterDate from './compontent/filter-date.vue';
 import FilterTreeSelect from './compontent/filter-tree-select.vue';
 import FilterIndependentDate from './compontent/filter-independent-date.vue';
+import { useHasValue } from './hooks/useHasValue';
 
 defineOptions({
 	name: 'TableFilter',
@@ -135,7 +137,21 @@ const emit = defineEmits<{
 
 const itemsModelValue = defineModel<I_Table_Filter_Item[]>('items', { required: true });
 
+// baseForm 用于存储快捷搜索&高级搜索的数据
+// const loadSchemeList = [
+// 	{
+// 		schemeName: '方案1',
+// 		schemeUid: '1',
+// 		scheme: [{}],
+// 	},
+// ];
+
+// const filterBaseForm = reactive({});
+// 高级搜索表单数据
+// const filterContainerForm = reactive({});
 const form = reactive({});
+// 搜索弹框内存在有效数据时，触发回调
+const { isShowQuickSearch } = useHasValue({ props, form });
 
 const items = computed(() =>
 	itemsModelValue.value
@@ -227,6 +243,10 @@ function getFormData() {
 	return form;
 }
 
+function onHide() {
+	isShowQuickSearch.value = false;
+}
+
 /// 查询
 function handleSave() {
 	isShowQuickSearch.value = false;
@@ -257,7 +277,6 @@ function handleFolding(bool: boolean) {
 }
 
 const popoverRef = ref();
-const isShowQuickSearch = ref(false);
 const onClickOutside = () => {
 	unref(popoverRef).popperRef?.delayHide?.();
 };
@@ -269,31 +288,6 @@ const handleQuickSearchClose = () => {
 const handleQuickSearch = () => {
 	isShowQuickSearch.value = true;
 };
-
-// 搜索弹框内存在有效数据时，触发回调
-const isSearch = ref(false);
-function hasValue(value: any) {
-	if (value === undefined || value === null) {
-		return false;
-	} else if (typeof value === 'string' && value.trim() === '') {
-		return false;
-	} else if (Array.isArray(value) && value.length === 0) {
-		return false;
-	} else return !(typeof value === 'object' && Object.keys(value).length === 0);
-}
-watch(
-	() => form,
-	() => {
-		isSearch.value = Object.values(form).some(hasValue);
-	},
-	{ deep: true }
-);
-
-watch([isShowQuickSearch, isSearch], ([newIsShowQuickSearch, newIsSearch], [oldIsShowQuickSearch, oldIsSearch]) => {
-	if (newIsShowQuickSearch !== oldIsShowQuickSearch || newIsSearch !== oldIsSearch) {
-		if (props?.onSearchStatusChange) props?.onSearchStatusChange(newIsShowQuickSearch, newIsSearch);
-	}
-});
 
 defineExpose({
 	handleReset,

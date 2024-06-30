@@ -14,7 +14,7 @@ export declare interface I_Table_Filter_Item extends Pick<VxeFormItemProps, T_Vx
 	/**
 	 * 筛选类型
 	 */
-	searchType?: 0 | 1;
+	searchType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 	/**
 	 * 是否快捷搜索
 	 */
@@ -35,6 +35,10 @@ export declare interface I_Table_Filter_Item extends Pick<VxeFormItemProps, T_Vx
 	 * 排序
 	 */
 	sortNumber?: number;
+	/**
+	 * 其他参数
+	 */
+	params?: Record<string, any>;
 }
 
 export declare interface I_Table_Filter_Props {
@@ -50,6 +54,7 @@ export declare interface I_Table_Filter_Props {
 	disabled?: boolean;
 	// 标识虚拟触发时的触发元素
 	virtualRef?: HTMLElement;
+	// 筛选条件状态(存在有效值/不存在有效值)改变或者打开关闭筛选弹窗时触发
 	onSearchStatusChange?: (isShow: boolean, isSearch: boolean) => void;
 	items: I_Table_Filter_Item[];
 }
