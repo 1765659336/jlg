@@ -28,7 +28,7 @@
 					</template>
 				</el-form-item>
 			</div>
-			<div v-show="!isFolding" class="table-filter__card">
+			<div v-show="!isFolding && items.length" class="table-filter__card">
 				<el-button class="save-btn" type="primary" @click="handleSave">查询</el-button>
 				<el-button class="reset-btn" @click="handleReset">重置</el-button>
 			</div>
