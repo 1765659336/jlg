@@ -62,6 +62,7 @@ const GlobalConfig: T_Global_Config_Props = {
 			storage: false,
 		},
 		sortConfig: {
+			multiple: false,
 			showIcon: true,
 			iconLayout: 'vertical',
 		},

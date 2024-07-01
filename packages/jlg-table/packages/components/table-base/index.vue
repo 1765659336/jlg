@@ -58,6 +58,7 @@
 import eachTree from 'xe-utils/eachTree';
 import clone from 'xe-utils/clone';
 import findTree from 'xe-utils/findTree';
+import merge from 'xe-utils/merge';
 import toArrayTree from 'xe-utils/toArrayTree';
 import findIndexOf from 'xe-utils/findIndexOf';
 import TableFilter from '../table-filter/index.vue';
@@ -138,6 +139,7 @@ const props = withDefaults(defineProps<I_Table_Grid_Props>(), {
 	rowConfig: () => GlobalConfig.table.rowConfig,
 	columnConfig: () => GlobalConfig.table.columnConfig,
 	customConfig: () => GlobalConfig.table.customConfig,
+	sortConfig: () => GlobalConfig.table.sortConfig,
 });
 const emit = defineEmits<{
 	resizableChange: [value: VxeGridDefines.ResizableChangeEventParams];
@@ -235,7 +237,7 @@ const beforeColumn = (args) => {
 const beforeQuery = async (args) => {
 	const getSysConfig = props.proxyConfig?.getSysConfig ? props.proxyConfig.getSysConfig : GlobalConfig.table.proxyConfig.getSysConfig;
 	if (args.isInited && typeof getSysConfig == 'function') {
-		const { searchData = [], columns = [], globalConfig = {}, merged = null, filterMerged } = await getSysConfig();
+		const { defaultSort = [], searchData = [], columns = [], globalConfig = {}, merged = null, filterMerged } = await getSysConfig();
 		setTableGlobalConfig(globalConfig);
 		if (columns.length > 0) {
 			eachTree(columns, (column) => {
@@ -257,6 +259,14 @@ const beforeQuery = async (args) => {
 			args.form = formData;
 		} else {
 			args.form = tableFilterRef.value?.getFormData() || null;
+		}
+		// 页面初始化时,如果服务端返回的数据存在组合排序,强制开启多列排序, 判断  props.sortConfig?.multiple 是否为 false 是为了兼容正常的多排序
+		if (defaultSort.length > 0 && props.sortConfig?.multiple === false) {
+			// 直接修改 props 违背了 vue 的单项数据流原则,但是考虑到外部修改参数操作成本较高,暂时先直接修改
+			args.$grid.props.sortConfig.multiple = true;
+			args.$grid.props.sortConfig.remote = true;
+			args.$grid.props.sortConfig.defaultSort = defaultSort;
+			args.sorts = defaultSort;
 		}
 	} else {
 		args.form = tableFilterRef.value?.getFormData() || null;
@@ -292,7 +302,7 @@ const defaultProxyConfig: VxeGridPropTypes.ProxyConfig = {
 };
 
 const computeProxyOpts = computed(() => {
-	return Object.assign({}, GlobalConfig.table.proxyConfig, props.proxyConfig, defaultProxyConfig) as VxeGridPropTypes.ProxyConfig;
+	return merge({}, GlobalConfig.table.proxyConfig, props.proxyConfig, defaultProxyConfig) as VxeGridPropTypes.ProxyConfig;
 });
 
 // 获取表单元素的宽度
