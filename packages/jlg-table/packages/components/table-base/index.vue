@@ -264,7 +264,6 @@ const beforeQuery = async (args) => {
 		if (defaultSort.length > 0 && props.sortConfig?.multiple === false) {
 			// 直接修改 props 违背了 vue 的单项数据流原则,但是考虑到外部修改参数操作成本较高,暂时先直接修改
 			args.$grid.props.sortConfig.multiple = true;
-			args.$grid.props.sortConfig.remote = true;
 			args.$grid.props.sortConfig.defaultSort = defaultSort;
 			args.sorts = defaultSort;
 		}
