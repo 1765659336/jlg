@@ -21,7 +21,7 @@
     flex-wrap: nowrap;
 
    .el-input__wrapper {
-      box-shadow: none;
+      box-shadow: none !important;
       border: 1px solid var(--el-input-border-color, var(--el-border-color));
       transform: translateZ(0);
       transition: border-color var(--el-transition-duration-fast) var(--el-transition-function-ease-in-out-bezier);
@@ -55,7 +55,7 @@
     .el-select__wrapper {
       padding: 4px 4px;
       font-size: 12px;
-      box-shadow: none;
+      box-shadow: none !important;
       border-bottom-left-radius: 0;
       border-top-left-radius: 0;
       background-color: var(--jlg-filter-select-background);
@@ -109,7 +109,7 @@
  */
 .filter-select {
   .el-select__wrapper {
-    box-shadow: none;
+    box-shadow: none !important;
     border: 1px solid var(--el-input-border-color, var(--el-border-color));
     transform: translateZ(0);
     transition: border-color var(--el-transition-duration-fast) var(--el-transition-function-ease-in-out-bezier);
