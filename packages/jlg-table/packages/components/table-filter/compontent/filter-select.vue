@@ -33,9 +33,10 @@ defineOptions({
 const modelValue = defineModel<string>({ required: true });
 const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean }>(), {
 	showLabel: false,
+	showSelect: false,
 });
 const searchType = defineModel<number>('searchType', { required: true, default: 0 });
-const isShowSelect = computed(() => props.item.isPure !== true && props.item.quickSearch !== true);
+const isShowSelect = computed(() => props.item.isPure !== true && props.showSelect === true);
 const isFocus = ref(false);
 </script>
 

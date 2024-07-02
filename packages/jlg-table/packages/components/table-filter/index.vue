@@ -83,6 +83,7 @@
 											v-model="form[item.field]"
 											v-model:search-type="item.searchType"
 											:show-label="true"
+											:show-select="true"
 											:item="item"
 										/>
 									</template>
