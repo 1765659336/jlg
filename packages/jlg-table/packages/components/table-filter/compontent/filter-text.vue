@@ -32,7 +32,8 @@ const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: b
 	showLabel: false,
 	showSelect: false,
 });
-const searchType = defineModel<number>('searchType', { required: true, default: 0 });
+// 文本默认模糊搜索
+const searchType = defineModel<number>('searchType', { required: true, default: 1 });
 const isShowSelect = computed(() => props.item.isPure !== true && props.showSelect === true);
 const isFocus = ref(false);
 </script>
