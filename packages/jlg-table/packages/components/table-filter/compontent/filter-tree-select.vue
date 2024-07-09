@@ -8,6 +8,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElTreeSelect } from 'element-plus';
 import { I_Table_Filter_Item } from '../type';
 
 defineOptions({

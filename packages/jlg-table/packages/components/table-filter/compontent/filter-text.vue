@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElInput, ElSelect, ElOption } from 'element-plus';
 import { I_Table_Filter_Item } from '../type';
 
 defineOptions({

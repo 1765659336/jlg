@@ -24,6 +24,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElSelectV2, ElSelect, ElOption } from 'element-plus';
 import { I_Table_Filter_Item } from '../type';
 import { SEARCH_TYPES } from '../constants';
 
