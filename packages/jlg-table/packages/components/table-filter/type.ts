@@ -93,9 +93,9 @@ export declare interface I_User_Search_Template_Model {
 	/** @description 搜索模板名称 */
 	templateName?: string | null;
 	/** @description 页面路由雪花id */
-	routeId?: string | null;
+	routeUId?: string | null;
 	/** @description 是否默认 */
-	isDefault?: boolean;
+	isDefault?: boolean | 1 | 0;
 	userSearchTemplateDetails?: I_User_Search_Template_Details_Model[];
 }
 
