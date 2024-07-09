@@ -14,10 +14,7 @@
 			</el-input-number>
 			<template v-if="isShowSelect">
 				<el-select v-model="searchType" size="default" class="slot-select" :class="{ 'is-focus': isFocus }" placeholder="">
-					<el-option label="大于" :value="0" />
-					<el-option label="小于" :value="1" />
-					<el-option label="等于" :value="2" />
-					<el-option label="模糊" :value="3" />
+					<el-option v-for="searchItem in SEARCH_TYPES.number" :key="searchItem.value" :label="searchItem.label" :value="searchItem.value" />
 				</el-select>
 			</template>
 		</div>
@@ -26,12 +23,13 @@
 
 <script setup lang="ts">
 import { I_Table_Filter_Item } from '../type';
+import { SEARCH_TYPES } from '../constants';
 
 defineOptions({
 	name: 'FilterInputNumber',
 });
 const modelValue = defineModel<string>({ required: true });
-const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean }>(), {
+const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean; showSelect: boolean }>(), {
 	showLabel: false,
 	showSelect: false,
 });

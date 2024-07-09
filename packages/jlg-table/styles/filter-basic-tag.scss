@@ -1,0 +1,20 @@
+.jlg-basic_tag {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 26px;
+  color: #606266;
+  border: 1px solid #ececec;
+  border-radius: 4px;
+  font-size: var(--el-font-size-base);
+  padding: 0 5px;
+  .basic-tag_label {
+    color: #666;
+  }
+  .basic-tag_text {
+    margin-right: 5px;
+  }
+  .basic-tag_close {
+    cursor: pointer;
+  }
+}

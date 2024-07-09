@@ -1,6 +1,8 @@
 import { VxeFormItemProps, VxeFormPropTypes } from 'vxe-table';
 import {} from 'vxe-table/types/form';
 import { VxeFormItemPropTypes } from 'vxe-table/types/form-item';
+import type Node from 'element-plus/lib/components/tree/src/model/node';
+import { TreeNodeData } from 'element-plus/lib/components/tree/src/tree.type';
 
 type T_Vxe_Form_Item_Props_Pick = 'title' | 'field' | 'titleWidth' | 'className' | 'titleClassName' | 'titleOverflow' | 'visible';
 type Align = 'left' | 'top' | 'right' | '' | null;
@@ -57,4 +59,58 @@ export declare interface I_Table_Filter_Props {
 	// 筛选条件状态(存在有效值/不存在有效值)改变或者打开关闭筛选弹窗时触发
 	onSearchStatusChange?: (isShow: boolean, isSearch: boolean) => void;
 	items: I_Table_Filter_Item[];
+}
+
+export interface TreeOptionProps {
+	// tree 组件指定子树为节点对象的某个属性值
+	children?: string;
+	label?: string | ((data: TreeNodeData, node: Node) => string);
+	disabled?: string | ((data: TreeNodeData, node: Node) => boolean);
+	isLeaf?: string | ((data: TreeNodeData, node: Node) => boolean);
+	class?: (
+		data: TreeNodeData,
+		node: Node
+	) =>
+		| string
+		| {
+				[key: string]: boolean;
+		  };
+}
+
+export interface SelectOptionProps {
+	label?: string;
+	value?: string;
+	disabled?: string;
+	// [el-select-v2] 指定选项的子选项为选项对象的某个属性值
+	options?: string;
+}
+
+export declare interface I_User_Search_Template_Model {
+	/** @description 搜索模板雪花id */
+	templateUid?: string | null;
+	/** @description 搜索模板名称 */
+	templateName?: string | null;
+	/** @description 页面路由雪花id */
+	routeId?: string | null;
+	/** @description 是否默认 */
+	isDefault?: boolean;
+	userSearchTemplateDetails?: I_User_Search_Template_Details_Model[];
+}
+
+export type I_User_Search_Template_Props_Model = Omit<I_User_Search_Template_Model, 'userSearchTemplateDetails'> & {
+	templateDetails?: string;
+};
+
+export declare interface I_User_Search_Template_Details_Model {
+	/** @description 数据库字段名 */
+	dbFieldName: string | null;
+	/** @description 动态页面列雪花id */
+	dynamicPageColUid: string | null;
+	/**
+	 * Format: int32
+	 * @description 搜索类型（模糊，精确...）
+	 */
+	searchType: number;
+	/** @description 默认值 */
+	defaultValue?: string | null;
 }

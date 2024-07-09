@@ -1,0 +1,109 @@
+.jlg-basic_template {
+  display: flex;
+  justify-content: space-between;
+
+  .left-options {
+    width: 230px;
+    height: 260px;
+    flex-shrink: 0;
+    background: #FBFBFB;
+
+    .option {
+      font-size: var(--el-font-size-base);
+      padding: 0 32px 0 20px;
+      position: relative;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--el-text-color-regular);
+      height: 34px;
+      line-height: 34px;
+      box-sizing: border-box;
+      cursor: pointer;
+      .handle{
+        display: flex;
+        align-items: center;
+        color: var(--el-color-primary);
+        .el-icon {
+          margin-right: 5px;
+        }
+      }
+      &.is-active{
+        background: var(--el-fill-color-light);
+        color: var(--el-color-primary);
+      }
+    }
+  }
+
+  .right-current_template {
+    width: 100%;
+
+    .top-wrap {
+      height: 200px;
+      .item-wrap{
+        width: 100%;
+        padding: 0 20px;
+        box-sizing: border-box;
+        .item-flex--wrap{
+          width: 100%;
+          display: flex;
+          margin-bottom: 10px;
+          .el-select{
+            width: 200px;
+            margin-right: 20px;
+          }
+          .handle-wrap{
+            display: flex;
+            align-items: center;
+            .el-icon{
+              cursor: pointer;
+              &:hover{
+                color: var(--el-color-primary);
+              }
+            }
+          }
+        }
+      }
+      .button-wrap{
+        padding: 0 20px;
+        .text-add-button{
+          cursor: pointer;
+          display: flex;
+          height: 24px;
+          align-items: center;
+          color: var(--el-color-primary);
+        }
+      }
+    }
+
+    .bottom-wrap {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      height: 60px;
+      border-top: 1px solid #E4E7ED;
+      .bottom-wrap-item{
+        width: 470px;
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+      }
+      .item-label{
+        flex-shrink: 0;
+        width: 115px;
+        text-align: center;
+        color: #575D6C;
+        font-size: var(--el-font-size-base);
+        &::after {
+          content: "*";
+          color: var(--el-color-danger);
+          margin-right: 4px;
+        }
+      }
+      .save-btn{
+        color: var(--el-button-hover-text-color);
+        border-color: var(--el-button-hover-text-color);
+      }
+    }
+  }
+}

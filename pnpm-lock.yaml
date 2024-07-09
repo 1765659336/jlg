@@ -47,7 +47,7 @@ importers:
         version: 2.7.4(vue@3.4.27)
       jlg-ui:
         specifier: ^0.0.20
-        version: link:../jlg-ui
+        version: 0.0.20(typescript@5.4.5)
       lodash-unified:
         specifier: ^1.0.3
         version: 1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.17.21)(lodash@4.17.21)
@@ -168,7 +168,7 @@ importers:
         version: 2.7.4(vue@3.4.27)
       jlg-ui:
         specifier: ^0.0.20
-        version: link:../jlg-ui
+        version: 0.0.20(typescript@5.4.5)
       lodash-unified:
         specifier: ^1.0.3
         version: 1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.17.21)(lodash@4.17.21)
@@ -300,6 +300,9 @@ importers:
       axios:
         specifier: ^1.6.8
         version: 1.7.2
+      dayjs:
+        specifier: ^1.11.3
+        version: 1.11.11
       eslint:
         specifier: ^8.53.0
         version: 8.57.0
@@ -3188,7 +3191,6 @@ packages:
 
   /dayjs@1.11.11:
     resolution: {integrity: sha512-okzr3f11N6WuqYtZSvm+F776mB41wRZMhKP+hc34YdW+KmtYYK9iqvHSwo2k9FEH3fhGXvOPV6yz2IcSrfRUDg==}
-    dev: false
 
   /de-indent@1.0.2:
     resolution: {integrity: sha1-sgOOhG3DO6pXlhKNCAS0VbjB4h0=}
@@ -4456,6 +4458,18 @@ packages:
   /jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
     dev: true
+
+  /jlg-ui@0.0.20(typescript@5.4.5):
+    resolution: {integrity: sha512-q1RBENV5j5uUmAo9gLVkWReYhIsx+CH2Nws2hlKpYTx7yCOIwbFDBxWV5CE9TdFfdG+g5ankke8IQhiSd8Mv0A==}
+    requiresBuild: true
+    dependencies:
+      '@element-plus/icons-vue': 2.3.1(vue@3.4.27)
+      element-plus: 2.7.4(vue@3.4.27)
+      vue: 3.4.27(typescript@5.4.5)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - typescript
+    dev: false
 
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}

@@ -22,27 +22,14 @@
 							:virtual-ref="customVirtualPopoverRef"
 							@reset="handleFilterReset"
 							@save="handleFilterSave"
+							@save-template="handleFilterSaveTemplate"
 							@folding="handleFolding"
 						>
-							<template #filter_divider="{ isFolding }">
-								<slot name="filter_divider" :is-folding="isFolding">
-									<el-divider v-show="!isFolding">
-										<div class="table-filter__divider">
-											<span style="margin-right: 5px" @click="onHandleFolding(!isFolding)">收起筛选</span>
-											<el-icon>
-												<ArrowUp />
-											</el-icon>
-										</div>
-									</el-divider>
-									<div v-show="isFolding" class="filter-folding" @click="onHandleFolding(!isFolding)">
-										<span class="filter-folding--text">展开筛选</span>
-									</div>
-								</slot>
+							<template v-if="$slots.filter_divider" #filter_divider="{ isFolding }">
+								<slot name="filter_divider" :is-folding="isFolding"></slot>
 							</template>
 						</table-filter>
 					</div>
-
-					<!--					<slot name="top"></slot>-->
 				</template>
 				<template v-for="(_, name) in $slots" #[name]="slotData" :key="name">
 					<slot :name v-bind="slotData || {}"></slot>
@@ -61,16 +48,15 @@ import findTree from 'xe-utils/findTree';
 import merge from 'xe-utils/merge';
 import toArrayTree from 'xe-utils/toArrayTree';
 import findIndexOf from 'xe-utils/findIndexOf';
-import TableFilter from '../table-filter/index.vue';
+import TableFilter from '../table-filter/newIndex.vue';
 import type { I_Table_Grid_Props, T_Msg, T_RenderCustomTemplate, T_Save_Config_Type } from './type';
-import type { I_Table_Filter_Props } from '../../components/table-filter/type';
+import type { I_Table_Filter_Props, I_User_Search_Template_Model } from '../../components/table-filter/type';
 import { computed, nextTick, reactive, Ref, useAttrs } from 'vue';
 import GlobalConfig from '../../../lib/useGlobalConfig';
 import { VxeGridEventProps, VxeGridInstance, VxeGridPropTypes, VxeGridDefines, VxeTableDefines } from 'vxe-table';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Sortable from 'sortablejs';
 import { useRenderCustomTemplate } from './useRenderCustomTemplate';
-import { ArrowUp } from '@element-plus/icons-vue';
 
 defineOptions({
 	name: 'JlgGrid',
@@ -150,7 +136,7 @@ const customTemplateRef = ref<HTMLElement>();
 const formElemRef = ref<HTMLElement>();
 const tableFilterRef = ref<InstanceType<typeof TableFilter>>();
 
-const customVirtualPopoverRef = ref<HTMLElement>();
+const customVirtualPopoverRef = ref();
 
 const initPopoverButton = (popoverRef: HTMLElement | Ref<HTMLElement>) => {
 	customVirtualPopoverRef.value = unref(popoverRef);
@@ -237,7 +223,15 @@ const beforeColumn = (args) => {
 const beforeQuery = async (args) => {
 	const getSysConfig = props.proxyConfig?.getSysConfig ? props.proxyConfig.getSysConfig : GlobalConfig.table.proxyConfig.getSysConfig;
 	if (args.isInited && typeof getSysConfig == 'function') {
-		const { defaultSort = [], searchData = [], columns = [], globalConfig = {}, merged = null, filterMerged } = await getSysConfig();
+		const {
+			defaultSort = [],
+			searchData = [],
+			columns = [],
+			globalConfig = {},
+			merged = null,
+			filterMerged,
+			filterSchemes = null,
+		} = await getSysConfig();
 		setTableGlobalConfig(globalConfig);
 		if (columns.length > 0) {
 			eachTree(columns, (column) => {
@@ -260,6 +254,12 @@ const beforeQuery = async (args) => {
 		} else {
 			args.form = tableFilterRef.value?.getFormData() || null;
 		}
+
+		// 设置筛选模板列表数据
+		if (filterSchemes && tableFilterRef.value?.setTemplateList) {
+			await tableFilterRef.value.setTemplateList(filterSchemes);
+		}
+
 		// 页面初始化时,如果服务端返回的数据存在组合排序,强制开启多列排序, 判断  props.sortConfig?.multiple 是否为 false 是为了兼容正常的多排序
 		if (defaultSort.length > 0 && props.sortConfig?.multiple === false) {
 			// 直接修改 props 违背了 vue 的单项数据流原则,但是考虑到外部修改参数操作成本较高,暂时先直接修改
@@ -558,12 +558,16 @@ function handleFolding(bool: boolean) {
 		setTimeout(() => recalculate());
 	});
 }
-function onHandleFolding(bool: boolean) {
-	tableFilterRef.value!.handleFolding(bool);
-}
+// function onHandleFolding(bool: boolean) {
+// 	tableFilterRef.value!.handleFolding(bool);
+// }
 
 function handleFilterSave() {
 	commitProxy('query');
+}
+
+function handleFilterSaveTemplate(data: I_User_Search_Template_Model, type: 'edit' | 'add' | 'delete') {
+	saveConfig('template', { ...data, type });
 }
 
 function handleFilterReset() {
@@ -571,7 +575,7 @@ function handleFilterReset() {
 }
 
 // 保存配置到服务端
-function saveConfig(type: T_Save_Config_Type = 'customize') {
+function saveConfig(type: T_Save_Config_Type = 'customize', params?: unknown) {
 	const _saveSysConfig = props.proxyConfig?.saveSysConfig ? props.proxyConfig.saveSysConfig : GlobalConfig.table.proxyConfig.saveSysConfig;
 	if (typeof _saveSysConfig == 'function' && storageConfig.value.enabled) {
 		const { collectColumn } = xGrid.value.getTableColumn();
@@ -586,7 +590,17 @@ function saveConfig(type: T_Save_Config_Type = 'customize') {
 			}
 		});
 
-		_saveSysConfig(columns, tableFilterConfig.value?.items || [], customStore, type);
+		_saveSysConfig({
+			columns,
+			filterConfig: {
+				items: tableFilterConfig.value?.items || [],
+				template: type === 'template' ? params : null,
+				templateType: type === 'template' ? (params as any).type ?? 'add' : null,
+				$filter: tableFilterRef.value,
+			},
+			globalConfig: customStore,
+			type,
+		});
 	}
 }
 
@@ -658,6 +672,3 @@ defineExpose({
 	onClickOutside,
 });
 </script>
-<style lang="scss">
-@import url('../../../styles/table-base.scss');
-</style>

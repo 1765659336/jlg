@@ -510,7 +510,7 @@ const gridOptions = reactive<I_Table_Grid_Props<RowVO>>({
 				type: 'independentDate',
 				defaultValue: ['2023-09-01', '2023-09-30'],
 				searchType: 0,
-				quickSearch: false,
+				quickSearch: true,
 				isPure: true,
 			},
 			{
@@ -565,8 +565,10 @@ const mockGetPageList = (params: VxeGridPropTypes.ProxyAjaxQueryParams<RowVO>) =
 const { openModal } = useDynamicModal();
 function handleEdit(row: RowVO) {
 	console.log(row);
+	const BaseModal = defineAsyncComponent(() => import('../../modal/BaseModal.vue'));
 	openModal({
-		component: defineAsyncComponent(() => import('../../modal/BaseModal.vue')),
+		// component: BaseModal,
+		component: BaseModal,
 		modalOptions: {
 			size: 'mini',
 			status: 'error',

@@ -14,10 +14,9 @@
 				@blur="isFocus = false"
 			>
 			</el-select-v2>
-			<template v-if="isShowSelect && item.props?.multiple === true">
+			<template v-if="isShowSelect">
 				<el-select v-model="searchType" size="default" class="slot-select" :class="{ 'is-focus': isFocus }" placeholder="">
-					<el-option label="包含" :value="0" />
-					<el-option label="不包含" :value="1" />
+					<el-option v-for="searchItem in SEARCH_TYPES.select" :key="searchItem.value" :label="searchItem.label" :value="searchItem.value" />
 				</el-select>
 			</template>
 		</div>
@@ -26,12 +25,13 @@
 
 <script setup lang="ts">
 import { I_Table_Filter_Item } from '../type';
+import { SEARCH_TYPES } from '../constants';
 
 defineOptions({
 	name: 'FilterSelect',
 });
 const modelValue = defineModel<string>({ required: true });
-const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean }>(), {
+const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean; showSelect: boolean }>(), {
 	showLabel: false,
 	showSelect: false,
 });

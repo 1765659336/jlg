@@ -9,7 +9,7 @@
     line-height: 24px;
     mix-blend-mode: normal;
     color: var(--el-text-color-regular);
-    font-size: 14px;
+    font-size: var(--el-font-size-base);
     word-break: break-all;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -54,7 +54,7 @@
 
     .el-select__wrapper {
       padding: 4px 4px;
-      font-size: 12px;
+      font-size: var(--el-font-size-extra-small);
       box-shadow: none !important;
       border-bottom-left-radius: 0;
       border-top-left-radius: 0;
@@ -69,7 +69,7 @@
       }
 
       .el-icon {
-        font-size: 12px;
+        font-size: var(--el-font-size-extra-small);
       }
     }
 

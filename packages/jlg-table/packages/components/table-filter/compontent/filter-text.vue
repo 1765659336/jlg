@@ -28,7 +28,7 @@ defineOptions({
 	name: 'FilterText',
 });
 const modelValue = defineModel<string>({ required: true });
-const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean }>(), {
+const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean; showSelect: boolean }>(), {
 	showLabel: false,
 	showSelect: false,
 });

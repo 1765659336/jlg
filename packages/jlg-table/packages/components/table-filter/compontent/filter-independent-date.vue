@@ -68,8 +68,7 @@ const disabledEndDate = (date: Date) => {
 watch(
 	modelValue,
 	(newValue) => {
-		if (!newValue) return;
-		if (newValue.length === 0) {
+		if (!newValue || newValue.length === 0) {
 			startTime.value = '';
 			endTime.value = '';
 		} else {

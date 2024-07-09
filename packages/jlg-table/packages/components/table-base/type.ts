@@ -9,7 +9,16 @@ type T_Destroy = {
 	onDestroy: () => void;
 };
 export type T_RenderCustomTemplate = <P = Record<string, any>>(customComponent: VNodeTypes, appContext: AppContext, props: P) => T_Destroy;
-export type T_Save_Config_Type = 'resizable' | 'sortable' | 'reset' | ' save' | 'customize';
+/**
+ * @description 保存配置类型
+ * @enum {string} resizable - 拖动列宽调整大小
+ * @enum {string} sortable - 拖动列排序
+ * @enum {string} reset - 重置表格配置
+ * @enum {string} save - 保存表格列配置
+ * @enum {string} template - 保存筛选方案模版
+ * @enum {string} customize - 自定义表格列配置
+ * */
+export type T_Save_Config_Type = 'resizable' | 'sortable' | 'reset' | ' save' | 'customize' | 'template';
 
 export type JlgGridInstance<T = any> = {
 	xGrid: VxeGridInstance<T>;

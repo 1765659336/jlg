@@ -1,7 +1,7 @@
 <template>
 	<el-config-provider :locale="zhCn">
-		<el-form ref="refForm" class="table-filter" :model="form" :disabled="props.disabled">
-			<div class="table-filter__container" :class="'is--' + (isFolding ? 'folding' : 'unfold')">
+		<el-form ref="refForm" class="jlg-table-filter" :model="form" :disabled="props.disabled">
+			<div class="jlg-table-filter__container" :class="'is--' + (isFolding ? 'folding' : 'unfold')">
 				<div v-for="item in items" :key="item.field" class="table-filter__card" :class="item.className">
 					<el-form-item
 						:prop="item.field"
@@ -12,12 +12,12 @@
 							<el-tooltip
 								:content="item.title"
 								placement="top"
-								:disabled="isShowTooltip || item.titleOverflow === false || item.titleOverflow === 'title' || item.titleOverflow === 'ellipsis'"
+								:disabled="isHideTooltip || item.titleOverflow === false || item.titleOverflow === 'title' || item.titleOverflow === 'ellipsis'"
 							>
 								<span
 									:title="item.titleOverflow === 'title' ? item.title : ''"
 									:style="labelStyle(item)"
-									class="text-overflow-hidden"
+									class="jlg-text-overflow-hidden"
 									:class="item.titleClassName"
 									@mouseover="($event) => visibleTooltip($event, item.title)"
 									>{{ item.title }}</span
@@ -50,78 +50,31 @@
 			</div>
 
 			<!--  快捷搜索弹出窗口   -->
-			<el-popover
-				ref="popoverRef"
+			<popover-component
+				v-model:form="form"
 				:visible="isShowQuickSearch"
-				trigger="click"
-				popper-class="jlg-popper--quick--search"
-				:pure="true"
 				:virtual-ref="props.virtualRef"
-				:teleported="false"
-				:show-arrow="false"
-				:width="525"
-				virtual-triggering
-				placement="bottom"
 				:disabled="props.disabled || itemsValue.length === 0"
-				:manual="true"
-				@hide="onHide"
-			>
-				<div v-show="isShowQuickSearch" class="jlg-popover__wrapper">
-					<div class="jlg-popover__title">
-						<span>搜索</span>
-						<el-icon size="18" style="cursor: pointer" @click="isShowQuickSearch = false">
-							<CloseBold />
-						</el-icon>
-					</div>
-					<div class="jlg-popover__body">
-						<el-row :gutter="40">
-							<el-col v-for="item in itemsValue" :key="item.field" :span="12" :class="item.className">
-								<el-form-item :prop="item.field">
-									<template #default>
-										<component
-											:is="renderContentTitle(item)"
-											v-model="form[item.field]"
-											v-model:search-type="item.searchType"
-											:show-label="true"
-											:show-select="true"
-											:item="item"
-										/>
-									</template>
-								</el-form-item>
-							</el-col>
-						</el-row>
-					</div>
-					<div class="jlg-popover__footer">
-						<div></div>
-						<div>
-							<el-button @click="onHide">关闭</el-button>
-							<el-button @click="handleReset">重置</el-button>
-							<el-button type="primary" @click="handleSave">查询</el-button>
-						</div>
-					</div>
-				</div>
-			</el-popover>
+				:is-show-quick-search="isShowQuickSearch"
+				:items-value="itemsValue"
+				:render-content-title="renderContentTitle"
+				:on-hide="onHide"
+				:on-handle-reset="handleReset"
+				:on-handle-save="handleSave"
+			/>
 		</el-form>
 	</el-config-provider>
 </template>
 
 <script setup lang="ts">
-import { ElConfigProvider } from 'element-plus';
-import { CSSProperties, ref } from 'vue';
+import { ref } from 'vue';
 import { I_Table_Filter_Item, I_Table_Filter_Props } from './type';
-import { ElPopover, ElTooltip, FormInstance } from 'element-plus';
 import GlobalConfig from '../../../lib/useGlobalConfig';
-import { ArrowDown, ArrowUp, CloseBold } from '@element-plus/icons-vue';
-import isString from 'xe-utils/isString';
-import isNumber from 'xe-utils/isNumber';
-import FilterText from './compontent/filter-text.vue';
-import FilterInputNumber from './compontent/filter-input-number.vue';
-import FilterSelect from './compontent/filter-select.vue';
-import FilterTime from './compontent/filter-time.vue';
-import FilterDate from './compontent/filter-date.vue';
-import FilterTreeSelect from './compontent/filter-tree-select.vue';
-import FilterIndependentDate from './compontent/filter-independent-date.vue';
-import { useHasValue } from './hooks/useHasValue';
+import { ElConfigProvider, ElTooltip, FormInstance } from 'element-plus';
+import { ArrowDown, ArrowUp } from '@element-plus/icons-vue';
+import { usePopover } from './hooks/usePopover';
+import { useBaseData } from './hooks/useBaseData';
+import PopoverComponent from './compontent/basic-popover.vue';
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 
 defineOptions({
@@ -142,21 +95,9 @@ const emit = defineEmits<{
 
 const itemsModelValue = defineModel<I_Table_Filter_Item[]>('items', { required: true });
 
-// baseForm 用于存储快捷搜索&高级搜索的数据
-// const loadSchemeList = [
-// 	{
-// 		schemeName: '方案1',
-// 		schemeUid: '1',
-// 		scheme: [{}],
-// 	},
-// ];
-
-// const filterBaseForm = reactive({});
-// 高级搜索表单数据
-// const filterContainerForm = reactive({});
-const form = reactive({});
+const { form, isHideTooltip, isFolding, labelStyle, visibleTooltip } = useBaseData({ props });
 // 搜索弹框内存在有效数据时，触发回调
-const { isShowQuickSearch } = useHasValue({ props, form });
+const { isShowQuickSearch, renderContentTitle, onClickOutside, handleQuickSearchClose, handleQuickSearch } = usePopover({ props, form });
 
 const items = computed(() =>
 	itemsModelValue.value
@@ -175,64 +116,6 @@ const itemsValue = computed(() =>
 		})
 		.sort((a, b) => (a.sortNumber || 0) - (b.sortNumber || 0))
 );
-
-const isShowTooltip = ref(false);
-
-function visibleTooltip(event: Event, labelText: string) {
-	if (!labelText) {
-		isShowTooltip.value = true;
-		return;
-	}
-	const { offsetWidth, scrollWidth } = event.target as HTMLElement;
-	isShowTooltip.value = offsetWidth >= scrollWidth;
-}
-
-const labelStyle = (item: I_Table_Filter_Item): CSSProperties => {
-	const labelWidth = addUnit(item.titleWidth || props?.titleWidth || '');
-	let titleAlign = item.titleAlign || props.titleAlign;
-	if (titleAlign === 'top' || titleAlign === '') titleAlign = 'left';
-	if (labelWidth) return { width: labelWidth, textAlign: titleAlign };
-	return { textAlign: titleAlign, width: '' };
-};
-
-const isFolding = ref(props.folding);
-
-const renderContentTitle = (item: I_Table_Filter_Item) => {
-	switch (item.type) {
-		case 'text':
-			return FilterText;
-		case 'number':
-			return FilterInputNumber;
-		case 'select':
-			return FilterSelect;
-		case 'time':
-			return FilterTime;
-		case 'date':
-			return FilterDate;
-		case 'independentDate':
-			return FilterIndependentDate;
-		case 'treeSelect':
-			return FilterTreeSelect;
-		default:
-			return FilterText;
-	}
-};
-
-function isStringNumber(val: string | number) {
-	if (!isString(val)) {
-		return false;
-	}
-	return !Number.isNaN(Number(val));
-}
-
-function addUnit(value?: string | number, defaultUnit = 'px') {
-	if (!value) return '';
-	if (isNumber(value) || isStringNumber(value)) {
-		return `${value}${defaultUnit}`;
-	} else if (isString(value)) {
-		return value;
-	}
-}
 
 // 设置初始值
 function handleInitialValue() {
@@ -280,19 +163,6 @@ function handleFolding(bool: boolean) {
 		emit('folding', bool);
 	});
 }
-
-const popoverRef = ref();
-const onClickOutside = () => {
-	unref(popoverRef).popperRef?.delayHide?.();
-};
-// 手动关闭快捷搜索
-const handleQuickSearchClose = () => {
-	isShowQuickSearch.value = false;
-};
-// 打开快捷搜索
-const handleQuickSearch = () => {
-	isShowQuickSearch.value = true;
-};
 
 defineExpose({
 	handleReset,
