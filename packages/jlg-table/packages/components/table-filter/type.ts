@@ -58,6 +58,8 @@ export declare interface I_Table_Filter_Props {
 	virtualRef?: HTMLElement;
 	// 筛选条件状态(存在有效值/不存在有效值)改变或者打开关闭筛选弹窗时触发
 	onSearchStatusChange?: (isShow: boolean, isSearch: boolean) => void;
+	// 是否启用筛选方案模式
+	isFilterTemplate?: boolean;
 	items: I_Table_Filter_Item[];
 }
 

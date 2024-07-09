@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TableFilter from '@pac/components/table-filter/newIndex.vue';
+import TableFilter from '@pac/components/table-filter/template-index.vue';
 import { reactive } from 'vue';
 import { I_Table_Grid_Props } from '@pac';
 

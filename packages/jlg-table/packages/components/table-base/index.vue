@@ -15,7 +15,8 @@
 			>
 				<template #top>
 					<div v-if="tableFilterConfig.items" ref="formElemRef" class="jlg-grid--form-wrapper">
-						<table-filter
+						<component
+							:is="tableFilterConfig.isFilterTemplate === false ? TableFilter : TableFilterTemplate"
 							ref="tableFilterRef"
 							v-bind="props.tableFilterConfig"
 							v-model:items="tableFilterConfig.items"
@@ -28,11 +29,11 @@
 							<template v-if="$slots.filter_divider" #filter_divider="{ isFolding }">
 								<slot name="filter_divider" :is-folding="isFolding"></slot>
 							</template>
-						</table-filter>
+						</component>
 					</div>
 				</template>
 				<template v-for="(_, name) in $slots" #[name]="slotData" :key="name">
-					<slot :name v-bind="slotData || {}"></slot>
+					<slot :name v-bind="slotData"></slot>
 				</template>
 				<template #default_handle_operation="{ row }">
 					<slot name="default_handle_operation" :row="row"></slot>
@@ -48,7 +49,8 @@ import findTree from 'xe-utils/findTree';
 import merge from 'xe-utils/merge';
 import toArrayTree from 'xe-utils/toArrayTree';
 import findIndexOf from 'xe-utils/findIndexOf';
-import TableFilter from '../table-filter/newIndex.vue';
+import TableFilter from '../table-filter/index.vue';
+import TableFilterTemplate from '../table-filter/template-index.vue';
 import type { I_Table_Grid_Props, T_Msg, T_RenderCustomTemplate, T_Save_Config_Type } from './type';
 import type { I_Table_Filter_Props, I_User_Search_Template_Model } from '../../components/table-filter/type';
 import { computed, nextTick, reactive, Ref, useAttrs } from 'vue';
@@ -134,7 +136,9 @@ const emit = defineEmits<{
 const xGrid = ref<VxeGridInstance>();
 const customTemplateRef = ref<HTMLElement>();
 const formElemRef = ref<HTMLElement>();
-const tableFilterRef = ref<InstanceType<typeof TableFilter>>();
+type T_Table_Filter = InstanceType<typeof TableFilter>;
+type T_Table_Filter_Template = InstanceType<typeof TableFilterTemplate>;
+const tableFilterRef = ref<T_Table_Filter | T_Table_Filter_Template>();
 
 const customVirtualPopoverRef = ref();
 
@@ -150,7 +154,7 @@ const onClickOutside = () => {
 	unref(tableFilterRef).onClickOutside();
 };
 
-const tableFilterConfig = defineModel<I_Table_Filter_Props>('tableFilterConfig');
+const tableFilterConfig = defineModel<I_Table_Filter_Props>('tableFilterConfig', { default: () => GlobalConfig.table.tableFilterConfig });
 const rawTableFilterConfig = clone(tableFilterConfig.value, true);
 const getTableFilterConfig = (deep: boolean) => {
 	return clone(tableFilterConfig.value, deep);
@@ -256,8 +260,10 @@ const beforeQuery = async (args) => {
 		}
 
 		// 设置筛选模板列表数据
-		if (filterSchemes && tableFilterRef.value?.setTemplateList) {
-			await tableFilterRef.value.setTemplateList(filterSchemes);
+		if (tableFilterConfig.value.isFilterTemplate !== false) {
+			if (filterSchemes && (tableFilterRef.value as T_Table_Filter_Template)?.setTemplateList) {
+				await (tableFilterRef.value as T_Table_Filter_Template).setTemplateList(filterSchemes);
+			}
 		}
 
 		// 页面初始化时,如果服务端返回的数据存在组合排序,强制开启多列排序, 判断  props.sortConfig?.multiple 是否为 false 是为了兼容正常的多排序

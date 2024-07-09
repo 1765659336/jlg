@@ -136,6 +136,10 @@ const GlobalConfig: T_Global_Config_Props = {
 		},
 		layouts: ['Top', 'Form', 'Toolbar', 'Table', 'Bottom', 'Pager'],
 		operationConfig: null,
+		tableFilterConfig: {
+			isFilterTemplate: true,
+			items: [],
+		},
 		storageConfig: {
 			enabled: true,
 			autoStorage: true,
