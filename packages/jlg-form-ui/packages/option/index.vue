@@ -7,6 +7,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElOption } from 'element-plus';
 import { globalComponentConfig } from '../index';
 import { I_Jlg_Option_Props } from './type';
 

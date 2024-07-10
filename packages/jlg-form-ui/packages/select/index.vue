@@ -28,7 +28,7 @@ import JlgTooltip from '../tooltip/index.vue';
 import JlgOption from '../option/index.vue';
 import { globalComponentConfig } from '../index';
 import { I_Jlg_Select_Emits, T_Jlg_Select_Props } from './type';
-import { FormItemContext, formItemContextKey, useLocale } from 'element-plus';
+import { ElSelect, FormItemContext, formItemContextKey, useLocale } from 'element-plus';
 import { E_JlgForm_FormType, T_Add_Gather_Fn } from '../form/type';
 
 defineOptions({

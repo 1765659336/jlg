@@ -76,6 +76,7 @@
 <script setup lang="ts">
 import { I_Jlg_Menu_Props, I_Jlg_Menu_Emits } from './type';
 import ShowCollect from './components/show-collect/index.vue';
+import { ElPopover } from 'element-plus';
 
 defineOptions({
 	name: 'JlgMenu',

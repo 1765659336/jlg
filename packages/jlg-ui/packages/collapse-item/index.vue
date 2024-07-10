@@ -22,6 +22,7 @@
 import { T_Jlg_CollapseItem_Props } from './type';
 import { CaretRight } from '@element-plus/icons-vue';
 import { T_Add_Collapse_Item } from '../collapse/type';
+import { ElCollapseItem } from 'element-plus';
 
 defineOptions({
 	name: 'JlgCollapseItem',

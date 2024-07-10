@@ -20,6 +20,7 @@ import { globalComponentConfig } from '../index';
 import { T_Jlg_DatePicker_Props, I_Jlg_DatePicker_Emits } from './type';
 import { FormItemContext, formItemContextKey } from 'element-plus';
 import { T_Add_Gather_Fn } from '../form/type';
+import { ElDatePicker } from 'element-plus';
 
 defineOptions({
 	name: 'JlgDatePicker',

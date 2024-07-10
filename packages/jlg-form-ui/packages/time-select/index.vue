@@ -15,7 +15,7 @@ import JlgTooltip from '../tooltip/index.vue';
 import { globalComponentConfig } from '../index';
 import { T_Jlg_TimeSelect_Props, I_Jlg_TimeSelect_Emits } from './type';
 import { useAttrs } from 'vue';
-import { FormItemContext, formItemContextKey } from 'element-plus';
+import { FormItemContext, formItemContextKey, ElTimeSelect } from 'element-plus';
 import { E_JlgForm_FormType, T_Add_Gather_Fn } from '../form/type';
 
 defineOptions({

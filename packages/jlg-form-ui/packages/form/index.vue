@@ -42,6 +42,7 @@ import JlgFormItem from '../form-item/index.vue';
 import { type Component } from 'vue';
 import useGather from './hooks/gather';
 import useRule from './hooks/rule';
+import { ElForm } from 'element-plus';
 
 defineOptions({
 	name: 'JlgForm',

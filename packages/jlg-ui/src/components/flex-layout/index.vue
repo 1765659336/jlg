@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import JlgFlexLayout from '../../../packages/flex-layout/index.vue';
 import JlgFlexCell from '../../../packages/flex-cell/index.vue';
+import { ElFormItem, ElInput } from 'element-plus';
 
 defineOptions({
 	name: 'FlexLayoutDemo',

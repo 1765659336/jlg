@@ -21,7 +21,7 @@
 import { I_Jlg_Input_Emits, T_Jlg_Input_Props } from './type';
 import { globalComponentConfig } from '../index';
 import JlgTooltip from '../tooltip/index.vue';
-import { FormItemContext, formItemContextKey } from 'element-plus';
+import { FormItemContext, formItemContextKey, ElInput } from 'element-plus';
 import { T_Add_Gather_Fn } from '../form/type';
 
 defineOptions({
