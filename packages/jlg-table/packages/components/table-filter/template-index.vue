@@ -32,7 +32,7 @@
 					</div>
 					<div class="filter-panel__button">
 						<el-button class="save-btn" type="primary" @click="handleSave">查询</el-button>
-						<el-button class="reset-btn" @click="handleReset">重置</el-button>
+						<el-button v-show="!templateStore.currentTemplateUId" class="reset-btn" @click="handleReset">重置</el-button>
 					</div>
 				</div>
 				<div class="jlg-filter-pane__divider">
@@ -108,13 +108,13 @@
 			v-model:form="form"
 			:visible="isShowQuickSearch"
 			:virtual-ref="props.virtualRef"
-			:disabled="props.disabled || itemsValue.length === 0"
+			:disabled="props.disabled"
 			:is-show-quick-search="isShowQuickSearch"
 			:items-value="itemsValue"
 			:render-content-title="renderContentTitle"
 			:on-hide="onHide"
 			:on-handle-reset="handleReset"
-			:on-handle-save="handleSave"
+			:on-handle-save="handlePopoverSave"
 		/>
 	</el-config-provider>
 </template>
@@ -122,8 +122,7 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue';
 import { ElConfigProvider, ElOption, ElSelect, ElTooltip, FormInstance } from 'element-plus';
-import { I_Table_Filter_Item, I_Table_Filter_Props } from './type';
-import { I_User_Search_Template_Model } from './type';
+import { I_Table_Filter_Item, I_Table_Filter_Props, I_User_Search_Template_Model } from './type';
 import GlobalConfig from '../../../lib/useGlobalConfig';
 import { usePopover } from './hooks/usePopover';
 import { useBaseData } from './hooks/useBaseData';
@@ -154,7 +153,7 @@ const emit = defineEmits<{
 
 const itemsModelValue = defineModel<I_Table_Filter_Item[]>('items', { required: true });
 
-const { form, isHideTooltip, isFolding, labelStyle, visibleTooltip } = useBaseData({ props });
+const { form, schemeForm, isHideTooltip, isFolding, labelStyle, visibleTooltip } = useBaseData({ props });
 // 搜索弹框内存在有效数据时，触发回调
 const { isShowQuickSearch, renderContentTitle, onClickOutside, handleQuickSearchClose, handleQuickSearch } = usePopover({ props, form });
 
@@ -201,7 +200,17 @@ const setTemplateList = (list?: I_User_Search_Template_Model[], currentTemplateU
 	});
 };
 
+// 根据模板uid删除模板
+const handleDeleteTemplate = (templateUid: string) => {
+	const index = templateStore.loadTemplateList.findIndex((item) => item.templateUid === templateUid);
+	if (index > -1) {
+		templateStore.currentTemplateUId = undefined;
+		templateStore.loadTemplateList.splice(index, 1);
+	}
+};
+
 const handleOptionClick = (templateItem?: I_User_Search_Template_Model) => {
+	debugger;
 	if (!templateItem) {
 		handleAddTemplate();
 	} else {
@@ -209,27 +218,56 @@ const handleOptionClick = (templateItem?: I_User_Search_Template_Model) => {
 	}
 };
 
+function pascalToCamel(str: string) {
+	// 字符串首字符转小写
+	return str.charAt(0).toLowerCase() + str.slice(1);
+}
+
 const basicTemplateRef = ref<InstanceType<typeof BasicTemplate>>();
 const ElSelectRef = ref<InstanceType<typeof ElSelect>>();
 const handleSchemeChange = (templateUid?: string) => {
-	const _form = {};
+	Object.keys(schemeForm).forEach((key) => {
+		schemeForm[key] = undefined;
+	});
 	const userSearchTemplateDetails = templateStore.loadTemplateList.find((item) => item.templateUid === templateUid)?.userSearchTemplateDetails;
 	if (userSearchTemplateDetails) {
 		userSearchTemplateDetails.forEach((item) => {
-			_form[item.dbFieldName] = item.defaultValue;
+			const field = pascalToCamel(item.dbFieldName);
+			schemeForm[field] = item.defaultValue;
 		});
 	}
 	isShowQuickSearch.value = false;
 	if (templateUid === '') return;
-	emit('save', _form);
+	emit('save', schemeForm);
 };
 watch(
 	() => templateStore.currentTemplateUId,
 	(value) => {
-		console.log('value', value);
 		handleSchemeChange(value);
 	}
 );
+/**
+ * 高级搜索数据变化时,重新计算 userSearchTemplateDetails
+ * */
+watch(
+	() => itemsValue.value?.length ?? 0,
+	(value, oldValue) => {
+		if (value === 0) {
+			templateStore.currentTemplateUId = undefined;
+			templateStore.loadTemplateList?.forEach((item) => {
+				item.userSearchTemplateDetails = [];
+			});
+		}
+		if (value < oldValue) {
+			templateStore.loadTemplateList?.forEach((item) => {
+				item.userSearchTemplateDetails = item.userSearchTemplateDetails.filter((detail) => {
+					return itemsValue.value.some((item) => item.params.dynamicPageColUid === pascalToCamel(detail.dynamicPageColUid));
+				});
+			});
+		}
+	}
+);
+
 const handleAddTemplate = () => {
 	//  将 templateStore.currentTemplateUId 设置为空字符串是为了区分新增与 el-select清空
 	templateStore.currentTemplateUId = '';
@@ -266,10 +304,7 @@ function handleInitialValue() {
 }
 
 function getFormData() {
-	if (props.beforeSave && typeof props.beforeSave === 'function') {
-		return props.beforeSave(form, items.value);
-	}
-	return form;
+	return templateStore.currentTemplateUId ? schemeForm : form;
 }
 
 function onHide() {
@@ -279,13 +314,24 @@ function onHide() {
 /// 查询
 function handleSave() {
 	isShowQuickSearch.value = false;
+	const _form = templateStore.currentTemplateUId ? schemeForm : form;
+	if (props.beforeSave && typeof props.beforeSave === 'function') {
+		const data = props.beforeSave(_form, items.value);
+		emit('save', data);
+		return;
+	}
+	emit('save', _form);
+}
+
+const handlePopoverSave = () => {
+	templateStore.currentTemplateUId = '';
 	if (props.beforeSave && typeof props.beforeSave === 'function') {
 		const data = props.beforeSave(form, items.value);
 		emit('save', data);
 		return;
 	}
 	emit('save', form);
-}
+};
 
 /// 重置查询条件
 function handleReset() {
@@ -308,6 +354,7 @@ function handleFolding(bool: boolean) {
 const handleTagClose = (field: string) => {
 	refForm.value?.resetFields([field]);
 	form[field] = null;
+	handleSave();
 };
 
 defineExpose({
@@ -316,9 +363,13 @@ defineExpose({
 	handleFolding,
 	getFormData,
 	onClickOutside,
+	handleSchemeChange,
+	handleDeleteTemplate,
 	handleQuickSearchClose,
 	handleQuickSearch,
 	setTemplateList,
+	currentTemplateDetails,
+	templateStore,
 	rawFormData: form,
 });
 </script>

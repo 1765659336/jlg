@@ -54,7 +54,7 @@
 				v-model:form="form"
 				:visible="isShowQuickSearch"
 				:virtual-ref="props.virtualRef"
-				:disabled="props.disabled || itemsValue.length === 0"
+				:disabled="props.disabled"
 				:is-show-quick-search="isShowQuickSearch"
 				:items-value="itemsValue"
 				:render-content-title="renderContentTitle"

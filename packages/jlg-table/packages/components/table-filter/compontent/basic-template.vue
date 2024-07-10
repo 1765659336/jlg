@@ -41,8 +41,8 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['optionClick']);
 
-function handleOptionClick(item: I_User_Search_Template_Model) {
-	if (item.templateUid === props?.currentTemplateDetails?.templateUid) return;
+function handleOptionClick(item?: I_User_Search_Template_Model) {
+	if (!item && item?.templateUid === props?.currentTemplateDetails?.templateUid) return;
 	emit('optionClick', item);
 }
 

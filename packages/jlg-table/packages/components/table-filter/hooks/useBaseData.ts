@@ -5,6 +5,7 @@ import isString from 'xe-utils/isString';
 
 export const useBaseData = ({ props }: { props: I_Table_Filter_Props }) => {
 	const form = reactive({});
+	const schemeForm = reactive({});
 	const isHideTooltip = ref(false);
 	const isFolding = ref(props.folding);
 
@@ -43,6 +44,7 @@ export const useBaseData = ({ props }: { props: I_Table_Filter_Props }) => {
 
 	return {
 		form,
+		schemeForm,
 		isFolding,
 		isHideTooltip,
 		visibleTooltip,

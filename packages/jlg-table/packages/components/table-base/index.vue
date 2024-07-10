@@ -278,6 +278,8 @@ const beforeQuery = async (args) => {
 	}
 	args.form = {
 		items: tableFilterConfig.value.items,
+		templateStore: (tableFilterRef.value as T_Table_Filter_Template)?.templateStore,
+		currentTemplateDetails: (tableFilterRef.value as T_Table_Filter_Template)?.currentTemplateDetails,
 		data: args.form,
 	};
 	if (args.isInited) {

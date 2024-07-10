@@ -8,7 +8,6 @@
 		:show-arrow="false"
 		:width="525"
 		virtual-triggering
-		placement="bottom"
 		:manual="true"
 		v-bind="$attrs"
 		@hide="props.onHide"
