@@ -10,8 +10,6 @@ declare module 'vue' {
     BaseUse: typeof import('./src/components/grid-layout/base-use/index.vue')['default']
     Collapse: typeof import('./src/components/collapse/index.vue')['default']
     ElForm: typeof import('element-plus/es')['ElForm']
-    ElFormItem: typeof import('element-plus/es')['ElFormItem']
-    ElInput: typeof import('element-plus/es')['ElInput']
     FlexLayout: typeof import('./src/components/flex-layout/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

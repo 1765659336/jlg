@@ -8,8 +8,8 @@
 				v-for="firstLevelMenu in handleMenuData"
 				:key="firstLevelMenu[menuDataRecordComputed.key]"
 				placement="right"
-				:width="400"
 				trigger="click"
+				:width="getPopoWidth(firstLevelMenu)"
 				:teleported="false"
 				v-bind="props.elPopoverProps"
 			>
@@ -121,6 +121,17 @@ watch(
 		immediate: true,
 	}
 );
+
+function getPopoWidth(firstLevelMenu) {
+	const childMenuLength = firstLevelMenu.children?.length;
+	if (childMenuLength >= 4) {
+		return 800;
+	} else if (childMenuLength === 0) {
+		return 0;
+	} else {
+		return 20 + 20 + 190 * childMenuLength;
+	}
+}
 </script>
 
 <style scoped lang="scss">
@@ -142,11 +153,14 @@ watch(
 	.jlg-menu-popover {
 		display: flex;
 		flex-wrap: wrap;
-		padding-inline-start: 0px;
+		/* padding-inline-start: 0px; */
+		padding: 12px 20px;
 
 		.second-level-menu {
-			margin-left: var(--second-level-menu-margin-left);
+			/* margin-left: var(--second-level-menu-margin-left); */
 			color: var(--jlg-menu-popover-color);
+			width: 170px;
+			margin-right: 20px;
 			.second-level-menu-title {
 				padding: var(--second-level-menu-title-top-padding) var(--second-level-menu-title-right-padding) var(--second-level-menu-title-bottom-padding)
 					var(--second-level-menu-title-left-padding);
