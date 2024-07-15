@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import { globalComponentConfig } from '../index';
 import { T_Jlg_Tooltip_Props } from './type';
+import { ElTooltip } from 'element-plus';
 
 defineOptions({
 	name: 'JlgTooltip',

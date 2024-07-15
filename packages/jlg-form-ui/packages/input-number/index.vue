@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { FormItemContext, formItemContextKey } from 'element-plus';
+import { FormItemContext, formItemContextKey, ElInputNumber } from 'element-plus';
 import { E_JlgForm_FormType, T_Add_Gather_Fn } from '../form/type';
 import { globalComponentConfig } from '../index';
 import { I_Jlg_InputNumber_Emits, T_Jlg_InputNumber_Props } from './type';

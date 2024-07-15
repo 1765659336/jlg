@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { FormItemContext, formItemContextKey } from 'element-plus';
+import { FormItemContext, formItemContextKey, ElRate } from 'element-plus';
 import { E_JlgForm_FormType, T_Add_Gather_Fn } from '../form/type';
 import { globalComponentConfig } from '../index';
 import { I_Jlg_Rate_Emits, T_Jlg_Rate_Props } from './type';

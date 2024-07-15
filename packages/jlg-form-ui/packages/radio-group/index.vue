@@ -23,7 +23,7 @@ import { globalComponentConfig } from '../index';
 import { T_Jlg_RadioGroup_Props, I_Jlg_RadioGroup_Emits } from './type';
 import JlgRadio from '../radio/index.vue';
 import { E_JlgForm_FormType, T_Add_Gather_Fn } from '../form/type';
-import { FormItemContext, formItemContextKey, RadioInstance } from 'element-plus';
+import { FormItemContext, formItemContextKey, RadioInstance, ElRadioGroup } from 'element-plus';
 import { T_Jlg_Radio_Props } from '../radio/type';
 
 defineOptions({

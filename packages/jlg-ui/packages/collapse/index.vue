@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import { T_Jlg_CollapseItem_Props } from '../collapse-item/type';
 import { T_Add_Collapse_Item, T_Jlg_Collapse_Props } from './type';
+import { ElCollapse } from 'element-plus';
 
 defineOptions({
 	name: 'JlgCollapse',

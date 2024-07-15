@@ -19,7 +19,7 @@
 import { useAttrs } from 'vue';
 import { I_Jlg_Radio_Emits, T_Jlg_Radio_Props } from './type';
 import { globalComponentConfig } from '../index';
-import { RadioInstance } from 'element-plus';
+import { RadioInstance, ElRadio } from 'element-plus';
 
 defineOptions({
 	name: 'JlgRadio',
