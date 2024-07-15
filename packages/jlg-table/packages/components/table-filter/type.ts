@@ -89,14 +89,14 @@ export interface SelectOptionProps {
 
 export declare interface I_User_Search_Template_Model {
 	/** @description 搜索模板雪花id */
-	templateUid?: string | null;
+	templateUid: string;
 	/** @description 搜索模板名称 */
-	templateName?: string | null;
+	templateName: string;
 	/** @description 页面路由雪花id */
 	routeUId?: string | null;
 	/** @description 是否默认 */
 	isDefault?: boolean | 1 | 0;
-	userSearchTemplateDetails?: I_User_Search_Template_Details_Model[];
+	userSearchTemplateDetails: I_User_Search_Template_Details_Model[];
 }
 
 export type I_User_Search_Template_Props_Model = Omit<I_User_Search_Template_Model, 'userSearchTemplateDetails'> & {

@@ -134,7 +134,7 @@ import { ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue';
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 
 defineOptions({
-	name: 'TableFilterTwo',
+	name: 'TableFilterTemplate',
 });
 const refForm = ref<FormInstance>();
 const basicTemplateEditRef = ref<InstanceType<typeof BasicTemplateEdit>>();
@@ -210,7 +210,6 @@ const handleDeleteTemplate = (templateUid: string) => {
 };
 
 const handleOptionClick = (templateItem?: I_User_Search_Template_Model) => {
-	debugger;
 	if (!templateItem) {
 		handleAddTemplate();
 	} else {

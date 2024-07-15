@@ -2,12 +2,16 @@ import { VxeGridInstance, VxeGridProps, VxeToolbarPropTypes } from 'vxe-table';
 import { I_Table_Filter_Props } from '../table-filter/type';
 import { VxeTableDataRow, VxeTableDefines } from 'vxe-table/types/table';
 import { AppContext, Ref, VNodeTypes } from 'vue';
+import TableFilter from '../table-filter/index.vue';
+import TableFilterTemplate from '../table-filter/template-index.vue';
 // import { ComponentPublicInstance } from 'vue';
 
 export type T_Msg = boolean | (() => boolean) | Promise<boolean>;
 type T_Destroy = {
 	onDestroy: () => void;
 };
+export type T_Table_Filter = InstanceType<typeof TableFilter>;
+export type T_Table_Filter_Template = InstanceType<typeof TableFilterTemplate>;
 export type T_RenderCustomTemplate = <P = Record<string, any>>(customComponent: VNodeTypes, appContext: AppContext, props: P) => T_Destroy;
 /**
  * @description 保存配置类型
@@ -22,11 +26,12 @@ export type T_Save_Config_Type = 'resizable' | 'sortable' | 'reset' | ' save' | 
 
 export type JlgGridInstance<T = any> = {
 	xGrid: VxeGridInstance<T>;
+	$filter: T_Table_Filter | T_Table_Filter_Template;
 	reactData: Record<string, any>;
 	customStore: Record<string, any>;
 	commitProxy: (code: string | VxeToolbarPropTypes.ButtonConfig, msg: T_Msg, ...args: any[]) => Promise<any>;
 	refresh: (refreshToFirstPage: boolean) => void;
-	resetCustomEvent: () => Promise<void>;
+	resetCustomEvent: (data: Record<string, any>) => Promise<boolean>;
 	saveCustomEvent: (columns: (VxeTableDefines.ColumnOptions<any> | VxeTableDefines.ColumnInfo<any>)[]) => Promise<any>;
 	renderCustomTemplate: T_RenderCustomTemplate;
 	saveConfig: (type?: T_Save_Config_Type) => void;
