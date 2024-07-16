@@ -128,6 +128,10 @@ const props = withDefaults(defineProps<I_Table_Grid_Props>(), {
 	columnConfig: () => GlobalConfig.table.columnConfig,
 	customConfig: () => GlobalConfig.table.customConfig,
 	sortConfig: () => GlobalConfig.table.sortConfig,
+	loadingConfig: () => GlobalConfig.table.loadingConfig,
+	emptyRender: () => GlobalConfig.table.emptyRender,
+	scrollX: () => GlobalConfig.table.scrollX,
+	scrollY: () => GlobalConfig.table.scrollY,
 });
 const emit = defineEmits<{
 	resizableChange: [value: VxeGridDefines.ResizableChangeEventParams];

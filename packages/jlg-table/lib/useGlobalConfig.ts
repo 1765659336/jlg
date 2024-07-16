@@ -125,14 +125,14 @@ const GlobalConfig: T_Global_Config_Props = {
 			isReplace: true,
 		},
 		scrollX: {
-			// enabled: false,
+			enabled: true,
 			gt: 60,
-			// oSize: 0
+			oSize: 0,
 		},
 		scrollY: {
-			// enabled: false,
+			enabled: true,
 			gt: 100,
-			// oSize: 0
+			oSize: 0,
 		},
 		layouts: ['Top', 'Form', 'Toolbar', 'Table', 'Bottom', 'Pager'],
 		operationConfig: null,
