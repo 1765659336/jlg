@@ -1,4 +1,4 @@
-import { I_Table_Filter_Item } from './type';
+import { I_Table_Filter_Item } from '../components/table-filter/type';
 
 export const DEFAULT_FORMATS_TIME = 'HH:mm:ss';
 export const DEFAULT_FORMATS_DATE = 'YYYY-MM-DD';
