@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { ElInputNumber, ElSelect, ElOption } from 'element-plus';
 import { I_Table_Filter_Item } from '../type';
-import { SEARCH_TYPES } from '../constants';
+import { SEARCH_TYPES } from '../../../constants';
 
 defineOptions({
 	name: 'FilterInputNumber',
@@ -39,7 +39,3 @@ const isShowSelect = computed(() => props.item.isPure !== true && props.showSele
 
 const isFocus = ref(false);
 </script>
-
-<style scoped lang="scss">
-@import url('../../../../styles/filter-item-wrap.scss');
-</style>

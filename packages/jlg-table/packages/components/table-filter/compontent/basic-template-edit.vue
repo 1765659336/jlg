@@ -59,7 +59,7 @@ import { reactive, watch } from 'vue';
 import { ElScrollbar, ElIcon, ElButton, ElSelect, ElOption, ElMessage } from 'element-plus';
 import { Close, Plus } from '@element-plus/icons-vue';
 import type { I_Table_Filter_Item, I_User_Search_Template_Model, I_User_Search_Template_Details_Model } from '../type';
-import { SEARCH_TYPES } from '../constants';
+import { SEARCH_TYPES } from '../../../constants';
 import { useRenderContentTitle } from '../hooks/usePopover';
 defineOptions({
 	name: 'BasicTemplateEdit',

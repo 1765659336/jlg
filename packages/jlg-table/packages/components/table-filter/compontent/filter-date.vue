@@ -26,7 +26,3 @@ defineModel<number>('searchType', { required: true, default: 0 });
 const format = computed(() => props.item.props?.format ?? GlobalConfig.datePickerFormat);
 const valueFormat = computed(() => props.item.props?.valueFormat ?? GlobalConfig.datePickerValueFormat);
 </script>
-
-<style scoped lang="scss">
-@import url('../../../../styles/filter-item-wrap.scss');
-</style>

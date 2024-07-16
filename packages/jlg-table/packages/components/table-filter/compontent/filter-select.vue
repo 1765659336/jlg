@@ -5,6 +5,7 @@
 			<el-select-v2
 				v-bind="props.item.props"
 				v-model="modelValue"
+				:options="props.item.props?.options ?? []"
 				clearable
 				class="select"
 				filterable
@@ -26,7 +27,7 @@
 <script setup lang="ts">
 import { ElSelectV2, ElSelect, ElOption } from 'element-plus';
 import { I_Table_Filter_Item } from '../type';
-import { SEARCH_TYPES } from '../constants';
+import { SEARCH_TYPES } from '../../../constants';
 
 defineOptions({
 	name: 'FilterSelect',
@@ -40,7 +41,3 @@ const searchType = defineModel<number>('searchType', { required: true, default: 
 const isShowSelect = computed(() => props.item.isPure !== true && props.showSelect === true);
 const isFocus = ref(false);
 </script>
-
-<style scoped lang="scss">
-@import url('../../../../styles/filter-item-wrap.scss');
-</style>
