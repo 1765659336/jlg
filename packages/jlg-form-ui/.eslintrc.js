@@ -87,7 +87,7 @@ module.exports = {
 		'@typescript-eslint/no-var-requires': 'error', // 强制使用 import 且不允许使用 require 设置off关闭检查
 		'vue/require-v-for-key': 'error', // 对保留元素检查 vue3中v-for会自动追加key值，所以不用再强制添加key属性，所以不检查key的填写
 		'vue/valid-v-for': 'error', // 对于非保留(自定义)元素检查  vue3中v-for会自动追加key值，所以不用再强制添加key属性，所以不检查key的填写
-		'no-unused-vars': 'error',
+		'no-unused-vars': 'warn',
 		'vue/no-mutating-props': 'warn',
 	},
 	ignorePatterns: ['src/assets'],

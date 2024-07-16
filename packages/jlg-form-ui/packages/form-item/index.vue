@@ -1,29 +1,33 @@
 <template>
 	<el-form-item ref="_ref" v-bind="mergeFormItemPropsComputed">
-		<template v-if="slots.label">
+		<template #label>
 			<slot name="label" :label="mergeFormItemPropsComputed.label">
 				<el-tooltip :content="mergeFormItemPropsComputed.label" placement="top" :disabled="isShowTooltip">
-					<span class="text-overflow-hidden" :style="labelStyle" @mouseover="($event) => visibleTooltip($event)">{{
-						mergeFormItemPropsComputed.label
-					}}</span>
+					<span
+						ref="labelTextRef"
+						class="text-overflow-hidden"
+						:class="[jlgFormContext?.labelPosition]"
+						@mouseover="($event) => visibleTooltip($event)"
+						>{{ mergeFormItemPropsComputed.label }}</span
+					>
 				</el-tooltip>
 			</slot>
 		</template>
 		<template #error="{ error }">
-			<slot name="error" :error="error" />
+			<slot name="error" :error="error"></slot>
 		</template>
-		<slot />
+		<slot></slot>
 	</el-form-item>
 </template>
 
 <script setup lang="ts">
 import { formContextKey, ElFormItem, ElTooltip } from 'element-plus';
-import { CSSProperties } from 'vue';
+import { nextTick } from 'vue';
 import { isNumber, isString } from 'lodash-unified';
 import { T_Jlg_FormItem_Props } from './type';
 import { globalComponentConfig } from '../index';
 import { FormValidatorRules } from '../rule';
-import { E_JlgForm_LabelPosition, T_Assign_Rules_Fn } from '../form/type';
+import { E_JlgForm_LabelPosition, T_Assign_Rules_Fn, T_JlgContextKey } from '../form/type';
 
 defineOptions({
 	name: 'JlgFormItem',
@@ -34,8 +38,6 @@ const props = withDefaults(defineProps<T_Jlg_FormItem_Props>(), {
 });
 
 const attrs = useAttrs();
-
-const slots = useSlots();
 
 const _ref = ref(null);
 
@@ -58,16 +60,21 @@ const addUnit = (value?: string | number, defaultUnit = 'px') => {
 };
 
 const formContext = inject(formContextKey);
+const jlgFormContext: T_JlgContextKey = inject('JlgContextKey');
+
+const labelTextRef = ref<HTMLSpanElement>();
 
 const assignRulesFn: T_Assign_Rules_Fn = inject('assignRulesFn');
 
-const labelStyle = computed<CSSProperties>(() => {
-	if (formContext?.labelPosition === E_JlgForm_LabelPosition['居上']) {
-		return {};
-	}
+onMounted(() => {
+	console.log(jlgFormContext?.labelPosition);
+
 	const labelWidth = addUnit(mergeFormItemPropsComputed.value.labelWidth || formContext?.labelWidth || '');
-	if (labelWidth) return { width: labelWidth };
-	return {};
+	if (jlgFormContext?.labelPosition === E_JlgForm_LabelPosition['内嵌'] && parseInt(labelWidth, 10) < labelTextRef.value.offsetWidth) {
+		nextTick(() => {
+			labelTextRef.value.style.width = labelWidth;
+		});
+	}
 });
 
 const visibleTooltip = (event) => {
