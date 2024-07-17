@@ -106,6 +106,9 @@ export interface I_Modal_Methods {
 	 *  手动切换右上角操作按钮的显示隐藏
 	 * */
 	toggleCorner(val: boolean | T_Buttons[]): void;
+
+	// 设置是否是编辑模式
+	toggleCustom(val: boolean): void;
 }
 
 export interface I_Modal_Constructor {

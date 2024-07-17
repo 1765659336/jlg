@@ -1,5 +1,13 @@
 <template>
-	<vxe-modal ref="xModalRef" v-bind="modalOptions" type="modal" :destroy-on-close="false" :show-close="showClose" :show-zoom="showZoom">
+	<vxe-modal
+		ref="xModalRef"
+		v-bind="modalOptions"
+		:class-name="modalClass"
+		type="modal"
+		:destroy-on-close="false"
+		:show-close="showClose"
+		:show-zoom="showZoom"
+	>
 		<template #default>
 			<slot></slot>
 		</template>
@@ -356,6 +364,17 @@ const toggleCorner = (buttons: boolean | T_Buttons[]) => {
 	});
 };
 
+const isCustom = ref(false);
+const modalClass = computed(() => {
+	if (isCustom.value) {
+		return 'custom-setting';
+	}
+	return '';
+});
+const toggleCustom = (_isCustom: boolean) => {
+	isCustom.value = _isCustom;
+};
+
 // 暴露常用方法
 defineExpose<T_Jlg_Modal_Instance>({
 	open,
@@ -372,6 +391,9 @@ defineExpose<T_Jlg_Modal_Instance>({
 	confirm,
 	custom,
 	toggleCorner,
+	toggleCustom,
 	ref: xModalRef,
 });
 </script>
+
+<style lang="scss"></style>

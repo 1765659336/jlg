@@ -22,6 +22,8 @@ const beforeHideMethod = ({ type }) => {
 	return Promise.resolve(true);
 };
 
+const isCustom = ref(false);
+
 const onHide = () => {
 	console.log('onHide 隐藏窗口后触发');
 };
@@ -38,6 +40,16 @@ const onConfirm = () => {
 	console.log('onConfirm 点击确认按钮后触发');
 };
 
+const onCustom = () => {
+	console.log('onCustom 点击确认按钮后触发');
+	isCustom.value = true;
+	jlgModalRef.value?.toggleCustom(isCustom.value);
+};
+const handleExitCustom = () => {
+	isCustom.value = false;
+	jlgModalRef.value?.toggleCustom(isCustom.value);
+};
+
 const handleMinModal = () => {
 	console.log(jlgModalRef.value?.hide());
 };
@@ -52,10 +64,18 @@ const handleMinModal = () => {
 		@show="onShow"
 		@zoom="onZoom"
 		@confirm="onConfirm"
+		@custom="onCustom"
 	>
 		<div>{{ props.text }}</div>
 		<el-button @click="handleMinModal">最小化弹窗</el-button>
+		<el-button @click="handleExitCustom">退出编辑模式</el-button>
 	</modal-template>
 </template>
 
-<style scoped lang="scss"></style>
+<style lang="scss">
+.custom-setting {
+	.vxe-modal--box {
+		border: 1px dashed red;
+	}
+}
+</style>
