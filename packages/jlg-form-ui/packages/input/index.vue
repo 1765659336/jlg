@@ -33,6 +33,8 @@ const slots = useSlots();
 const props = withDefaults(defineProps<T_Jlg_Input_Props>(), {
 	type: 'text',
 	validateEvent: true,
+	disabled: false,
+	modelValue: '',
 });
 
 const attrs = useAttrs();
@@ -70,6 +72,8 @@ const mergeInputPropsComputed = computed(() => {
 
 // 自定义处理placeholder
 const placeholderComputed = computed(() => {
+	if (props.disabled) return '';
+
 	if (mergeInputPropsComputed.value.placeholder) {
 		return mergeInputPropsComputed.value.placeholder;
 	} else if (context && context.label) {
@@ -92,6 +96,10 @@ const blurInput = (event) => {
 
 const mouseenter = () => {
 	if (!mergeInputPropsComputed.value.disabled) {
+		return;
+	}
+
+	if (props.modelValue === '') {
 		return;
 	}
 	tooltipShow.value = true;
