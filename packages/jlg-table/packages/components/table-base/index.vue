@@ -59,6 +59,7 @@ import { VxeGridEventProps, VxeGridInstance, VxeGridPropTypes, VxeGridDefines, V
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Sortable from 'sortablejs';
 import { useRenderCustomTemplate } from './useRenderCustomTemplate';
+import { FIlTER_ITEMS_INJECTION_KEY } from '../../constants/injection-key';
 
 defineOptions({
 	name: 'JlgGrid',
@@ -158,7 +159,8 @@ const onClickOutside = () => {
 };
 
 const tableFilterConfig = defineModel<I_Table_Filter_Props>('tableFilterConfig', { default: () => GlobalConfig.table.tableFilterConfig });
-// const rawTableFilterConfig = clone(tableFilterConfig.value, true);
+const tableFilterItems = computed(() => tableFilterConfig.value.items);
+provide(FIlTER_ITEMS_INJECTION_KEY, tableFilterItems);
 const getTableFilterConfig = (deep: boolean) => {
 	return clone(tableFilterConfig.value, deep);
 };

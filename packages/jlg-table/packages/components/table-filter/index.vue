@@ -1,81 +1,78 @@
 <template>
-	<el-config-provider :locale="zhCn">
-		<el-form ref="refForm" class="jlg-table-filter" :model="form" :disabled="props.disabled">
-			<div class="jlg-table-filter__container" :class="'is--' + (isFolding ? 'folding' : 'unfold')">
-				<div v-for="item in items" :key="item.field" class="table-filter__card" :class="item.className">
-					<el-form-item
-						:prop="item.field"
-						:label-position="item.titleAlign ?? props.titleAlign"
-						:label-width="item.titleWidth != null ? item.titleWidth : props.titleWidth"
-					>
-						<template #label>
-							<el-tooltip
-								:content="item.title"
-								placement="top"
-								:disabled="isHideTooltip || item.titleOverflow === false || item.titleOverflow === 'title' || item.titleOverflow === 'ellipsis'"
+	<el-form ref="refForm" class="jlg-table-filter" :model="form" :disabled="props.disabled">
+		<div class="jlg-table-filter__container" :class="'is--' + (isFolding ? 'folding' : 'unfold')">
+			<div v-for="item in items" :key="item.field" class="table-filter__card" :class="item.className">
+				<el-form-item
+					:prop="item.field"
+					:label-position="item.titleAlign ?? props.titleAlign"
+					:label-width="item.titleWidth != null ? item.titleWidth : props.titleWidth"
+				>
+					<template #label>
+						<el-tooltip
+							:content="item.title"
+							placement="top"
+							:disabled="isHideTooltip || item.titleOverflow === false || item.titleOverflow === 'title' || item.titleOverflow === 'ellipsis'"
+						>
+							<span
+								:title="item.titleOverflow === 'title' ? item.title : ''"
+								:style="labelStyle(item)"
+								class="jlg-text-overflow-hidden"
+								:class="item.titleClassName"
+								@mouseover="($event) => visibleTooltip($event, item.title)"
+								>{{ item.title }}</span
 							>
-								<span
-									:title="item.titleOverflow === 'title' ? item.title : ''"
-									:style="labelStyle(item)"
-									class="jlg-text-overflow-hidden"
-									:class="item.titleClassName"
-									@mouseover="($event) => visibleTooltip($event, item.title)"
-									>{{ item.title }}</span
-								>
-							</el-tooltip>
-						</template>
-						<template #default>
-							<component :is="renderContentTitle(item)" v-model="form[item.field]" v-model:search-type="item.searchType" :item="item" />
-						</template>
-					</el-form-item>
-				</div>
-				<div v-show="!isFolding && items.length" class="table-filter__card">
-					<el-button class="save-btn" type="primary" @click="handleSave">查询</el-button>
-					<el-button class="reset-btn" @click="handleReset">重置</el-button>
-				</div>
+						</el-tooltip>
+					</template>
+					<template #default>
+						<component :is="renderContentTitle(item)" v-model="form[item.field]" v-model:search-type="item.searchType" :item="item" />
+					</template>
+				</el-form-item>
 			</div>
-			<!--  展开/折叠 操作区域   -->
-			<div v-show="items.length > 0" class="table-filter__operation">
-				<slot name="filter_divider" :is-folding="isFolding">
-					<el-divider>
-						<div class="table-filter__divider" @click="handleFolding(!isFolding)">
-							<span style="margin-right: 5px">{{ isFolding ? '展开筛选' : '收起筛选' }}</span>
-							<el-icon>
-								<ArrowDown v-if="isFolding" />
-								<ArrowUp v-else />
-							</el-icon>
-						</div>
-					</el-divider>
-				</slot>
+			<div v-show="!isFolding && items.length" class="table-filter__card">
+				<el-button class="save-btn" type="primary" @click="handleSave">查询</el-button>
+				<el-button class="reset-btn" @click="handleReset">重置</el-button>
 			</div>
+		</div>
+		<!--  展开/折叠 操作区域   -->
+		<div v-show="items.length > 0" class="table-filter__operation">
+			<slot name="filter_divider" :is-folding="isFolding">
+				<el-divider>
+					<div class="table-filter__divider" @click="handleFolding(!isFolding)">
+						<span style="margin-right: 5px">{{ isFolding ? '展开筛选' : '收起筛选' }}</span>
+						<el-icon>
+							<ArrowDown v-if="isFolding" />
+							<ArrowUp v-else />
+						</el-icon>
+					</div>
+				</el-divider>
+			</slot>
+		</div>
 
-			<!--  快捷搜索弹出窗口   -->
-			<popover-component
-				v-model:form="form"
-				:visible="isShowQuickSearch"
-				:virtual-ref="props.virtualRef"
-				:disabled="props.disabled"
-				:is-show-quick-search="isShowQuickSearch"
-				:items-value="itemsValue"
-				:render-content-title="renderContentTitle"
-				:on-hide="onHide"
-				:on-handle-reset="handleReset"
-				:on-handle-save="handleSave"
-			/>
-		</el-form>
-	</el-config-provider>
+		<!--  快捷搜索弹出窗口   -->
+		<popover-component
+			v-model:form="form"
+			:visible="isShowQuickSearch"
+			:virtual-ref="props.virtualRef"
+			:disabled="props.disabled"
+			:is-show-quick-search="isShowQuickSearch"
+			:items-value="itemsValue"
+			:render-content-title="renderContentTitle"
+			:on-hide="onHide"
+			:on-handle-reset="handleReset"
+			:on-handle-save="handleSave"
+		/>
+	</el-form>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import { I_Table_Filter_Item, I_Table_Filter_Props } from './type';
 import GlobalConfig from '../../../lib/useGlobalConfig';
-import { ElConfigProvider, ElTooltip, FormInstance } from 'element-plus';
+import { ElTooltip, FormInstance } from 'element-plus';
 import { ArrowDown, ArrowUp } from '@element-plus/icons-vue';
 import { usePopover } from './hooks/usePopover';
 import { useBaseData } from './hooks/useBaseData';
 import PopoverComponent from './compontent/basic-popover.vue';
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 
 defineOptions({
 	name: 'TableFilter',

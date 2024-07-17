@@ -27,7 +27,7 @@
 								<component
 									:is="renderContentTitle(item)"
 									v-model="formModel[item.field]"
-									v-model:search-type="item.searchType"
+									:search-type="item.searchType"
 									:show-label="true"
 									:show-select="true"
 									:item="item"

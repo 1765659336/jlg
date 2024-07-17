@@ -12,7 +12,14 @@
 			>
 			</el-input>
 			<template v-if="isShowSelect">
-				<el-select v-model="searchType" size="default" class="slot-select" :class="{ 'is-focus': isFocus }" placeholder="">
+				<el-select
+					v-model="searchType"
+					size="default"
+					class="slot-select"
+					:class="{ 'is-focus': isFocus }"
+					placeholder=""
+					@change="handleSelectChange"
+				>
 					<el-option label="精确" :value="0" />
 					<el-option label="模糊" :value="1" />
 				</el-select>
@@ -24,6 +31,8 @@
 <script setup lang="ts">
 import { ElInput, ElSelect, ElOption } from 'element-plus';
 import { I_Table_Filter_Item } from '../type';
+import { FIlTER_ITEMS_INJECTION_KEY, injectStrict } from '../../../constants/injection-key';
+import { Ref, watch } from 'vue';
 
 defineOptions({
 	name: 'FilterText',
@@ -34,7 +43,23 @@ const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: b
 	showSelect: false,
 });
 // 文本默认模糊搜索
-const searchType = defineModel<number>('searchType', { required: true, default: 1 });
+const searchType = ref(props.item.searchType ?? 1);
 const isShowSelect = computed(() => props.item.isPure !== true && props.showSelect === true);
 const isFocus = ref(false);
+
+const tableFilterItems = injectStrict<Ref<I_Table_Filter_Item[]>>(FIlTER_ITEMS_INJECTION_KEY);
+watch(
+	() => props.item.searchType,
+	(val) => {
+		searchType.value = val;
+	},
+	{ immediate: true }
+);
+const handleSelectChange = (value: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => {
+	tableFilterItems.value.forEach((item) => {
+		if (item.field === props.item.field) {
+			item.searchType = value;
+		}
+	});
+};
 </script>
