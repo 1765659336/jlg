@@ -689,7 +689,11 @@ function saveCustomEvent(columns: (VxeTableDefines.ColumnOptions<unknown> | VxeT
 	return xGrid.value.loadColumn(_columns);
 }
 
+const currentProvides = (getCurrentInstance() as any)?.provides;
 const renderCustomTemplate: T_RenderCustomTemplate = (customComponent, appContext, props) => {
+	if (appContext) {
+		Reflect.set(appContext, 'provides', { ...appContext.provides, ...currentProvides });
+	}
 	return useRenderCustomTemplate(customTemplateRef.value, appContext, customComponent, props);
 };
 
