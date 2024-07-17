@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { T_JlgForm_Props, E_JlgForm_FormType, T_JlgForm_FormJsonItem, E_JlgForm_LabelPosition } from './type';
+import { T_JlgForm_Props, E_JlgForm_FormType, T_JlgForm_FormJsonItem, E_JlgForm_LabelPosition, T_JlgContextKey } from './type';
 import { JlgGridLayout, JlgGridCell } from 'jlg-ui';
 import { globalComponentConfig } from '../index';
 import Input from '../input/index.vue';
@@ -75,6 +75,10 @@ const furnishMergeFormPropsComputed = computed(() => {
 	};
 });
 
+provide<T_JlgContextKey>('JlgContextKey', {
+	labelPosition: props.labelPosition,
+});
+
 const renderFormItemComponent = (formItem: T_JlgForm_FormJsonItem): Component => {
 	switch (formItem.type) {
 		case E_JlgForm_FormType.输入框:
@@ -108,11 +112,16 @@ defineExpose({
 .jlg_form_label_position_top-embedded {
 	:deep(.el-form-item) {
 		padding-top: 20px;
+		position: relative;
 		.el-form-item__label {
-			transform: translate(10px, -13px);
+			transform: translate(10px, -10px);
 			position: absolute;
 			z-index: 999;
 			background-color: #fff;
+			padding: 0px 2px;
+			border-radius: 5px;
+			line-height: 1;
+			margin-bottom: 0;
 		}
 	}
 }

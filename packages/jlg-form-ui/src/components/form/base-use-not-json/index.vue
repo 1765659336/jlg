@@ -2,7 +2,13 @@
 	<el-button @click="gather">收集数据</el-button>
 	<el-button @click="validator">校验</el-button>
 	{{ formData }}
-	<jlg-form ref="JlgFormRef" :label-position="E_JlgForm_LabelPosition['内嵌']" :gather-props="{ col: 1, allCol: 3 }" :model="formData">
+	<jlg-form
+		ref="JlgFormRef"
+		:label-position="E_JlgForm_LabelPosition['居上']"
+		:gather-props="{ col: 1, allCol: 3 }"
+		label-width="120px"
+		:model="formData"
+	>
 		<jlg-grid-layout v-bind="gridLayoutProps">
 			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item
@@ -15,6 +21,7 @@
 						:tooltip-props="{
 							effect: 'light',
 						}"
+						disabled
 					></jlg-input>
 				</jlg-form-item>
 			</jlg-grid-cell>
@@ -28,13 +35,13 @@
 					<jlg-input-number v-model="formData.number" @change="valueChange"> </jlg-input-number>
 				</jlg-form-item>
 			</jlg-grid-cell>
-			<jlg-grid-cell v-for="i in 30" :key="i" :width="1" :height="1">
+			<!-- <jlg-grid-cell v-for="i in 30" :key="i" :width="1" :height="1">
 				<jlg-form-item prop="select.value" :label="'Select测试placeholder' + i">
 					<jlg-select v-model="formData.select.value">
 						<jlg-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
 					</jlg-select>
 				</jlg-form-item>
-			</jlg-grid-cell>
+			</jlg-grid-cell> -->
 			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item label="time-select">
 					<jlg-time-select v-model="formData.timeSelect" start="08:30" step="00:15" end="18:30" />
@@ -55,10 +62,23 @@
 			</jlg-grid-cell>
 		</jlg-grid-layout>
 	</jlg-form>
+
+	<div style="width: 400px">
+		<el-form :model="formData" label-width="220" label-position="top">
+			<el-form-item required>
+				<template #label>
+					<el-tooltip content="Activity name" placement="top">
+						<span>Activity name</span>
+					</el-tooltip>
+				</template>
+				<el-input v-model="formData.input.value" />
+			</el-form-item>
+		</el-form>
+	</div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { T_JlgForm_Props, E_JlgForm_LabelPosition } from '@pac/form/type';
 import { JlgGridLayout, JlgGridCell } from 'jlg-ui';
 import { E_FormValidatorRulesValidateFunEnum } from '@pac/rule';
@@ -96,14 +116,14 @@ const gridLayoutProps = ref<T_JlgForm_Props['gridLayoutProps']>({
 	border: false,
 });
 
-const options = computed(() => {
-	return new Array(10).fill(0, 0, 10).map((i, index) => {
-		return {
-			value: index,
-			label: 'Option' + index,
-		};
-	});
-});
+// const options = computed(() => {
+// 	return new Array(10).fill(0, 0, 10).map((i, index) => {
+// 		return {
+// 			value: index,
+// 			label: 'Option' + index,
+// 		};
+// 	});
+// });
 
 const valueChange = (v) => {
 	console.log(v);
