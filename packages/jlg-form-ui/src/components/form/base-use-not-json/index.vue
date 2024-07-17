@@ -27,12 +27,12 @@
 			</jlg-grid-cell>
 			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item label="datePicker" prop="datePicker" :validate-rules="[[E_FormValidatorRulesValidateFunEnum.必填校验]]">
-					<jlg-date-picker v-model="formData.datePicker" type="date" />
+					<jlg-date-picker v-model="formData.datePicker" type="date" disabled />
 				</jlg-form-item>
 			</jlg-grid-cell>
 			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item label="number">
-					<jlg-input-number v-model="formData.number" @change="valueChange"> </jlg-input-number>
+					<jlg-input-number v-model="formData.number" @change="valueChange" disabled> </jlg-input-number>
 				</jlg-form-item>
 			</jlg-grid-cell>
 			<!-- <jlg-grid-cell v-for="i in 30" :key="i" :width="1" :height="1">
@@ -44,7 +44,7 @@
 			</jlg-grid-cell> -->
 			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item label="time-select">
-					<jlg-time-select v-model="formData.timeSelect" start="08:30" step="00:15" end="18:30" />
+					<jlg-time-select v-model="formData.timeSelect" start="08:30" step="00:15" end="18:30" disabled />
 				</jlg-form-item>
 			</jlg-grid-cell>
 			<jlg-grid-cell :width="1" :height="1">
@@ -90,7 +90,9 @@ defineOptions({
 const JlgFormRef = ref();
 
 const formData = ref({
-	input: {},
+	input: {
+		value: '哈啊哈哈哈',
+	},
 	select: {
 		value: 1,
 	},

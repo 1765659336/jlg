@@ -67,8 +67,6 @@ const labelTextRef = ref<HTMLSpanElement>();
 const assignRulesFn: T_Assign_Rules_Fn = inject('assignRulesFn');
 
 onMounted(() => {
-	console.log(jlgFormContext?.labelPosition);
-
 	const labelWidth = addUnit(mergeFormItemPropsComputed.value.labelWidth || formContext?.labelWidth || '');
 	if (jlgFormContext?.labelPosition === E_JlgForm_LabelPosition['内嵌'] && parseInt(labelWidth, 10) < labelTextRef.value.offsetWidth) {
 		nextTick(() => {

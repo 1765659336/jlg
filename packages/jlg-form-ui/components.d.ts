@@ -12,10 +12,11 @@ declare module 'vue' {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
-    PakTest: typeof import('./src/components/form/pak-test/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UseColls: typeof import('./src/components/form/use-colls/index.vue')['default']
   }
 }

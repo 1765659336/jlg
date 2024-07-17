@@ -93,4 +93,9 @@ defineExpose({
 		border: none;
 	}
 }
+.el-collapse-item {
+	:deep(.el-collapse-item__wrap) {
+		overflow: visible;
+	}
+}
 </style>
