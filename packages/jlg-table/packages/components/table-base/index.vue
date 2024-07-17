@@ -51,7 +51,7 @@ import toArrayTree from 'xe-utils/toArrayTree';
 import findIndexOf from 'xe-utils/findIndexOf';
 import TableFilter from '../table-filter/index.vue';
 import TableFilterTemplate from '../table-filter/template-index.vue';
-import type { I_Table_Grid_Props, T_Msg, T_RenderCustomTemplate, T_Save_Config_Type } from './type';
+import type { I_Table_Grid_Props, T_Msg, T_RenderCustomTemplate, T_Save_Config_Type, T_Table_Filter, T_Table_Filter_Template } from './type';
 import type { I_Table_Filter_Props, I_User_Search_Template_Model } from '../../components/table-filter/type';
 import { computed, nextTick, reactive, Ref, useAttrs } from 'vue';
 import GlobalConfig from '../../../lib/useGlobalConfig';
@@ -59,6 +59,7 @@ import { VxeGridEventProps, VxeGridInstance, VxeGridPropTypes, VxeGridDefines, V
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Sortable from 'sortablejs';
 import { useRenderCustomTemplate } from './useRenderCustomTemplate';
+import { FIlTER_ITEMS_INJECTION_KEY } from '../../constants/injection-key';
 
 defineOptions({
 	name: 'JlgGrid',
@@ -128,6 +129,10 @@ const props = withDefaults(defineProps<I_Table_Grid_Props>(), {
 	columnConfig: () => GlobalConfig.table.columnConfig,
 	customConfig: () => GlobalConfig.table.customConfig,
 	sortConfig: () => GlobalConfig.table.sortConfig,
+	loadingConfig: () => GlobalConfig.table.loadingConfig,
+	emptyRender: () => GlobalConfig.table.emptyRender,
+	scrollX: () => GlobalConfig.table.scrollX,
+	scrollY: () => GlobalConfig.table.scrollY,
 });
 const emit = defineEmits<{
 	resizableChange: [value: VxeGridDefines.ResizableChangeEventParams];
@@ -136,8 +141,7 @@ const emit = defineEmits<{
 const xGrid = ref<VxeGridInstance>();
 const customTemplateRef = ref<HTMLElement>();
 const formElemRef = ref<HTMLElement>();
-type T_Table_Filter = InstanceType<typeof TableFilter>;
-type T_Table_Filter_Template = InstanceType<typeof TableFilterTemplate>;
+
 const tableFilterRef = ref<T_Table_Filter | T_Table_Filter_Template>();
 
 const customVirtualPopoverRef = ref();
@@ -155,7 +159,8 @@ const onClickOutside = () => {
 };
 
 const tableFilterConfig = defineModel<I_Table_Filter_Props>('tableFilterConfig', { default: () => GlobalConfig.table.tableFilterConfig });
-const rawTableFilterConfig = clone(tableFilterConfig.value, true);
+const tableFilterItems = computed(() => tableFilterConfig.value.items);
+provide(FIlTER_ITEMS_INJECTION_KEY, tableFilterItems);
 const getTableFilterConfig = (deep: boolean) => {
 	return clone(tableFilterConfig.value, deep);
 };
@@ -215,7 +220,7 @@ const storageConfig = computed(() => {
 const columnResizeWidthMap = new Map<string, number>();
 const beforeColumn = (args) => {
 	const { column } = args;
-	const resizeWidth = columnResizeWidthMap.get(column.id);
+	const resizeWidth = columnResizeWidthMap.get(column.field);
 	if (resizeWidth) {
 		column.resizeWidth = resizeWidth;
 	}
@@ -231,15 +236,17 @@ const beforeQuery = async (args) => {
 			defaultSort = [],
 			searchData = [],
 			columns = [],
-			globalConfig = {},
+			globalConfig = null,
 			merged = null,
 			filterMerged,
 			filterSchemes = null,
-		} = await getSysConfig();
-		setTableGlobalConfig(globalConfig);
+		} = args.sysConfigData ? args.sysConfigData : await getSysConfig();
+		if (globalConfig) {
+			setTableGlobalConfig(globalConfig);
+		}
 		if (columns.length > 0) {
 			eachTree(columns, (column) => {
-				columnResizeWidthMap.set(column.id, column.resizeWidth);
+				columnResizeWidthMap.set(column.field, column.resizeWidth);
 			});
 			const _merged = merged ? merged : mergedList;
 			const _columns = _merged(flattenArray(propsColumns.value, 'field'), flattenArray(columns, 'field'), fieldList, 'field', 'renderSortNumber');
@@ -278,6 +285,8 @@ const beforeQuery = async (args) => {
 	}
 	args.form = {
 		items: tableFilterConfig.value.items,
+		templateStore: (tableFilterRef.value as T_Table_Filter_Template)?.templateStore,
+		currentTemplateDetails: (tableFilterRef.value as T_Table_Filter_Template)?.currentTemplateDetails,
 		data: args.form,
 	};
 	if (args.isInited) {
@@ -292,11 +301,16 @@ const beforeQuery = async (args) => {
 	reactData.sort = args.sort;
 	reactData.sorts = args.sorts;
 	reactData.form = args.form;
+	reactData.options = args.options;
 	const beforeQuery = props.proxyConfig?.beforeQuery ? props.proxyConfig.beforeQuery : GlobalConfig.table.proxyConfig.beforeQuery;
 	if (beforeQuery && typeof beforeQuery === 'function') {
 		return beforeQuery(args);
 	}
-	return args.options(args);
+	args.sysConfigData = undefined;
+	if (args?.options) {
+		return args.options(args);
+	}
+	return Promise.reject();
 };
 
 const defaultProxyConfig: VxeGridPropTypes.ProxyConfig = {
@@ -624,30 +638,49 @@ function setTableFilterConfig(config: I_Table_Filter_Props) {
 	tableFilterConfig.value = clone(config, true);
 }
 
-//  重置表格列配置
-function resetCustomEvent({ filter = true, global = true }: { filter?: boolean; global?: boolean }) {
-	// 重置表单配置
-	if (filter) {
-		tableFilterConfig.value = clone(rawTableFilterConfig, true);
-	}
-	if (global) {
-		// 重置表格全局配置
-		setTableGlobalConfig({
-			// 是否带有斑马纹
-			stripe: false,
-			// 表格的尺寸
-			size: 'medium',
-			// 所有的列对齐方式
-			align: 'center',
-		});
-	}
-	return xGrid.value.loadColumn(rawColumns);
+/**
+ * 设置列配置(用于恢复默认远程配置)
+ * @param sysConfigData 服务端返回的列配置
+ * */
+function resetCustomEvent(sysConfigData?: any) {
+	return new Promise((resolve) => {
+		tableFilterConfig.value.items = [];
+		beforeQuery({
+			...reactData,
+			code: '_init',
+			isInited: true,
+			isReload: false,
+			options: null,
+			sysConfigData: sysConfigData,
+		})
+			.then(() => {
+				resolve(true);
+			})
+			.catch(() => {
+				resolve(false);
+			});
+	});
 }
 
-// 加载列配置，如果有操作列配置，自动插入操作列
-function saveCustomEvent(columns: (VxeTableDefines.ColumnOptions<any> | VxeTableDefines.ColumnInfo<any>)[]) {
+/**
+ * 加载列配置，如果有操作列配置，自动插入操作列
+ * */
+function saveCustomEvent(columns: (VxeTableDefines.ColumnOptions<unknown> | VxeTableDefines.ColumnInfo<unknown>)[]) {
 	const leftColList = props.columns.filter((item) => !!item.type);
-	const _columns = clone(leftColList.concat(columns), true);
+	const _columns = [...leftColList];
+	eachTree(columns, (column) => {
+		if (!column.type && column.field !== 'jlg-operation-colum') {
+			// vxe-table 在 loadColumn 函数中会判断传入的列是否已经是 ColumnInfo 类型,如果是直接返回,不会重新渲染 cell. 因此导致 sortable 不会动态更新
+			// 所以强行通过解构修改 column 的类型,使其不是 ColumnInfo 类型
+			// 此做法缺点: 会重新 new ColumnInfo 导致 resizeWidth 丢失,需要再次处理
+			if (column?.field !== undefined && (column as VxeTableDefines.ColumnInfo)?.resizeWidth !== undefined) {
+				columnResizeWidthMap.set(column.field, (column as VxeTableDefines.ColumnInfo)?.resizeWidth ?? 0);
+				_columns.push({ ...column });
+			} else {
+				_columns.push(column);
+			}
+		}
+	});
 
 	// 如果存在操作列配置
 	if (props.operationConfig) {
@@ -662,6 +695,7 @@ const renderCustomTemplate: T_RenderCustomTemplate = (customComponent, appContex
 
 defineExpose({
 	xGrid,
+	$filter: tableFilterRef,
 	reactData,
 	customStore,
 	commitProxy,

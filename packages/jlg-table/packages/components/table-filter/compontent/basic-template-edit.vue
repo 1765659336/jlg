@@ -36,7 +36,7 @@
 				</div>
 			</div>
 			<div class="button-wrap">
-				<span class="text-add-button" @click="handleAddEvent">
+				<span v-if="props.items.length" class="text-add-button" @click="handleAddEvent">
 					<el-icon>
 						<Plus></Plus>
 					</el-icon>
@@ -59,7 +59,7 @@ import { reactive, watch } from 'vue';
 import { ElScrollbar, ElIcon, ElButton, ElSelect, ElOption, ElMessage } from 'element-plus';
 import { Close, Plus } from '@element-plus/icons-vue';
 import type { I_Table_Filter_Item, I_User_Search_Template_Model, I_User_Search_Template_Details_Model } from '../type';
-import { SEARCH_TYPES } from '../constants';
+import { SEARCH_TYPES } from '../../../constants';
 import { useRenderContentTitle } from '../hooks/usePopover';
 defineOptions({
 	name: 'BasicTemplateEdit',
@@ -114,6 +114,7 @@ const getSearchTypes = (searchItem: I_User_Search_Template_Details_Model, isInit
 	}
 
 	const findItem = props.items.find((item) => item.params.dynamicPageColUid === searchItem.dynamicPageColUid);
+	searchItem.dbFieldName = findItem?.params.dbFieldName ?? '';
 	const type = findItem?.type ?? 'text';
 	dynamicPageColMap[searchItem.dynamicPageColUid] = {
 		options: SEARCH_TYPES[type] ?? [],

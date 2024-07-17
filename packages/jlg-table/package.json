@@ -1,7 +1,7 @@
 {
 	"name": "jlg-table",
 	"private": false,
-	"version": "0.1.1",
+	"version": "0.1.5",
 	"type": "commonjs",
 	"scripts": {
 		"dev": "vite",
@@ -11,6 +11,7 @@
 		"eslint:fix": "eslint --fix .",
 		"pre-commit": "concurrently \"tsc\" \"lint-staged\"",
 		"preinstall": "npx only-allow pnpm",
+		"yalc:push": "npm run build && yalc push",
 		"publishVersion": "npm run build && npm publish --registry=http://10.1.2.9:4873"
 	},
 	"files": [

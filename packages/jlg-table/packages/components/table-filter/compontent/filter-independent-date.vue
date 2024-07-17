@@ -30,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElDatePicker } from 'element-plus';
 import { I_Table_Filter_Item } from '../type';
 import { computed } from 'vue';
 import GlobalConfig from '../../../../lib/useGlobalConfig';

@@ -8,12 +8,13 @@
 </template>
 
 <script setup lang="ts">
+import { ElTimePicker } from 'element-plus';
 import { I_Table_Filter_Item } from '../type';
 
 defineOptions({
 	name: 'FilterTime',
 });
-type ModelValueType = null | Date | number | string | Array<Date | number | string | null>;
+type ModelValueType = [number | string | Date, number | string | Date] | number | string | Date | string[];
 const modelValue = defineModel<ModelValueType>({ required: true });
 const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean }>(), {
 	showLabel: false,
