@@ -1,7 +1,7 @@
 {
 	"name": "jlg-table",
 	"private": false,
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"type": "commonjs",
 	"scripts": {
 		"dev": "vite",
@@ -33,11 +33,11 @@
 			"require": "./dist/jlg-table.umd.js",
 			"types": "./dist/packages/index.d.ts"
 		},
-		"./dist/":  {
+		"./dist/": {
 			"import": "./dist/",
 			"require": "./dist/"
 		},
-		"./styles/":  {
+		"./styles/": {
 			"import": "./styles/",
 			"require": "./styles/"
 		},
