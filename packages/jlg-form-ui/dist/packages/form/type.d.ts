@@ -76,3 +76,6 @@ export declare type T_Assign_Rules_Fn_Params_Source = {
     recordValidate: FormValidatorRules;
 };
 export declare type T_Assign_Rules_Fn = (source?: T_Assign_Rules_Fn_Params_Source) => void;
+export declare type T_JlgContextKey = {
+    labelPosition: E_JlgForm_LabelPosition;
+};

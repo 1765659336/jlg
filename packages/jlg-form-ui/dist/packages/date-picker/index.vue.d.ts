@@ -8,14 +8,14 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
 }>, {
     _ref: globalThis.Ref<any>;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    "update:modelValue": (v: import('element-plus/es/utils/index.mjs').EpPropMergeType<(new (...args: any[]) => string | number | Date | [import('element-plus').DateModelType, import('element-plus').DateModelType]) | (() => import('element-plus').ModelValueType) | ((new (...args: any[]) => string | number | Date | [import('element-plus').DateModelType, import('element-plus').DateModelType]) | (() => import('element-plus').ModelValueType))[], unknown, unknown>) => void;
+    "update:modelValue": (v: import('element-plus/es/utils/index.mjs').EpPropMergeType<(new (...args: any[]) => string | number | Date | string[] | [import('element-plus').DateModelType, import('element-plus').DateModelType]) | (() => import('element-plus').ModelValueType) | ((new (...args: any[]) => string | number | Date | string[] | [import('element-plus').DateModelType, import('element-plus').DateModelType]) | (() => import('element-plus').ModelValueType))[], unknown, unknown>) => void;
 }, string, import('vue').PublicProps, Readonly<globalThis.ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<T_Jlg_DatePicker_Props>, {
     editable: boolean;
     clearable: boolean;
     validateEvent: boolean;
     teleported: boolean;
 }>>> & {
-    "onUpdate:modelValue"?: (v: import('element-plus/es/utils/index.mjs').EpPropMergeType<(new (...args: any[]) => string | number | Date | [import('element-plus').DateModelType, import('element-plus').DateModelType]) | (() => import('element-plus').ModelValueType) | ((new (...args: any[]) => string | number | Date | [import('element-plus').DateModelType, import('element-plus').DateModelType]) | (() => import('element-plus').ModelValueType))[], unknown, unknown>) => any;
+    "onUpdate:modelValue"?: (v: import('element-plus/es/utils/index.mjs').EpPropMergeType<(new (...args: any[]) => string | number | Date | string[] | [import('element-plus').DateModelType, import('element-plus').DateModelType]) | (() => import('element-plus').ModelValueType) | ((new (...args: any[]) => string | number | Date | string[] | [import('element-plus').DateModelType, import('element-plus').DateModelType]) | (() => import('element-plus').ModelValueType))[], unknown, unknown>) => any;
 }, {
     readonly clearable: import('element-plus/es/utils/index.mjs').EpPropMergeType<BooleanConstructor, unknown, unknown>;
     readonly validateEvent: import('element-plus/es/utils/index.mjs').EpPropMergeType<BooleanConstructor, unknown, unknown>;
