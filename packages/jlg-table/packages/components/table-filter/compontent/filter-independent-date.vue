@@ -70,11 +70,11 @@ watch(
 	modelValue,
 	(newValue) => {
 		if (!newValue || newValue.length === 0) {
-			startTime.value = '';
-			endTime.value = '';
+			startTime.value = null;
+			endTime.value = null;
 		} else {
-			startTime.value = newValue[0] ?? '';
-			endTime.value = newValue[1] ?? '';
+			startTime.value = newValue[0] ?? null;
+			endTime.value = newValue[1] ?? null;
 		}
 	},
 	{ deep: true, immediate: true }
@@ -84,7 +84,7 @@ watch(
 	[startTime, endTime],
 	([newStartTime, newEndTime]) => {
 		const isEmpty = !newStartTime && !newEndTime;
-		modelValue.value = isEmpty ? [] : [newStartTime ?? '', newEndTime ?? ''];
+		modelValue.value = isEmpty ? [] : [newStartTime ?? null, newEndTime ?? null];
 	},
 	{ deep: true }
 );
