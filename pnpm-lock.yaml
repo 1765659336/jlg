@@ -475,6 +475,9 @@ importers:
       unplugin-auto-import:
         specifier: ^0.17.5
         version: 0.17.6
+      unplugin-element-plus:
+        specifier: ^0.8.0
+        version: 0.8.0
       unplugin-vue-components:
         specifier: ^0.26.0
         version: 0.26.0(vue@3.4.27)
