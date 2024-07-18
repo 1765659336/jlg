@@ -17,6 +17,7 @@
 			<slot name="error" :error="error"></slot>
 		</template>
 		<slot></slot>
+		<el-input style="position: fixed; z-index: -999; display: none; width: 0; height: 0" />
 	</el-form-item>
 </template>
 
