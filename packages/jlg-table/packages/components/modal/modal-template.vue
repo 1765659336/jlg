@@ -82,6 +82,7 @@ const emit = defineEmits<{
 	show: [params: VxeModalDefines.ShowEventParams];
 	zoom: [params: VxeModalDefines.ZoomEventParams];
 	custom: [params: T_Modal_Options];
+	resize: [params: VxeModalDefines.ResizeEventParams];
 }>(); // 定义事件
 
 const attrs = useAttrs();
@@ -243,6 +244,12 @@ const onConfirm = (params: VxeModalDefines.ConfirmEventParams) => {
 	emit('confirm', params);
 };
 
+const onResize = (params: VxeModalDefines.ResizeEventParams) => {
+	const _confirm = attrs?.modalOptions?.['on-resize'] || attrs?.modalOptions?.['onResize'];
+	_confirm && _confirm(params);
+	emit('resize', params);
+};
+
 const modalOptions = computed<T_Modal_Options>({
 	get: () => {
 		if (attrs?.modalOptions && typeof attrs.modalOptions === 'object') {
@@ -255,6 +262,7 @@ const modalOptions = computed<T_Modal_Options>({
 				onZoom,
 				onCancel,
 				onConfirm,
+				onResize,
 				// 覆盖 vxe-modal 默认的 关闭按钮点击时触发的事件
 				onClose: () => {},
 			};
