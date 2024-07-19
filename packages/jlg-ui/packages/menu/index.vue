@@ -129,7 +129,7 @@ function getPopoWidth(firstLevelMenu) {
 	} else if (childMenuLength === 0) {
 		return 0;
 	} else {
-		return 20 + 20 + 190 * childMenuLength;
+		return 20 + 20 + 2 + 190 * childMenuLength;
 	}
 }
 </script>
@@ -161,6 +161,7 @@ function getPopoWidth(firstLevelMenu) {
 			color: var(--jlg-menu-popover-color);
 			width: 170px;
 			margin-right: 20px;
+			margin-bottom: 10px;
 			.second-level-menu-title {
 				padding: var(--second-level-menu-title-top-padding) var(--second-level-menu-title-right-padding) var(--second-level-menu-title-bottom-padding)
 					var(--second-level-menu-title-left-padding);
