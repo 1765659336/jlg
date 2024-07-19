@@ -91,6 +91,7 @@ const handleAddEvent = () => {
 		dbFieldName: '',
 		dynamicPageColUid: '',
 		searchType: 0,
+		searchColType: null,
 		defaultValue: null,
 	};
 	if (currentTemplateDetails.value) {
@@ -107,14 +108,15 @@ type SearchType = {
 };
 const dynamicPageColMap = reactive<Record<string, SearchType>>({});
 const getSearchTypes = (searchItem: I_User_Search_Template_Details_Model, isInit?: boolean) => {
+	const findItem = props.items.find((item) => item.params.dynamicPageColUid === searchItem.dynamicPageColUid);
+	if (findItem?.params) {
+		Object.assign(searchItem, findItem.params);
+	}
 	// 恢复默认
 	if (!isInit) {
 		searchItem.searchType = 0;
 		handleSelectToChange(searchItem);
 	}
-
-	const findItem = props.items.find((item) => item.params.dynamicPageColUid === searchItem.dynamicPageColUid);
-	searchItem.dbFieldName = findItem?.params.dbFieldName ?? '';
 	const type = findItem?.type ?? 'text';
 	dynamicPageColMap[searchItem.dynamicPageColUid] = {
 		options: SEARCH_TYPES[type] ?? [],
@@ -193,5 +195,6 @@ const resetNewTemplateDetails = () => {
 
 defineExpose({
 	resetNewTemplateDetails,
+	newTemplateDetails,
 });
 </script>

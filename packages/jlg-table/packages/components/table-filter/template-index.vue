@@ -32,7 +32,7 @@
 					</div>
 					<div class="filter-panel__button">
 						<el-button class="save-btn" type="primary" @click="handleSave">查询</el-button>
-						<el-button v-show="!templateStore.currentTemplateUId" class="reset-btn" @click="handleReset">重置</el-button>
+						<el-button v-show="!basicTemplateRef?.isShow" class="reset-btn" @click="handleReset">重置</el-button>
 					</div>
 				</div>
 				<div class="jlg-filter-pane__divider">
@@ -142,7 +142,6 @@ const props = withDefaults(defineProps<I_Table_Filter_Props>(), {
 	titleAlign: () => GlobalConfig.tableFilter.titleAlign,
 	titleWidth: () => GlobalConfig.tableFilter.titleWidth,
 	folding: () => GlobalConfig.tableFilter.folding,
-	beforeSave: GlobalConfig.tableFilter.beforeSave,
 });
 const emit = defineEmits<{
 	save: [data: Record<string, any>];
@@ -236,6 +235,7 @@ const handleSchemeChange = (templateUid?: string) => {
 		});
 	}
 	isShowQuickSearch.value = false;
+	// templateUid === '' 时代表点击的是 '新增'，不需要触发 save 事件
 	if (templateUid === '') return;
 	emit('save', schemeForm);
 };
@@ -303,6 +303,14 @@ function handleInitialValue() {
 }
 
 function getFormData() {
+	if (basicTemplateRef.value?.isShow && !templateStore.currentTemplateUId) {
+		// 新增且未保存模板，触发查询时，使用当前新增模板表单数据
+		return basicTemplateEditRef.value?.newTemplateDetails.userSearchTemplateDetails.reduce((prev, item) => {
+			const field = pascalToCamel(item.dbFieldName);
+			prev[field] = item.defaultValue;
+			return prev;
+		}, {});
+	}
 	return templateStore.currentTemplateUId ? schemeForm : form;
 }
 
@@ -313,22 +321,12 @@ function onHide() {
 /// 查询
 function handleSave() {
 	isShowQuickSearch.value = false;
-	const _form = templateStore.currentTemplateUId ? schemeForm : form;
-	if (props.beforeSave && typeof props.beforeSave === 'function') {
-		const data = props.beforeSave(_form, items.value);
-		emit('save', data);
-		return;
-	}
+	const _form = getFormData();
 	emit('save', _form);
 }
 
 const handlePopoverSave = () => {
 	templateStore.currentTemplateUId = '';
-	if (props.beforeSave && typeof props.beforeSave === 'function') {
-		const data = props.beforeSave(form, items.value);
-		emit('save', data);
-		return;
-	}
 	emit('save', form);
 };
 
@@ -367,6 +365,7 @@ defineExpose({
 	handleQuickSearchClose,
 	handleQuickSearch,
 	setTemplateList,
+	getNewTemplateDetails: () => basicTemplateEditRef.value?.newTemplateDetails,
 	currentTemplateDetails,
 	templateStore,
 	rawFormData: form,
