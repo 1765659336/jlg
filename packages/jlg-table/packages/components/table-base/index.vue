@@ -4,9 +4,7 @@
 		<div class="jlg-table-container">
 			<vxe-grid
 				ref="xGrid"
-				v-bind="{ ...props, ...tableCompEvents }"
-				:columns="propsColumns"
-				:proxy-config="computeProxyOpts"
+				v-bind="computeGridProps"
 				:auto-resize="true"
 				:stripe="customStore.stripe"
 				:size="customStore.size"
@@ -46,7 +44,6 @@
 import eachTree from 'xe-utils/eachTree';
 import clone from 'xe-utils/clone';
 import findTree from 'xe-utils/findTree';
-import merge from 'xe-utils/merge';
 import toArrayTree from 'xe-utils/toArrayTree';
 import findIndexOf from 'xe-utils/findIndexOf';
 import TableFilter from '../table-filter/index.vue';
@@ -263,7 +260,7 @@ const beforeQuery = async (args) => {
 			tableFilterConfig.value.items = _items;
 			args.form = formData;
 		} else {
-			args.form = tableFilterRef.value?.getFormData() || null;
+			args.form = tableFilterRef.value.getFormData() || null;
 		}
 
 		// 设置筛选模板列表数据
@@ -283,10 +280,17 @@ const beforeQuery = async (args) => {
 	} else {
 		args.form = tableFilterRef.value?.getFormData() || null;
 	}
+	let currentTemplateDetails = null;
+	if (tableFilterRef.value && (tableFilterRef.value as T_Table_Filter_Template)?.templateStore) {
+		const _tableFilter = tableFilterRef.value as T_Table_Filter_Template;
+		const _newTemplateDetails = _tableFilter?.getNewTemplateDetails();
+		const _currentTemplateDetails = _tableFilter?.currentTemplateDetails;
+		currentTemplateDetails = _currentTemplateDetails ?? _newTemplateDetails;
+	}
 	args.form = {
 		items: tableFilterConfig.value.items,
 		templateStore: (tableFilterRef.value as T_Table_Filter_Template)?.templateStore,
-		currentTemplateDetails: (tableFilterRef.value as T_Table_Filter_Template)?.currentTemplateDetails,
+		currentTemplateDetails,
 		data: args.form,
 	};
 	if (args.isInited) {
@@ -319,10 +323,6 @@ const defaultProxyConfig: VxeGridPropTypes.ProxyConfig = {
 	message: false,
 	seq: true,
 };
-
-const computeProxyOpts = computed(() => {
-	return merge({}, GlobalConfig.table.proxyConfig, props.proxyConfig, defaultProxyConfig) as VxeGridPropTypes.ProxyConfig;
-});
 
 // 获取表单元素的宽度
 function getFormElementWidth() {
@@ -696,6 +696,28 @@ const renderCustomTemplate: T_RenderCustomTemplate = (customComponent, appContex
 	}
 	return useRenderCustomTemplate(customTemplateRef.value, appContext, customComponent, props);
 };
+
+// 对最常用的三个配置进行合并
+const computeProxyOpts = computed(() => {
+	return Object.assign({}, GlobalConfig.table.proxyConfig, props.proxyConfig, defaultProxyConfig) as VxeGridPropTypes.ProxyConfig;
+});
+const computePagerOpts = computed(() => {
+	return Object.assign({}, GlobalConfig.table.pagerConfig, props.pagerConfig);
+});
+const computeSortOpts = computed(() => {
+	return Object.assign({}, GlobalConfig.table.sortConfig, props.sortConfig);
+});
+const computeGridProps = computed(() => {
+	const proxyConfig = computeProxyOpts.value;
+	const pagerConfig = computePagerOpts.value;
+	const sortConfig = computeSortOpts.value;
+	return Object.assign({}, props, tableCompEvents, {
+		columns: propsColumns.value,
+		proxyConfig,
+		pagerConfig,
+		sortConfig,
+	});
+});
 
 defineExpose({
 	xGrid,

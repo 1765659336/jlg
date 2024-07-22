@@ -50,8 +50,6 @@ export declare interface I_Table_Filter_Props {
 	titleWidth?: VxeFormPropTypes.TitleWidth;
 	// 是否折叠
 	folding?: boolean;
-	// 提交前之前的钩子，参数为表单数据和筛选项配置。可用于对表单数据进一步处理
-	beforeSave?: (formData: Record<string, any>, filterConfig: I_Table_Filter_Item[]) => Record<string, any>;
 	// 是否禁用所有组件， 如果设置为 true, 它将覆盖内部组件的 disabled 属性
 	disabled?: boolean;
 	// 标识虚拟触发时的触发元素
@@ -108,11 +106,15 @@ export declare interface I_User_Search_Template_Details_Model {
 	dbFieldName: string | null;
 	/** @description 动态页面列雪花id */
 	dynamicPageColUid: string | null;
+	/** @description 后端存储的筛选框类型 */
+	searchColType: number | null;
 	/**
 	 * Format: int32
 	 * @description 搜索类型（模糊，精确...）
 	 */
 	searchType: number;
 	/** @description 默认值 */
-	defaultValue?: string | null;
+	defaultValue: string | null;
+	// 其他非必要参数
+	[key: string]: unknown;
 }

@@ -82,7 +82,6 @@ const props = withDefaults(defineProps<I_Table_Filter_Props>(), {
 	titleAlign: () => GlobalConfig.tableFilter.titleAlign,
 	titleWidth: () => GlobalConfig.tableFilter.titleWidth,
 	folding: () => GlobalConfig.tableFilter.folding,
-	beforeSave: GlobalConfig.tableFilter.beforeSave,
 });
 const emit = defineEmits<{
 	save: [data: Record<string, any>];
@@ -122,9 +121,6 @@ function handleInitialValue() {
 }
 
 function getFormData() {
-	if (props.beforeSave && typeof props.beforeSave === 'function') {
-		return props.beforeSave(form, items.value);
-	}
 	return form;
 }
 
@@ -135,11 +131,6 @@ function onHide() {
 /// 查询
 function handleSave() {
 	isShowQuickSearch.value = false;
-	if (props.beforeSave && typeof props.beforeSave === 'function') {
-		const data = props.beforeSave(form, items.value);
-		emit('save', data);
-		return;
-	}
 	emit('save', form);
 }
 
