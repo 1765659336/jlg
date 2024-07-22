@@ -68,6 +68,8 @@ const mergeDatePickerPropsComputed = computed(() => {
 });
 
 const placeholderComputed = computed(() => {
+	if (props.disabled) return '';
+
 	if (mergeDatePickerPropsComputed.value.placeholder) {
 		return mergeDatePickerPropsComputed.value.placeholder;
 	} else if (context) {

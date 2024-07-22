@@ -88,6 +88,8 @@ const elSelectLabel = computed(() => t('el.select.placeholder'));
 
 // 自定义处理placeholder
 const placeholderComputed = computed(() => {
+	if (props.disabled) return '';
+
 	if (mergeSelectPropsComputed.value.placeholder !== elSelectLabel.value) {
 		return mergeSelectPropsComputed.value.placeholder;
 	} else if (context) {
