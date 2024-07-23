@@ -7,6 +7,9 @@ export type T_Global_Config_Props = {
 	datePickerFormat?: string;
 	datePickerValueFormat?: string;
 	table?: I_Table_Grid_Props;
+	modal?: {
+		loadingComponent?: I_Table_Grid_Props['loadingConfig']['loadingComponent'];
+	};
 	icon?: {
 		[key: string]: string;
 	};
@@ -145,6 +148,9 @@ const GlobalConfig: T_Global_Config_Props = {
 		loadingConfig: {
 			loadingComponent: null,
 		},
+	},
+	modal: {
+		loadingComponent: null,
 	},
 	icon: {
 		// loading

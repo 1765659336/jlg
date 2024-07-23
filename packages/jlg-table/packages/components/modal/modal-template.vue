@@ -7,9 +7,13 @@
 		:destroy-on-close="false"
 		:show-close="showClose"
 		:show-zoom="showZoom"
+		:loading="false"
 	>
 		<template #default>
 			<slot></slot>
+			<template v-if="isLoading && GlobalConfig.modal?.loadingComponent">
+				<component :is="GlobalConfig.modal.loadingComponent" />
+			</template>
 		</template>
 		<!--   窗口头部的模板（如果使用了，则 slot title 与  slot corner无效） -->
 		<template v-if="slots.header" #header>
@@ -69,6 +73,14 @@ import debounce from 'xe-utils/debounce';
 defineOptions({
 	name: 'ModalTemplate',
 	inheritAttrs: false,
+});
+
+const props = defineProps({
+	loading: Boolean,
+	delay: {
+		type: Number,
+		default: 0,
+	},
 });
 
 const { getModal, closeModal } = useDynamicModal();
@@ -374,14 +386,42 @@ const toggleCorner = (buttons: boolean | T_Buttons[]) => {
 
 const isCustom = ref(false);
 const modalClass = computed(() => {
-	if (isCustom.value) {
-		return 'custom-setting';
-	}
-	return '';
+	const classes = [];
+	if (isCustom.value) classes.push('custom-setting');
+	if (isLoading.value) classes.push('is--loading');
+	return classes.join(' ');
 });
 const toggleCustom = (_isCustom: boolean) => {
 	isCustom.value = _isCustom;
 };
+
+const isLoading = ref(false);
+let timeoutId = null;
+// 标记是否是首次加载
+const isFirstLoad = ref(true);
+
+watch(
+	() => props.loading,
+	(newVal) => {
+		if (newVal && isFirstLoad.value) {
+			timeoutId = setTimeout(() => {
+				isLoading.value = true;
+				// 避免再次进入延迟逻辑
+				isFirstLoad.value = false;
+			}, props.delay);
+		} else {
+			clearTimeout(timeoutId);
+			isLoading.value = newVal;
+		}
+	},
+	{
+		immediate: true,
+	}
+);
+
+onUnmounted(() => {
+	clearTimeout(timeoutId);
+});
 
 // 暴露常用方法
 defineExpose<T_Jlg_Modal_Instance>({
