@@ -60,6 +60,8 @@ const mergeTimeSelectPropsComputed = computed(() => {
 });
 
 const placeholderComputed = computed(() => {
+	if (props.disabled) return '';
+
 	if (mergeTimeSelectPropsComputed.value.placeholder) {
 		return mergeTimeSelectPropsComputed.value.placeholder;
 	} else if (context) {

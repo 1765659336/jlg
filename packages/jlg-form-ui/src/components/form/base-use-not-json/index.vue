@@ -91,7 +91,7 @@ const JlgFormRef = ref();
 
 const formData = ref({
 	input: {
-		value: '哈啊哈哈哈',
+		value: '1',
 	},
 	select: {
 		value: 1,
