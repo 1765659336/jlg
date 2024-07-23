@@ -142,6 +142,9 @@ const GlobalConfig: T_Global_Config_Props = {
 			enabled: true,
 			autoStorage: true,
 		},
+		loadingConfig: {
+			loadingComponent: null,
+		},
 	},
 	icon: {
 		// loading
