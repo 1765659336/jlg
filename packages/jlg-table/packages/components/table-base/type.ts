@@ -1,7 +1,7 @@
 import { VxeGridInstance, VxeGridProps, VxeToolbarPropTypes } from 'vxe-table';
 import { I_Table_Filter_Props } from '../table-filter/type';
 import { VxeTableDataRow, VxeTableDefines } from 'vxe-table/types/table';
-import { AppContext, Ref, VNodeTypes } from 'vue';
+import { AppContext, Component, Ref, VNodeTypes } from 'vue';
 import TableFilter from '../table-filter/index.vue';
 import TableFilterTemplate from '../table-filter/template-index.vue';
 // import { ComponentPublicInstance } from 'vue';
@@ -43,7 +43,7 @@ export type JlgGridInstance<T = any> = {
 	onClickOutside: () => void;
 };
 
-export declare interface I_Table_Grid_Props<D = VxeTableDataRow> extends Omit<VxeGridProps<D>, 'formConfig' | 'filterConfig'> {
+export declare interface I_Table_Grid_Props<D = VxeTableDataRow> extends Omit<VxeGridProps<D>, 'formConfig' | 'filterConfig' | 'loadingConfig'> {
 	tableFilterConfig?: I_Table_Filter_Props;
 	operationConfig?: {
 		/**
@@ -72,5 +72,19 @@ export declare interface I_Table_Grid_Props<D = VxeTableDataRow> extends Omit<Vx
 		 * 是否启用自动存储，开启后，拖拽列宽、拖拽列顺序、列隐藏等操作将通过触发 saveSysConfig 函数自动保存到服务端
 		 */
 		autoStorage?: boolean;
+	};
+	loadingConfig?: {
+		/**
+		 * 全局自定义加载中组件,优先级高于 icon 和 text
+		 */
+		loadingComponent?: Component;
+		/**
+		 * 显示图标
+		 */
+		icon?: string;
+		/**
+		 * 显示文字
+		 */
+		text?: string;
 	};
 }

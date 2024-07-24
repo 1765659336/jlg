@@ -18,6 +18,9 @@ function existModal(options: T_Modal_Params) {
 function openModal(options: T_Modal_Params): Promise<I_Modal_Controller> {
 	return new Promise((resolve, reject) => {
 		options.component = markRaw(options.component);
+		if (options.component?.name === 'AsyncComponentWrapper' && !!options.modalOptions?.id) {
+			options.component.name = options.modalOptions.id;
+		}
 		const name = options.component?.name;
 
 		function addModal() {
@@ -77,7 +80,15 @@ function closeModal(name?: string, type: I_Dynamic_Modal_Store['eventType'] = 'c
 				dynamicModalStore.eventType = 'hide';
 		}
 		// 将modal的 modelValue 设置为 false，会自动触发 onHide 事件，再在 onHide 事件中控制分发 onHide 与 onClose。
-		$modal.modalOptions.modelValue = false;
+		if ($modal.modalOptions.modelValue === false) {
+			// 如果已经处于最小化状态,不会自动触发 onHide 事件,需要手动执行 xModalRef.value.close
+			$modal.ref.reactData.visible = true;
+			$modal.ref.close().then(() => {
+				$modal.ref.reactData.visible = false;
+			});
+		} else {
+			$modal.modalOptions.modelValue = false;
+		}
 
 		return nextTick();
 	};

@@ -109,9 +109,17 @@ export interface I_Modal_Methods {
 
 	// 设置是否是编辑模式
 	toggleCustom(val: boolean): void;
+	/**
+	 * 切换确定按钮的加载状态
+	 * */
+	toggleBtnLoading(val: boolean): void;
 }
 
 export interface I_Modal_Constructor {
+	/**
+	 * 确定按钮是否显示加载中状态
+	 */
+	btnLoading: Ref<boolean>;
 	/**
 	 * vxe-table 的 Modal 组件原始实例,一般情况下不需要使用
 	 */

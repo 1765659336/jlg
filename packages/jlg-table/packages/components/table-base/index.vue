@@ -30,6 +30,9 @@
 						</component>
 					</div>
 				</template>
+				<template v-if="!$slots.loading && GlobalConfig.table?.loadingConfig?.loadingComponent" #loading>
+					<component :is="GlobalConfig.table.loadingConfig.loadingComponent" />
+				</template>
 				<template v-for="(_, name) in $slots" #[name]="slotData" :key="name">
 					<slot :name v-bind="slotData"></slot>
 				</template>
