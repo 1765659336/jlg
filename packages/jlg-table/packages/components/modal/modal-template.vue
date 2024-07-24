@@ -54,7 +54,7 @@
 			<div v-show="!shrinkStore.isShrink" class="modal--footer">
 				<slot name="footer">
 					<el-button @click="cancel">{{ modalOptions.cancelButtonText }}</el-button>
-					<el-button type="primary" @click="confirm">{{ modalOptions.confirmButtonText }}</el-button>
+					<el-button type="primary" :loading="btnLoading" @click="confirm">{{ modalOptions.confirmButtonText }}</el-button>
 				</slot>
 			</div>
 		</template>
@@ -419,6 +419,11 @@ watch(
 	}
 );
 
+const btnLoading = ref(false);
+const toggleBtnLoading = (loading: boolean) => {
+	btnLoading.value = loading;
+};
+
 onUnmounted(() => {
 	clearTimeout(timeoutId);
 });
@@ -440,6 +445,8 @@ defineExpose<T_Jlg_Modal_Instance>({
 	custom,
 	toggleCorner,
 	toggleCustom,
+	toggleBtnLoading,
+	btnLoading,
 	ref: xModalRef,
 });
 </script>
