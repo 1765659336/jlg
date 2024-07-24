@@ -35,13 +35,13 @@
 					<jlg-input-number v-model="formData.number" @change="valueChange" disabled> </jlg-input-number>
 				</jlg-form-item>
 			</jlg-grid-cell>
-			<!-- <jlg-grid-cell v-for="i in 30" :key="i" :width="1" :height="1">
-				<jlg-form-item prop="select.value" :label="'Select测试placeholder' + i">
-					<jlg-select v-model="formData.select.value">
+			<jlg-grid-cell :width="1" :height="1">
+				<jlg-form-item prop="select.value" label="Select测试placeholder">
+					<jlg-select v-model="formData.select.value" disabled>
 						<jlg-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
 					</jlg-select>
 				</jlg-form-item>
-			</jlg-grid-cell> -->
+			</jlg-grid-cell>
 			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item label="time-select">
 					<jlg-time-select v-model="formData.timeSelect" start="08:30" step="00:15" end="18:30" disabled />
@@ -91,10 +91,10 @@ const JlgFormRef = ref();
 
 const formData = ref({
 	input: {
-		value: '1',
+		value: '',
 	},
 	select: {
-		value: 1,
+		value: '1',
 	},
 	number: 0,
 	datePicker: '',

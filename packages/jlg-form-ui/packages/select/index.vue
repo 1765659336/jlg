@@ -84,13 +84,12 @@ const mergeSelectPropsComputed = computed(() => {
 });
 
 // select placeholder 默认值
-const elSelectLabel = computed(() => t('el.select.placeholder'));
+// const elSelectLabel = computed(() => t('el.select.placeholder'));
 
 // 自定义处理placeholder
 const placeholderComputed = computed(() => {
 	if (props.disabled) return '';
-
-	if (mergeSelectPropsComputed.value.placeholder !== elSelectLabel.value) {
+	if (mergeSelectPropsComputed.value.placeholder) {
 		return mergeSelectPropsComputed.value.placeholder;
 	} else if (context) {
 		return `请选择${context.label}`;
@@ -119,6 +118,9 @@ onMounted(() => {
 
 const mouseenter = () => {
 	if (!mergeSelectPropsComputed.value.disabled) {
+		return;
+	}
+	if (props.modelValue === '') {
 		return;
 	}
 	tooltipShow.value = true;
