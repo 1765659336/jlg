@@ -1,7 +1,12 @@
 import { I_Table_Filter_Props } from '../packages/components/table-filter/type';
 import { I_Table_Grid_Props } from '../packages/components/table-base/type';
+import type { JlgComponentPermissionCodeType, JlgComponentPermissionResult } from './core';
 
 export type T_Global_Config_Props = {
+	/**
+	 * 权限码全局判断方法
+	 */
+	permissionMethod?: (params: { code: JlgComponentPermissionCodeType }) => JlgComponentPermissionResult;
 	// 表格筛选器默认配置
 	tableFilter?: I_Table_Filter_Props;
 	datePickerFormat?: string;
@@ -18,6 +23,7 @@ export type T_Global_Config_Props = {
 const iconPrefix = 'vxe-icon-';
 
 const GlobalConfig: T_Global_Config_Props = {
+	permissionMethod: null,
 	tableFilter: {
 		titleAlign: 'left',
 		titleWidth: 95,

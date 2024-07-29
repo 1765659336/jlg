@@ -601,7 +601,7 @@ function handleEdit(row: RowVO) {
 			dblclickZoom: true,
 			// 是否启用窗口拖动
 			draggable: true,
-			width: 300,
+			width: 800,
 			height: 400,
 			minWidth: 200,
 			minHeight: 200,

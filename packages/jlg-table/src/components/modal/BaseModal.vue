@@ -37,7 +37,11 @@ const onZoom = (params) => {
 	console.log('onZoom 窗口最大化还原后触发, params:', params);
 };
 const onConfirm = () => {
-	console.log('onConfirm 点击确认按钮后触发');
+	jlgModalRef.value.toggleBtnLoading(true);
+	setTimeout(() => {
+		jlgModalRef.value.toggleBtnLoading(false);
+		console.log('onConfirm 点击确认按钮后触发');
+	}, 1000);
 };
 
 const onCustom = () => {
@@ -87,12 +91,17 @@ function handleSizeChange() {
 // 		height: parseInt(ModalEl.style.height),
 // 	};
 // }
+const loading = ref(true);
+setTimeout(() => {
+	loading.value = false;
+}, 550);
 </script>
 
 <template>
 	<modal-template
 		ref="jlgModalRef"
 		:before-hide-method="beforeHideMethod"
+		:loading="loading"
 		@close="onClose"
 		@hide="onHide"
 		@show="onShow"
