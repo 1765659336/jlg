@@ -1,0 +1,126 @@
+.jlg-tabs {
+  display: flex;
+  flex-direction: column;
+  &.is--padding {
+    .jlg-tabs-pane--item {
+      padding: var(--jlg-ui-layout-padding-default);
+    }
+  }
+  .jlg-tabs-header {
+    position: relative;
+    flex-shrink: 0;
+  }
+}
+.jlg-tabs-header{
+  .jlg-tabs-header--wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    overflow-y: hidden;
+    overflow-x: auto;
+  }
+}
+
+.jlg-tabs-header--item {
+  position: relative;
+  padding: 0 0.5em;
+  cursor: pointer;
+  box-sizing: border-box;
+  &.is--active {
+    color: var(--jlg-ui-font-primary-color);
+  }
+  &.align--left {
+    text-align: left;
+  }
+  &.align--center {
+    text-align: center;
+  }
+  &.align--right {
+    text-align: right;
+  }
+  &:hover,
+  &.is--active {
+    .jlg-tabs-header--close-btn {
+      visibility: visible;
+    }
+  }
+}
+
+.jlg-tabs-header--item-icon,
+.jlg-tabs-header--close-btn {
+  flex-shrink: 0;
+}
+
+.jlg-tabs-header--close-btn {
+  position: absolute;
+  right: 0.5em;
+  top: 0;
+  visibility: hidden;
+  color: var(--jlg-ui-input-placeholder-color);
+  &:hover {
+    color: var(--jlg-ui-font-color);
+  }
+  &:active {
+    color: var(--jlg-ui-font-primary-color);
+  }
+  & > i {
+    font-size: 1em;
+  }
+}
+
+.jlg-tabs-pane {
+  flex-grow: 1;
+  overflow: hidden;
+}
+.jlg-tabs-pane--item {
+  display: none;
+  height: 100%;
+  overflow: auto;
+  &.is--visible {
+    display: block;
+  }
+}
+
+.jlg-tabs--default {
+  .jlg-tabs-header--item-inner {
+    border-bottom: 2px solid transparent;
+  }
+  .jlg-tabs-header--active-line-default {
+    display: block;
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    height: 2px;
+    width: 4px;
+    background-color: var(--jlg-ui-font-primary-color);
+    z-index: 2;
+  }
+}
+
+
+.jlg-tabs--card {
+  .jlg-tabs-header--item {
+    position: relative;
+    z-index: 1;
+    border:1px solid var(--jlg-ui-input-border-color);
+    margin-left: -1px;
+    line-height: 22px;
+    padding: 0 20px;
+    font-size: var(--el-font-size-extra-small);;
+    cursor: pointer;
+    &:hover {
+      z-index: 2;
+      border-color: var(--el-color-primary-light-5);
+      color: var(--el-color-primary-light-5);
+      background-color: #fff;
+    }
+    &.is--active{
+      z-index: 3;
+      color: var(--jlg-ui-font-primary-color);
+      border-color: var(--jlg-ui-font-primary-color);
+    }
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+}
