@@ -1,12 +1,11 @@
-import type { App, VNode } from 'vue';
+import type { VNode } from 'vue';
+import { Plugin } from 'vue';
 export type defineJlgComponent<P = { [key: string]: any }, E = { [key: string]: any }, S = { [key: string]: (...args: any[]) => any }> = {
 	new (): {
 		$props: P & E;
 		$slots: S;
 	};
-} & {
-	install(app: App): void;
-};
+} & Plugin;
 
 /**
  * 组件事件参数
@@ -42,15 +41,6 @@ export interface JlgComponentPermissionInfo {
 	code?: JlgComponentPermissionCodeType;
 	visible: boolean;
 	disabled: boolean;
-}
-
-/**
- * 全局权限控制
- */
-export interface JlgGlobalPermission {
-	getCheckInfo(code: JlgComponentPermissionCodeType): JlgComponentPermissionInfo;
-	checkVisible(code: JlgComponentPermissionCodeType): boolean;
-	checkDisable(code: JlgComponentPermissionCodeType): boolean;
 }
 
 /**
