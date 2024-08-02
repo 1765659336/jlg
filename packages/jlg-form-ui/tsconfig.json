@@ -37,7 +37,8 @@
 			]
 		},
 		"types": [
-			"unplugin-vue-define-options"
+			"unplugin-vue-define-options",
+			"vite-svg-loader"
 		],
 		"allowSyntheticDefaultImports": true
 	},

@@ -27,6 +27,9 @@ import { T_Jlg_Radio_Props } from './radio/type';
 import { FormValidatorRules } from './rule';
 export * from './rule';
 import './theme.scss';
+import { I_MultipleTypeConfig } from './upload/use-upload';
+import { T_Jlg_Upload_Global_Props } from './upload/types';
+import { JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod } from './upload/index';
 
 export {
 	JlgForm,
@@ -42,6 +45,12 @@ export {
 	JlgRadioGroup,
 	JlgRadio,
 	FormValidatorRules,
+	JlgUpload,
+	JlgFileTypeList,
+	JlgUploadContent,
+	JlgUploadList,
+	JlgUploadFileModel,
+	JlgFileViewerMethod,
 }; //实现按需引入*
 
 const components = [
@@ -57,6 +66,11 @@ const components = [
 	JlgRate,
 	JlgRadioGroup,
 	JlgRadio,
+	JlgUpload,
+	JlgFileTypeList,
+	JlgUploadContent,
+	JlgUploadList,
+	JlgUploadFileModel,
 ];
 
 type DeepPartial<T> = {
@@ -76,6 +90,7 @@ interface I_Global_Component_Config {
 	rate: DeepPartial<T_Jlg_Rate_Props>;
 	radioGroup: DeepPartial<T_Jlg_RadioGroup_Props>;
 	radio: DeepPartial<T_Jlg_Radio_Props>;
+	upload: DeepPartial<T_Jlg_Upload_Global_Props>;
 }
 
 export const globalComponentConfig: I_Global_Component_Config = {
@@ -100,6 +115,63 @@ export const globalComponentConfig: I_Global_Component_Config = {
 	rate: {},
 	radioGroup: {},
 	radio: {},
+	upload: {
+		// 是否显示下载按钮
+		showDownload: true,
+		// 是否显示上传区域
+		showContent: true,
+		// 是否显示文件列表
+		showFileList: true,
+		uploadShowPath: '',
+		// 上传模式为 ‘multiple-type-card’ 时的默认配置项
+		multipleTypeConfig: {
+			showAside: true,
+			typeKey: 'type',
+			types: [],
+			// 点击Aside的回调
+			onAsideClick: null as any,
+		} as I_MultipleTypeConfig,
+		// 上传模式,可选参数 single-type-card | multiple-type-card
+		type: 'single-type-card',
+		// 请求 URL
+		action: '',
+		// 上传区域的提示文本
+		text: null as string | null,
+		// 上传区域的样式
+		uploadContentStyle: {
+			width: '220px',
+			height: '70px',
+		} as Record<string, any>,
+		// 上传文件数量
+		limit: 10,
+		multiple: false,
+		// 单个上传文件大小限制(M)
+		fileSize: 10,
+		// 允许上传的文件类型, 例如['png', 'jpg', 'jpeg']
+		fileType: null as any,
+		// 上传时附带的额外参数
+		data: {},
+		// 上传的文件字段名
+		name: 'file',
+		drag: true,
+		// 是否自动上传
+		autoUpload: true,
+		// 设置上传的请求头部
+		headers: {},
+		beforeUpload: null,
+		beforeRemove: null,
+		onRemove: null,
+		onChange: null,
+		onPreview: null,
+		onSuccess: null,
+		onProgress: null,
+		onError: null,
+		onExceed: null,
+		// 文件上传状态发生变化时触发的钩子（成功或失败都返回 false，上传中返回 true）
+		onUploadingStatus: null,
+		//  OnlyOffice 支持览的文件格式
+		onlyOfficeFileList: null,
+	},
 };
 
 const traversalReplacement = (source, oldConfig, key?: string) => {

@@ -9,6 +9,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import path from 'path';
 import dts from 'vite-plugin-dts';
 import ElementPlus from 'unplugin-element-plus/vite';
+import SvgLoader from 'vite-svg-loader'; // Vite插件，用于将svg文件转为组件
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -32,6 +33,10 @@ export default defineConfig({
 			tsconfigPath: 'tsconfig.node.json',
 		}),
 		ElementPlus({}),
+		SvgLoader({
+			// 将svg文件转为组件
+			defaultImport: 'component', // svg组件名称
+		}),
 	],
 	build: {
 		lib: {

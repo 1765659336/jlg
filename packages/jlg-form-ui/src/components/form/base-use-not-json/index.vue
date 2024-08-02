@@ -11,6 +11,16 @@
 	>
 		<jlg-grid-layout v-bind="gridLayoutProps">
 			<jlg-grid-cell :width="1" :height="1">
+				<jlg-form-item label="Input测试文件上传" prop="input.value">
+					<jlg-upload
+						v-model:file-list="formData.fileList"
+						action="http://218.77.107.37:48999/upload/oa"
+						upload-show-path="http://218.77.107.37:49000/"
+						:show-download="true"
+					/>
+				</jlg-form-item>
+			</jlg-grid-cell>
+			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item
 					label="Input测试placeholder"
 					prop="input.value"
@@ -32,7 +42,7 @@
 			</jlg-grid-cell>
 			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item label="number">
-					<jlg-input-number v-model="formData.number" @change="valueChange" disabled> </jlg-input-number>
+					<jlg-input-number v-model="formData.number" disabled @change="valueChange"> </jlg-input-number>
 				</jlg-form-item>
 			</jlg-grid-cell>
 			<jlg-grid-cell :width="1" :height="1">
@@ -90,6 +100,7 @@ defineOptions({
 const JlgFormRef = ref();
 
 const formData = ref({
+	fileList: [],
 	input: {
 		value: '',
 	},

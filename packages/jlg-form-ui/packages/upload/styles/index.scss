@@ -1,0 +1,31 @@
+.multiple-type-card {
+    .multiple-card-main {
+        padding: 2px 0 2px 20px;
+    }
+}
+.modal--header {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #222222;
+    border-bottom: 1px solid #ebeef5;
+    background-color: #f8f8f8;
+    .modal--header-title {
+        cursor: move;
+        flex-grow: 1;
+        padding: 0.6em 0 0.6em 1em;
+    }
+    .modal--header-right {
+        flex-shrink: 0;
+        padding: 0.6em 1em 0.6em 0;
+        .modal--close-btn {
+            cursor: pointer;
+            margin-left: 0.6em;
+            &:hover {
+                color: var(--el-color-primary);
+            }
+        }
+    }
+}

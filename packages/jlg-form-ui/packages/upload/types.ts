@@ -1,0 +1,34 @@
+import type { I_MultipleTypeConfig } from './use-upload';
+
+export type T_Jlg_Upload_Global_Props = {
+	showDownload?: undefined | null | boolean;
+	showContent?: undefined | null | boolean;
+	showFileList?: undefined | null | boolean;
+	uploadShowPath?: undefined | null | string;
+	multipleTypeConfig?: I_MultipleTypeConfig;
+	type?: undefined | null | string;
+	action?: string;
+	text?: undefined | null | string;
+	uploadContentStyle?: any;
+	limit?: undefined | null | number;
+	multiple?: undefined | null | boolean;
+	fileSize?: undefined | null | number;
+	fileType?: any;
+	data?: Record<string, any>;
+	name?: undefined | null | string;
+	drag?: undefined | null | boolean;
+	autoUpload?: undefined | null | boolean;
+	headers?: undefined | null | Record<string, any>;
+	beforeUpload?: any;
+	beforeRemove?: any;
+	onRemove?: any;
+	onChange?: any;
+	onPreview?: any;
+	onSuccess?: any;
+	onProgress?: any;
+	onError?: any;
+	onExceed?: any;
+	onUploadingStatus?: any;
+	onlyOfficeFileList?: any;
+	[key: string]: any;
+};

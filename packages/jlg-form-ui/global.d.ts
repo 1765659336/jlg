@@ -14,5 +14,10 @@ declare module '@vue/runtime-core' {
 		JlgRate: (typeof import('jlg-form-ui'))['JlgRate'];
 		JlgRadioGroup: (typeof import('jlg-form-ui'))['JlgRadioGroup'];
 		JlgRadio: (typeof import('jlg-form-ui'))['JlgRadio'];
+		JlgUpload: (typeof import('jlg-form-ui'))['JlgUpload'];
+		JlgFileTypeList: (typeof import('jlg-form-ui'))['JlgFileTypeList'];
+		JlgUploadContent: (typeof import('jlg-form-ui'))['JlgUploadContent'];
+		JlgUploadList: (typeof import('jlg-form-ui'))['JlgUploadList'];
+		JlgUploadFileModel: (typeof import('jlg-form-ui'))['JlgUploadFileModel'];
 	}
 }
