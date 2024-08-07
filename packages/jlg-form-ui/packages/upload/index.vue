@@ -62,9 +62,11 @@
 				<slot name="modalContainer">
 					<upload-file-model
 						ref="uploadFileModelRef"
-						v-bind="contentProps"
+						v-bind="uploadContentProps"
 						v-model:file-list="uploadFiles"
 						:multiple-type-config="props.multipleTypeConfig"
+						:before-upload="props.beforeUpload"
+						:on-success="handleSuccess"
 						@handle-before="handleBefore"
 					/>
 				</slot>
@@ -75,8 +77,8 @@
 	<div v-else class="flex flex-wrap" :data-jlg-form-item="props.propsName">
 		<upload-content
 			v-if="props.showContent !== false"
-			ref="uploadContentRef"
-			v-bind="contentProps"
+			ref="uploadRef"
+			v-bind="uploadContentProps"
 			v-model:file-list="uploadFiles"
 			style="margin-right: 12px; margin-bottom: 12px"
 		>
@@ -107,9 +109,9 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
-import { computed, nextTick, ref } from 'vue';
-import { FormItemContext, formItemContextKey, UploadFile, UploadFiles } from 'element-plus';
-import { ElAside, ElContainer, ElMain, ElDialog, UploadUserFile } from 'element-plus';
+import { computed, defineModel, shallowRef, ref } from 'vue';
+import { FormItemContext, formItemContextKey, uploadContextKey } from 'element-plus';
+import { ElAside, ElContainer, ElMain, ElDialog } from 'element-plus';
 import { isFunction } from 'lodash-unified';
 import UploadContent from './components/upload-content.vue';
 import UploadList from './components/upload-list.vue';
@@ -118,19 +120,48 @@ import UploadFileModel from './components/upload-file-model.vue';
 
 import { uploadProps } from './use-upload';
 import { T_Add_Gather_Fn } from '../form/type';
+import { useHandlers } from './use-handlers';
+import { UploadContentInstance, UploadContentProps } from './components/use-upload-content';
+import { I_uploadUserFile, T_uploadUserFiles } from './types';
 
-const props = defineProps(uploadProps);
-const uploadContentRef = ref<any>();
 const uploadFileModelRef = ref<any>();
 
-const uploadFiles = defineModel('fileList', { type: Array<UploadUserFile> });
+const props = defineProps(uploadProps);
 
-const contentProps = computed(() => ({
+const uploadFiles = defineModel<T_uploadUserFiles>('fileList', { default: () => [] });
+const uploadRef = shallowRef<UploadContentInstance>();
+const { abort, submit, clearFiles, handleStart, handleError, handleRemove, handleSuccess, handleProgress, revokeFileObjectURL } = useHandlers(
+	props,
+	uploadRef,
+	uploadFiles
+);
+
+const uploadContentProps = computed<UploadContentProps>(() => ({
 	...props,
 	fileList: uploadFiles.value,
+	onStart: handleStart,
+	onProgress: handleProgress,
+	onSuccess: handleSuccess,
+	onError: handleError,
+	onRemove: handleRemove,
 }));
 
+onBeforeUnmount(() => {
+	uploadFiles.value.forEach(revokeFileObjectURL);
+});
+
+const accept = computed(() => {
+	if (props.accept) {
+		return props.accept;
+	}
+	return '';
+});
+provide(uploadContextKey, {
+	accept: accept,
+});
+
 const showFileModal = ref(false);
+
 function showFileModalFunc() {
 	if (!props.disabled) showFileModal.value = true;
 }
@@ -140,7 +171,7 @@ const fileTypeListRef = ref<{ fileType: number }>();
 const siftUploadFiles = computed(() => {
 	const fileType = fileTypeListRef.value?.fileType ?? null;
 	if (props.type === 'multiple-type-card' && fileType !== null) {
-		return (uploadFiles.value as UploadFiles).filter((file: Record<string, any>) => {
+		return uploadFiles.value.filter((file) => {
 			const typeKey = props.multipleTypeConfig?.typeKey ?? ('type' as string);
 			return file.status === 'uploading' || file[typeKey] === fileTypeListRef.value?.fileType;
 		});
@@ -165,24 +196,35 @@ function handleBefore() {
 }
 
 // 删除文件
-function onDeleteFileEvent(uploadFile: UploadFile) {
-	const index = uploadFiles.value.findIndex((item: Partial<UploadFile>) => item.uid === uploadFile.uid);
+function onDeleteFileEvent(uploadFile: I_uploadUserFile) {
+	const index = uploadFiles.value.findIndex((item: Partial<I_uploadUserFile>) => item.$uid === uploadFile.$uid);
 	uploadFiles.value.splice(index, 1);
 	if (uploadFile.status === 'uploading' || uploadFile.status === 'ready') {
 		// 如果文件正在上传或者等待上传，点击关闭按钮时调用abort方法停止上传
 		if (uploadFileModelRef.value && props.type === 'multiple-type-card') {
 			uploadFileModelRef.value!.abort(uploadFile);
 		} else {
-			uploadContentRef.value!.upload?.abort(uploadFile);
+			uploadRef.value?.abort(uploadFile);
 		}
 	}
 	if (props.onRemove && isFunction(props.onRemove)) {
-		props.onRemove(uploadFile, uploadFiles.value as UploadFiles);
+		props.onRemove(uploadFile, uploadFiles.value);
 	}
 }
+
 defineExpose({
-	epRef: uploadContentRef,
+	epRef: uploadRef,
 	onDeleteFileEvent,
+	/** @description 取消上传请求 */
+	abort,
+	/** @description 手动上传文件列表*/
+	submit,
+	/** @description 清除文件列表  */
+	clearFiles,
+	/** @description 手动选择文件 */
+	handleStart,
+	/** @description 手动删除文件 */
+	handleRemove,
 });
 
 // formItem传递的context
@@ -195,11 +237,11 @@ onMounted(() => {
 			fn() {
 				return {
 					label: props.propsName,
-					remotePath: contentProps.value.uploadShowPath,
+					remotePath: uploadContentProps.value.uploadShowPath,
 					value: uploadFiles.value,
 					realValue: uploadFiles.value,
 					type: 'up-load',
-					...props.gatherProps,
+					...(props.gatherProps as Record<string, any>),
 				};
 			},
 		});

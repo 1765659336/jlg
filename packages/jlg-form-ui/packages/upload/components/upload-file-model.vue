@@ -13,7 +13,7 @@
 				v-bind="$attrs"
 				:upload-content-style="{ width: '100%', height: '150px' }"
 				:before-upload="onBeforeUpload"
-				:on-success="onSuccessEvent"
+				:on-success="handleSuccess"
 			/>
 		</div>
 	</el-form>
@@ -26,42 +26,42 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { reactive, PropType, Ref, nextTick, ref } from 'vue';
-import { ElForm, ElFormItem, ElSelect, ElOption, ElMessage, UploadUserFile, UploadFile, UploadFiles } from 'element-plus';
-import { T_AsideTypes, uploadProps } from '../use-upload';
+import { reactive, PropType, nextTick, ref, defineModel, shallowRef } from 'vue';
+import { ElForm, ElFormItem, ElSelect, ElOption, ElMessage } from 'element-plus';
+import { uploadProps } from '../use-upload';
 import UploadContent from './upload-content.vue';
-import { uploadContentProps } from './use-upload-content';
-import type { UploadRawFile } from 'element-plus';
+import { UploadContentInstance, uploadContentProps, type UploadContentProps } from './use-upload-content';
 import { isFunction } from 'lodash-unified';
+import { I_uploadUserFile, T_uploadUserFiles, UploadRawFile } from '../types';
 
 const emit = defineEmits(['handleBefore']);
 const props = defineProps({
 	multipleTypeConfig: uploadProps.multipleTypeConfig,
 	fileList: {
-		type: Array as PropType<UploadUserFile[]>,
+		type: Array as PropType<T_uploadUserFiles>,
 		default: () => [],
 	},
 	beforeUpload: uploadContentProps.beforeUpload,
 	onSuccess: uploadContentProps.onSuccess,
 });
 
-const uploadFiles = ref<UploadUserFile[]>(props.fileList);
+const uploadFiles = defineModel<T_uploadUserFiles>('fileList', { default: () => [] });
 
 const formData = reactive({
 	currentType: null as any,
 });
 
 // multiple-type-card类型下，上传成功后，添加type字段
-function onSuccessEvent(response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) {
+const handleSuccess: UploadContentProps['onSuccess'] = (response, rawFile) => {
 	const typeKey = props.multipleTypeConfig?.typeKey ?? ('type' as string);
 	response.content[typeKey] = formData.currentType ?? null;
 	// 上传成功后，重新向外部暴露 onSuccess 属性
 	if (props.onSuccess && isFunction(props.onSuccess)) {
 		nextTick(() => {
-			props.onSuccess?.(response, uploadFile, uploadFiles);
+			props.onSuccess?.(response, rawFile);
 		});
 	}
-}
+};
 
 async function onBeforeUpload(rawFile: UploadRawFile) {
 	if (!formData.currentType) {
@@ -83,9 +83,9 @@ async function onBeforeUpload(rawFile: UploadRawFile) {
 	return hookResult;
 }
 
-const uploadContentRef = ref<any>();
-function abort(uploadFile: UploadFile) {
-	return uploadContentRef.value!.upload?.abort(uploadFile);
+const uploadContentRef = shallowRef<UploadContentInstance>();
+function abort(uploadFile?: I_uploadUserFile) {
+	return uploadContentRef.value?.abort(uploadFile);
 }
 defineExpose({
 	abort,

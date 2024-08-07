@@ -1,124 +1,162 @@
-import { PropType, ExtractPropTypes } from 'vue';
-import { UploadHooks, UploadUserFile } from 'element-plus';
-import { I_fileListType } from './use-upload-list';
+import { ExtractPropTypes, type PropType } from 'vue';
+import { UploadData } from 'element-plus';
+import { ajaxUpload, UploadAjaxError } from 'element-plus/es/components/upload/src/ajax';
+import type UploadContent from './upload-content.vue';
 import { globalComponentConfig } from '../../index';
+import {
+	Awaitable,
+	mutable,
+	definePropType,
+	T_uploadUserFiles,
+	UploadRawFile,
+	I_uploadUserFile,
+	UploadHooks,
+	UploadRequestHandler,
+	UploadProgressEvent,
+} from '../types';
 
-export const uploadContentEmits = [];
-export const uploadContentProps = {
+export const uploadBaseProps = {
+	/**
+	 * @description 请求 URL, 必须传递
+	 */
+	action: {
+		type: String,
+		default: '#',
+	},
+	/**
+	 * @description 请求标头
+	 */
+	headers: {
+		type: definePropType<Headers | Record<string, any>>(Object),
+	},
+	/**
+	 * @description 设置上传请求方式
+	 */
+	method: {
+		type: String,
+		default: 'post',
+	},
+	/**
+	 * @description请求的附加选项
+	 */
+	data: {
+		type: definePropType<Awaitable<UploadData> | ((rawFile: UploadRawFile) => Awaitable<UploadData>)>([Object, Function, Promise]),
+		default: () => mutable({} as const),
+	},
+	/**
+	 * @description 是否允许上传多个文件
+	 */
+	multiple: Boolean,
+	/**
+	 * @description 上传文件的key名
+	 */
+	name: {
+		type: String,
+		default: 'file',
+	},
+	/**
+	 * @description 是否支持拖拽上传
+	 */
+	drag: Boolean,
+	/**
+	 * @description 指示是否应使用 Cookie、授权标头或 TLS 客户端证书等凭据进行跨站点 Access-Control 请求。该设置 withCredentials 对同源请求没有影响。
+	 * 此外，此标志还用于指示何时在响应中忽略 cookie。缺省值为 false。
+	 */
+	withCredentials: Boolean,
+	/**
+	 * @description 是否显示已上传的文件列表
+	 */
+	showFileList: {
+		type: Boolean,
+		default: true,
+	},
+	/**
+	 * @description accepted [file types](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept)
+	 */
+	accept: {
+		type: String,
+		default: '',
+	},
+	/**
+	 * @description default uploaded files
+	 */
+	fileList: {
+		type: definePropType<T_uploadUserFiles>(Array),
+		default: () => [],
+	},
+	/**
+	 * @description whether to auto upload file
+	 */
+	autoUpload: {
+		type: Boolean,
+		default: true,
+	},
+	/**
+	 * @description override default xhr behavior, allowing you to implement your own upload-file's request
+	 */
+	httpRequest: {
+		type: definePropType<UploadRequestHandler>(Function),
+		default: ajaxUpload,
+	},
+	/**
+	 * @description whether to disable upload
+	 */
+	disabled: Boolean,
+	/**
+	 * @description maximum number of uploads allowed
+	 */
+	limit: Number,
+	uploadContentStyle: {
+		// type: Object,
+		type: definePropType<Record<string, string>>(Object),
+		default: () => globalComponentConfig.upload.uploadContentStyle,
+	},
+	// 上传文件的地址
+	uploadShowPath: {
+		type: String as PropType<string>,
+		default: () => globalComponentConfig.upload.uploadShowPath,
+	},
 	// 上传区域的提示文本
 	text: {
 		type: String,
 		default: () => globalComponentConfig.upload.text,
 	},
-	// 请求 URL
-	action: {
-		type: String,
-		default: () => globalComponentConfig.upload.action,
-	},
-	uploadContentStyle: {
-		type: Object,
-		default: () => globalComponentConfig.upload.uploadContentStyle,
-	},
-	// 上传文件数量
-	limit: {
-		type: Number,
-		default: () => globalComponentConfig.upload.limit,
-	},
-	// 是否禁用
-	disabled: {
-		type: Boolean,
-		default: false,
-	},
-	// 是否允许多选
-	multiple: {
-		type: Boolean,
-		default: () => globalComponentConfig.upload.multiple,
-	},
-	// 单个上传文件大小限制(M)
-	fileSize: {
-		type: Number,
-		default: () => globalComponentConfig.upload.fileSize,
-	},
-	// 允许上传的文件类型, 例如['png', 'jpg', 'jpeg']
-	fileType: {
-		type: Array as PropType<string[] | null | undefined | false>,
-		default: () => globalComponentConfig.upload.fileType,
-	},
-	// 上传列表
-	fileList: {
-		type: Array as PropType<Array<UploadUserFile & { [x: string]: any }>>,
-		default: () => [],
-	},
-	// 上传文件的额外参数
-	data: {
-		type: Object as PropType<Record<string, any>>,
-		default: () => globalComponentConfig.upload.data,
-	},
-	// 上传的文件字段名
-	name: {
-		type: String,
-		default: () => globalComponentConfig.upload.name,
-	},
-	// 是否允许拖拽上传
-	drag: {
-		type: Boolean,
-		default: () => globalComponentConfig.upload.drag,
-	},
-	// 是否自动上传
-	autoUpload: {
-		type: Boolean,
-		default: () => globalComponentConfig.upload.autoUpload,
-	},
-	// 设置上传的请求头部
-	headers: {
-		type: Object as PropType<Record<string, any>>,
-		default: () => ({}),
-	},
+} as const;
+export const uploadContentProps = {
+	...uploadBaseProps,
 	beforeUpload: {
-		type: Function as PropType<UploadHooks['beforeUpload']>,
-		default: () => globalComponentConfig.upload.beforeUpload,
-	},
-	beforeRemove: {
-		type: Function as PropType<UploadHooks['beforeRemove']>,
-		default: () => globalComponentConfig.upload.beforeRemove,
+		type: definePropType<UploadHooks['beforeUpload']>(Function),
+		default: () => {},
 	},
 	onRemove: {
-		type: Function as PropType<UploadHooks['onRemove']>,
-		default: () => globalComponentConfig.upload.onRemove,
+		type: definePropType<(file: I_uploadUserFile | UploadRawFile, rawFile?: UploadRawFile) => void>(Function),
+		default: () => {},
 	},
-	onChange: {
-		type: Function as PropType<UploadHooks['onChange']>,
-		default: () => globalComponentConfig.upload.onChange,
-	},
-	// 点击文件列表中已上传的文件时的钩子
-	onPreview: {
-		type: Function as PropType<(file: I_fileListType) => void>,
-		default: () => globalComponentConfig.upload.onPreview,
+	onStart: {
+		type: definePropType<(rawFile: UploadRawFile) => void>(Function),
+		default: () => {},
 	},
 	onSuccess: {
-		type: Function as PropType<UploadHooks['onSuccess']>,
-		default: () => globalComponentConfig.upload.onSuccess,
+		type: definePropType<(response: any, rawFile: UploadRawFile) => unknown>(Function),
+		default: () => {},
 	},
 	onProgress: {
-		type: Function as PropType<UploadHooks['onProgress']>,
-		default: () => globalComponentConfig.upload.onProgress,
+		type: definePropType<(evt: UploadProgressEvent, rawFile: UploadRawFile) => void>(Function),
+		default: () => {},
 	},
 	onError: {
-		type: Function as PropType<UploadHooks['onError']>,
-		default: () => globalComponentConfig.upload.onError,
+		type: definePropType<(err: UploadAjaxError, rawFile: UploadRawFile) => void>(Function),
+		default: () => {},
 	},
 	onExceed: {
-		type: Function as PropType<UploadHooks['onExceed']>,
-		default: () => globalComponentConfig.upload.onExceed,
+		type: definePropType<UploadHooks['onExceed']>(Function),
+		default: () => {},
 	},
 	// 文件上传状态发生变化时触发的钩子（成功或失败都返回false，上传中返回 true）
 	onUploadingStatus: {
-		type: Function as PropType<(file: boolean) => void>,
+		type: definePropType<UploadHooks['onUploadingStatus']>(Function),
 		default: () => globalComponentConfig.upload.onUploadingStatus,
 	},
-	onlyOfficeFileList: {
-		type: Array as PropType<I_fileListType[]>,
-		default: () => globalComponentConfig.upload.onlyOfficeFileList,
-	},
-};
+} as const;
 export type UploadContentProps = ExtractPropTypes<typeof uploadContentProps>;
+export type UploadContentInstance = InstanceType<typeof UploadContent>;

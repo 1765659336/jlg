@@ -1,4 +1,4 @@
-import { I_fileListType } from './components/use-upload-list';
+import { I_uploadUserFile } from './types';
 
 export function useUtils(fileRemotePath: string) {
 	const openLink = (link: string): void => {
@@ -91,7 +91,7 @@ export function useUtils(fileRemotePath: string) {
 		document.body.removeChild(a);
 	}
 	// 获取图片的地址
-	function getImageUrl(file: I_fileListType, fileName = 'name') {
+	function getImageUrl(file: I_uploadUserFile, fileName = 'name') {
 		const path = file.path;
 		const name = file[fileName];
 		return {

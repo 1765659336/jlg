@@ -86,15 +86,24 @@ import { computed, ref } from 'vue';
 import { useUtils } from '../utils';
 
 // 引入svg
+// @ts-expect-error 引入svg
 import excelComponent from '../assets/excel.svg?component';
+// @ts-expect-error 引入svg
 import jpegComponent from '../assets/jpeg.svg?component';
+// @ts-expect-error 引入svg
 import jpgComponent from '../assets/jpg.svg?component';
+// @ts-expect-error 引入svg
 import pdfComponent from '../assets/pdf.svg?component';
+// @ts-expect-error 引入svg
 import pngComponent from '../assets/png.svg?component';
+// @ts-expect-error 引入svg
 import wordComponent from '../assets/word.svg?component';
+// @ts-expect-error 引入svg
 import pptComponent from '../assets/ppt.svg?component';
+// @ts-expect-error 引入svg
 import unknownFile from '../assets/file-default.svg?component';
-import { I_fileListType, uploadListEmits, uploadListProps } from './use-upload-list';
+import { uploadListEmits, uploadListProps } from './use-upload-list';
+import { I_uploadUserFile } from '../types';
 
 const emit = defineEmits(uploadListEmits);
 const props = defineProps(uploadListProps);
@@ -106,7 +115,7 @@ const previewSrcList = computed(() => {
 });
 
 const isShowImageViewer = ref(false);
-const currentRow = ref<I_fileListType>();
+const currentRow = ref<I_uploadUserFile>();
 // 预览图片
 const handlePreviewImages = (file: any) => {
 	currentRow.value = file;
@@ -164,14 +173,14 @@ const downloadFile = async (file: any) => {
 	document.body.removeChild(a);
 };
 
-const deleteRowEvent = (file: I_fileListType) => {
+const deleteRowEvent = (file: I_uploadUserFile) => {
 	emit('delete', file, props.fileList?.indexOf(file));
 };
-const handlePreview = (file: I_fileListType) => {
+const handlePreview = (file: I_uploadUserFile) => {
 	if (props.onPreview && typeof props.onPreview === 'function') return props.onPreview(file);
 };
 
-const handleRestFile = (file: I_fileListType) => {
+const handleRestFile = (file: I_uploadUserFile) => {
 	if (!file) return;
 	handlePreview(file);
 	if (isImage(file.ext)) {
@@ -199,7 +208,7 @@ const handlePreviewWord = (file: any) => {
 		}
 
 		ipcRenderer.send('previewWord', {
-			preurl: props.uploadShowPath as string,
+			preurl: props.uploadShowPath,
 			...file,
 		});
 	} catch (e) {

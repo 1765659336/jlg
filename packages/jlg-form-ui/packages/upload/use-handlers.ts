@@ -1,81 +1,126 @@
-import type { UploadContentProps } from './components/use-upload-content';
-import { useUtils } from './utils';
-import { ElMessage, UploadProps } from 'element-plus';
-import { isFunction } from 'lodash-unified';
+import type { UploadContentInstance, UploadContentProps } from './components/use-upload-content';
+import type { UploadStatus } from 'element-plus';
+import { genFileId, ElMessage } from 'element-plus';
+import { isNil } from 'lodash-unified';
+import { Ref, ShallowRef } from 'vue';
+import { watch } from 'vue';
+import { UploadAllProps } from './use-upload';
+import { I_uploadUserFile, T_uploadUserFiles, UploadRawFile } from './types';
+const revokeFileObjectURL = (file: I_uploadUserFile) => {
+	if (file.url?.startsWith('blob:')) {
+		URL.revokeObjectURL(file.url);
+	}
+};
+export const useHandlers = (props: UploadAllProps, uploadRef: ShallowRef<UploadContentInstance | undefined>, uploadFiles: Ref<T_uploadUserFiles>) => {
+	const getFile = (rawFile: UploadRawFile) => uploadFiles.value.find((file) => file.$uid === rawFile.$uid);
+	const getFileIndex = (rawFile: UploadRawFile) => uploadFiles.value.findIndex((file) => file.$uid === rawFile.$uid);
 
-export const useHandlers = (props: UploadContentProps, fileList: any) => {
-	const { checkFileType } = useUtils('');
-	const beforeUpload: UploadProps['beforeUpload'] = async (rawFile) => {
-		// 校验文件类型
-		if (props.fileType) {
-			const fileExtension = checkFileType(rawFile.name);
-			const isTypeOk = props.fileType.some((type: string) => {
-				return fileExtension && fileExtension.indexOf(type) > -1;
-			});
-			if (!isTypeOk) {
-				ElMessage.warning(`文件格式不正确，请上传${props.fileType.join('/')}格式文件`);
-				return false;
-			}
-		}
-		let hookResult = true;
-		if (props.beforeUpload) {
-			try {
-				hookResult = (await props.beforeUpload(rawFile)) as boolean;
-			} catch (error) {
-				hookResult = false;
-			}
-		}
-		// if (props.disabled === true) return false;
-		return hookResult;
+	function abort(file: I_uploadUserFile) {
+		uploadRef.value?.abort(file);
+	}
+
+	function clearFiles(
+		/** @default ['ready', 'uploading', 'success', 'fail'] */
+		states: UploadStatus[] = ['ready', 'uploading', 'success', 'fail']
+	) {
+		uploadFiles.value = uploadFiles.value.filter((row) => !states.includes(row.status));
+	}
+
+	const handleError: UploadContentProps['onError'] = (err, rawFile) => {
+		const file = getFile(rawFile);
+		if (!file) return;
+
+		console.error(err);
+		file.status = 'fail';
+		uploadFiles.value.splice(uploadFiles.value.indexOf(file), 1);
+		props.onError(err, file, uploadFiles.value);
+		props.onChange(file, uploadFiles.value);
 	};
 
-	const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
-		props.onRemove && props.onRemove(file, uploadFiles);
+	const handleProgress: UploadContentProps['onProgress'] = (evt, rawFile) => {
+		const file = getFile(rawFile);
+		if (!file) return;
+
+		props.onProgress(evt, file, uploadFiles.value);
+		file.status = 'uploading';
+		file.percentage = Math.round(evt.percent);
 	};
 
-	const handleChange: UploadProps['onChange'] = (file, uploadFiles) => {
-		props.onChange && props.onChange(file, uploadFiles);
-	};
-
-	const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
-		props.onPreview && props.onPreview(uploadFile);
-	};
-
-	const handleSuccess: UploadProps['onSuccess'] = async (response, uploadFile, uploadFiles) => {
+	const handleSuccess: UploadContentProps['onSuccess'] = (response, rawFile) => {
 		const { status, content } = response;
 		if (status === 1) {
-			if (props.onSuccess && isFunction(props.onSuccess)) {
-				await props.onSuccess(response, uploadFile, uploadFiles);
-			}
-			const index = fileList.value.findIndex((item: any) => item.uid === uploadFile.uid);
-			fileList.value[index] = {
+			const index = getFileIndex(rawFile);
+			if (index === -1) return;
+			uploadFiles.value[index] = {
 				...content,
-				status: response.status,
+				status: 'success',
 			};
+			const file = uploadFiles.value[index];
+			props.onSuccess(response, file, uploadFiles.value);
+			props.onChange(file, uploadFiles.value);
 		} else {
 			ElMessage.error('上传失败!');
 		}
 	};
 
-	const handleProgress: UploadProps['onProgress'] = (uploadProgressEvent, uploadFile, uploadFiles) => {
-		props.onProgress && props.onProgress(uploadProgressEvent, uploadFile, uploadFiles);
+	const handleStart: UploadContentProps['onStart'] = (file) => {
+		if (isNil(file.$uid)) file.$uid = genFileId();
+		const uploadFile: I_uploadUserFile = {
+			name: file.name,
+			percentage: 0,
+			status: 'ready',
+			size: file.size,
+			raw: file,
+			$uid: file.$uid,
+		};
+		uploadFiles.value = [...uploadFiles.value, uploadFile];
+		props.onChange(uploadFile, uploadFiles.value);
 	};
-	const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
-		// 自定义超出限制时的钩子函数
-		if (props.onExceed && isFunction(props.onExceed)) {
-			props.onExceed(files, uploadFiles);
+
+	const handleRemove: UploadContentProps['onRemove'] = async (file): Promise<void> => {
+		const uploadFile = file instanceof File ? getFile(file) : file;
+		if (!uploadFile) throw new Error('未找到要删除的文件');
+
+		const doRemove = (file: I_uploadUserFile) => {
+			abort(file);
+			const fileList = uploadFiles.value;
+			fileList.splice(fileList.indexOf(file), 1);
+			props.onRemove(file, fileList);
+			revokeFileObjectURL(file);
+		};
+
+		if (props.beforeRemove) {
+			const before = await props.beforeRemove(uploadFile, uploadFiles.value);
+			if (before !== false) doRemove(uploadFile);
 		} else {
-			ElMessage.warning(`当前限制选择 ${props.limit} 个, 本次选择了 ${files.length}个文件, 加起来是 ${files.length + uploadFiles.length} 个文件`);
+			doRemove(uploadFile);
 		}
 	};
 
+	function submit() {
+		uploadFiles.value.filter(({ status }) => status === 'ready').forEach(({ raw }) => raw && uploadRef.value?.upload(raw));
+	}
+
+	watch(
+		uploadFiles,
+		(files) => {
+			for (const file of files) {
+				file.$uid ||= genFileId();
+				file.status ||= 'success';
+			}
+		},
+		{ immediate: true, deep: true }
+	);
+
 	return {
-		beforeUpload,
-		handleRemove,
-		handleChange,
-		handlePreview,
-		handleSuccess,
+		abort,
+		clearFiles,
+		handleError,
 		handleProgress,
-		handleExceed,
+		handleStart,
+		handleSuccess,
+		handleRemove,
+		submit,
+		revokeFileObjectURL,
 	};
 };

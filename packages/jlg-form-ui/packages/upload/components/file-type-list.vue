@@ -52,7 +52,7 @@ const props = defineProps({
 	},
 	onAsideClick: {
 		type: Function,
-		default: null,
+		default: () => {},
 	},
 });
 
@@ -86,6 +86,6 @@ defineExpose({
 	fileType,
 });
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import '../styles/file-type-list.scss';
 </style>
