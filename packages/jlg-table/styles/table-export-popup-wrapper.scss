@@ -1,0 +1,48 @@
+.jlg-table-export-popup-wrapper {
+
+  .jlg-export--panel {
+    &__header {
+      padding-top: 20px;
+      .el-checkbox{
+        margin-right: 0;
+        height: 16px;
+        margin-bottom: 30px;
+        span{
+          font-weight: 400;
+          font-size: var(--el-font-size-extra-smal);
+          color: #1F2329;
+        }
+      }
+    }
+    &__content {
+       max-height: 450px;
+      overflow-y: auto;
+      .el-checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .el-checkbox {
+        margin-right: 0;
+        height: 16px;
+        margin-bottom: 20px;
+
+        .el-checkbox__label {
+          max-width: 140px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          span{
+            font-weight: 400;
+            font-size: var(--el-font-size-extra-smal);
+            color: #1F2329;
+          }
+        }
+      }
+    }
+  }
+  .modal--footer{
+    display: flex;
+    justify-content: space-between;
+  }
+}

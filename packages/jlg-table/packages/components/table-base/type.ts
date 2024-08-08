@@ -4,8 +4,7 @@ import { VxeTableDataRow, VxeTableDefines } from 'vxe-table/types/table';
 import { AppContext, Component, Ref, VNodeTypes } from 'vue';
 import TableFilter from '../table-filter/index.vue';
 import TableFilterTemplate from '../table-filter/template-index.vue';
-// import { ComponentPublicInstance } from 'vue';
-
+import { I_Table_Export_Panel_Props, JlgTableExportConstructor } from '../export/type';
 export type T_Msg = boolean | (() => boolean) | Promise<boolean>;
 type T_Destroy = {
 	onDestroy: () => void;
@@ -27,6 +26,7 @@ export type T_Save_Config_Type = 'resizable' | 'sortable' | 'reset' | ' save' | 
 export type JlgGridInstance<T = any> = {
 	xGrid: VxeGridInstance<T>;
 	$filter: T_Table_Filter | T_Table_Filter_Template;
+	$export: JlgTableExportConstructor;
 	reactData: Record<string, any>;
 	customStore: Record<string, any>;
 	commitProxy: (code: string | VxeToolbarPropTypes.ButtonConfig, msg: T_Msg, ...args: any[]) => Promise<any>;
@@ -43,7 +43,8 @@ export type JlgGridInstance<T = any> = {
 	onClickOutside: () => void;
 };
 
-export declare interface I_Table_Grid_Props<D = VxeTableDataRow> extends Omit<VxeGridProps<D>, 'formConfig' | 'filterConfig' | 'loadingConfig'> {
+export declare interface I_Table_Grid_Props<D = VxeTableDataRow>
+	extends Omit<VxeGridProps<D>, 'formConfig' | 'filterConfig' | 'loadingConfig' | 'exportConfig'> {
 	tableFilterConfig?: I_Table_Filter_Props;
 	operationConfig?: {
 		/**
@@ -87,4 +88,8 @@ export declare interface I_Table_Grid_Props<D = VxeTableDataRow> extends Omit<Vx
 		 */
 		text?: string;
 	};
+	/**
+	 * 导出配置
+	 */
+	exportConfig?: I_Table_Export_Panel_Props;
 }

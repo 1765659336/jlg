@@ -1,6 +1,8 @@
 <template>
 	<div class="jlg-table-base vxe-table--render-default">
-		<div ref="customTemplateRef" class="custom-template"></div>
+		<div ref="customTemplateRef" class="custom-template">
+			<jlg-table-export-panel ref="$export" v-bind="props.exportConfig" :x-grid="xGrid" />
+		</div>
 		<div class="jlg-table-container">
 			<vxe-grid
 				ref="xGrid"
@@ -9,6 +11,7 @@
 				:stripe="customStore.stripe"
 				:size="customStore.size"
 				:align="customStore.align"
+				:export-config="undefined"
 				@resizable-change="handleResizableChange"
 			>
 				<template #top>
@@ -60,6 +63,8 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import Sortable from 'sortablejs';
 import { useRenderCustomTemplate } from './useRenderCustomTemplate';
 import { FIlTER_ITEMS_INJECTION_KEY } from '../../constants/injection-key';
+import { JlgTableExportConstructor } from '../export/type';
+import JlgTableExportPanel from '../export/export-panel.vue';
 
 defineOptions({
 	name: 'JlgGrid',
@@ -131,6 +136,7 @@ const props = withDefaults(defineProps<I_Table_Grid_Props>(), {
 	sortConfig: () => GlobalConfig.table.sortConfig,
 	loadingConfig: () => GlobalConfig.table.loadingConfig,
 	emptyRender: () => GlobalConfig.table.emptyRender,
+	exportConfig: () => GlobalConfig.table.exportConfig,
 	scrollX: () => GlobalConfig.table.scrollX,
 	scrollY: () => GlobalConfig.table.scrollY,
 });
@@ -139,6 +145,7 @@ const emit = defineEmits<{
 }>();
 
 const xGrid = ref<VxeGridInstance>();
+const $export = ref<JlgTableExportConstructor>();
 const customTemplateRef = ref<HTMLElement>();
 const formElemRef = ref<HTMLElement>();
 
@@ -725,6 +732,7 @@ const computeGridProps = computed(() => {
 defineExpose({
 	xGrid,
 	$filter: tableFilterRef,
+	$export,
 	reactData,
 	customStore,
 	commitProxy,

@@ -14,6 +14,7 @@ export type T_Global_Config_Props = {
 	table?: I_Table_Grid_Props;
 	modal?: {
 		loadingComponent?: I_Table_Grid_Props['loadingConfig']['loadingComponent'];
+		exportLoadingComponent?: I_Table_Grid_Props['loadingConfig']['loadingComponent'];
 	};
 	icon?: {
 		[key: string]: string;
@@ -104,11 +105,9 @@ const GlobalConfig: T_Global_Config_Props = {
 			getSysConfig: null,
 			saveSysConfig: null,
 		},
-		importConfig: {
-			modes: ['insert', 'covering'],
-		},
+		importConfig: {},
 		exportConfig: {
-			modes: ['current', 'selected'],
+			sortFieId: 'sortIndex',
 		},
 		printConfig: {
 			modes: ['current', 'selected'],
@@ -157,6 +156,7 @@ const GlobalConfig: T_Global_Config_Props = {
 	},
 	modal: {
 		loadingComponent: null,
+		exportLoadingComponent: null,
 	},
 	icon: {
 		// loading

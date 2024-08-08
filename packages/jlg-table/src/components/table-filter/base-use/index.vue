@@ -5,7 +5,7 @@
 			<vxe-button @click="handleDelete">删除</vxe-button>
 			<vxe-button @click="handleDelete2">删除2</vxe-button>
 			<vxe-button>保存</vxe-button>
-			<vxe-button>导出</vxe-button>
+			<vxe-button @click="handleExport">导出</vxe-button>
 		</template>
 		<template #toolbar_tools>
 			<!--			<el-button type="primary" @click="resetCustomEvent">恢复默认</el-button>-->
@@ -536,6 +536,53 @@ const gridOptions = reactive<I_Table_Grid_Props<RowVO>>({
 		enabled: true,
 		autoStorage: true,
 	},
+	exportConfig: {
+		getExportConfig: () => {
+			return new Promise((resolve) => {
+				resolve([
+					{
+						dynamicPageColUid: '1',
+						displayName: 'ID',
+						dbFieldName: 'id',
+						dbFieldType: 6,
+						isExportCol: 1,
+					},
+					{
+						dynamicPageColUid: '2',
+						displayName: '姓名',
+						dbFieldName: 'name',
+						dbFieldType: 1,
+						isExportCol: 1,
+					},
+					{
+						dynamicPageColUid: '3',
+						displayName: '昵称',
+						dbFieldName: 'nickname',
+						dbFieldType: 1,
+						isExportCol: 1,
+					},
+					{
+						dynamicPageColUid: '4',
+						displayName: '角色',
+						dbFieldName: 'role',
+						dbFieldType: 6,
+						isExportCol: 0,
+					},
+					{
+						dynamicPageColUid: '5',
+						displayName: '性别',
+						dbFieldName: 'sex',
+						dbFieldType: 1,
+						isExportCol: 1,
+					},
+				]);
+			});
+		},
+		saveExportConfig: ({ data, $export }) => {
+			console.log('data', data);
+			console.log('$export', $export);
+		},
+	},
 });
 // 模拟分页接口
 const mockGetPageList = (params: VxeGridPropTypes.ProxyAjaxQueryParams<RowVO>) => {
@@ -678,6 +725,9 @@ function handleDelete() {
 function handleDelete2() {
 	jlgGrid.value?.commitProxy('delete', true);
 }
+const handleExport = () => {
+	jlgGrid.value?.$export.openExportPanel();
+};
 // const zoomEvent = () => {
 // 	const $grid = jlgGrid.value?.xGrid;
 // 	if ($grid) {
