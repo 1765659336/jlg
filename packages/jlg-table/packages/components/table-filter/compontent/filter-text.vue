@@ -9,6 +9,7 @@
 				size="default"
 				@focus="isFocus = true"
 				@blur="isFocus = false"
+				@keyup.enter="handleEnter"
 			>
 			</el-input>
 			<template v-if="isShowSelect">
@@ -38,7 +39,7 @@ defineOptions({
 	name: 'FilterText',
 });
 const modelValue = defineModel<string>({ required: true });
-const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean; showSelect: boolean }>(), {
+const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean; showSelect: boolean; onEnter?: () => void }>(), {
 	showLabel: false,
 	showSelect: false,
 });
@@ -61,5 +62,10 @@ const handleSelectChange = (value: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => {
 			item.searchType = value;
 		}
 	});
+};
+const handleEnter = () => {
+	if (props.onEnter) {
+		props.onEnter();
+	}
 };
 </script>

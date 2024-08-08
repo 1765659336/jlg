@@ -30,6 +30,7 @@
 									:search-type="item.searchType"
 									:show-label="true"
 									:show-select="true"
+									:on-enter="props.onHandleSave"
 									:item="item"
 								/>
 							</template>

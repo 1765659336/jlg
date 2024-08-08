@@ -10,6 +10,7 @@
 				@focus="isFocus = true"
 				@blur="isFocus = false"
 				@mousewheel.prevent
+				@keyup.enter="handleEnter"
 			>
 			</el-input-number>
 			<template v-if="isShowSelect">
@@ -39,7 +40,7 @@ defineOptions({
 	name: 'FilterInputNumber',
 });
 const modelValue = defineModel<number>({ required: true });
-const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean; showSelect: boolean }>(), {
+const props = withDefaults(defineProps<{ item: I_Table_Filter_Item; showLabel: boolean; showSelect: boolean; onEnter?: () => void }>(), {
 	showLabel: false,
 	showSelect: false,
 });
@@ -61,5 +62,10 @@ const handleSelectChange = (value: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => {
 			item.searchType = value;
 		}
 	});
+};
+const handleEnter = () => {
+	if (props.onEnter) {
+		props.onEnter();
+	}
 };
 </script>

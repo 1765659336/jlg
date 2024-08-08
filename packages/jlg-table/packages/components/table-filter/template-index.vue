@@ -77,7 +77,13 @@
 									</el-tooltip>
 								</template>
 								<template #default>
-									<component :is="renderContentTitle(item)" v-model="form[item.field]" v-model:search-type="item.searchType" :item="item" />
+									<component
+										:is="renderContentTitle(item)"
+										v-model="form[item.field]"
+										v-model:search-type="item.searchType"
+										:item="item"
+										:on-enter="handleSave"
+									/>
 								</template>
 							</el-form-item>
 						</div>
@@ -326,6 +332,7 @@ function handleSave() {
 }
 
 const handlePopoverSave = () => {
+	isShowQuickSearch.value = false;
 	templateStore.currentTemplateUId = '';
 	emit('save', form);
 };
