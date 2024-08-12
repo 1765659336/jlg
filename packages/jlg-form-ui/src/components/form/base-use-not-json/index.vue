@@ -19,8 +19,6 @@
 				<jlg-form-item label="Input测试文件上传">
 					<jlg-upload
 						v-model:file-list="formData.fileList"
-						type="multiple-type-card"
-						:multiple-type-config="multipleTypeConfig"
 						action="http://218.77.107.37:48999/Upload/Sys5011G/File"
 						upload-show-path="http://218.77.107.37:49000/"
 						:on-uploading-status="onUploadingStatus"
@@ -183,7 +181,6 @@ const deleteUid = () => {
 };
 const isLoad = ref(false);
 const onUploadingStatus = (v) => {
-	console.log(v);
 	isLoad.value = v;
 };
 const onSuccess = (response: any, uploadFile: I_uploadUserFile, uploadFiles: T_uploadUserFiles) => {

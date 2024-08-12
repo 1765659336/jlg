@@ -12,7 +12,7 @@
 						ref="uploadContentRef"
 						v-model:file-list="uploadFiles"
 						:class="{ 'multiple-upload-content': !props.disabled }"
-						style="margin-right: 12px; margin-bottom: 12px"
+						:wrap-style="{ marginRight: '12px', marginBottom: '12px' }"
 						:disabled="true"
 						:drag="false"
 						@click.stop="showFileModalFunc"
@@ -80,7 +80,7 @@
 			ref="uploadRef"
 			v-bind="uploadContentProps"
 			v-model:file-list="uploadFiles"
-			style="margin-right: 12px; margin-bottom: 12px"
+			:wrap-style="{ marginRight: '12px', marginBottom: '12px' }"
 		>
 			<slot name="trigger" />
 		</upload-content>
@@ -112,7 +112,6 @@ export default defineComponent({
 import { computed, defineModel, shallowRef, ref } from 'vue';
 import { FormItemContext, formItemContextKey, uploadContextKey } from 'element-plus';
 import { ElAside, ElContainer, ElMain, ElDialog } from 'element-plus';
-import { isFunction } from 'lodash-unified';
 import UploadContent from './components/upload-content.vue';
 import UploadList from './components/upload-list.vue';
 import FileTypeList from './components/file-type-list.vue';
@@ -197,8 +196,6 @@ function handleBefore() {
 
 // 删除文件
 function onDeleteFileEvent(uploadFile: I_uploadUserFile) {
-	const index = uploadFiles.value.findIndex((item: Partial<I_uploadUserFile>) => item.$uid === uploadFile.$uid);
-	uploadFiles.value.splice(index, 1);
 	if (uploadFile.status === 'uploading' || uploadFile.status === 'ready') {
 		// 如果文件正在上传或者等待上传，点击关闭按钮时调用abort方法停止上传
 		if (uploadFileModelRef.value && props.type === 'multiple-type-card') {
@@ -207,9 +204,7 @@ function onDeleteFileEvent(uploadFile: I_uploadUserFile) {
 			uploadRef.value?.abort(uploadFile);
 		}
 	}
-	if (props.onRemove && isFunction(props.onRemove)) {
-		props.onRemove(uploadFile, uploadFiles.value);
-	}
+	handleRemove(uploadFile);
 }
 
 defineExpose({

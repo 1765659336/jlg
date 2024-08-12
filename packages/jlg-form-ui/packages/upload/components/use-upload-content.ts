@@ -106,6 +106,11 @@ export const uploadBaseProps = {
 	 * @description maximum number of uploads allowed
 	 */
 	limit: Number,
+	wrapStyle: {
+		// type: Object,
+		type: definePropType<Record<string, string>>(Object),
+		default: null,
+	},
 	uploadContentStyle: {
 		// type: Object,
 		type: definePropType<Record<string, string>>(Object),

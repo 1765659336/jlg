@@ -23,14 +23,24 @@ export const useHandlers = (props: UploadAllProps, uploadRef: ShallowRef<UploadC
 		/** @default ['ready', 'uploading', 'success', 'fail'] */
 		states: UploadStatus[] = ['ready', 'uploading', 'success', 'fail']
 	) {
-		uploadFiles.value = uploadFiles.value.filter((row) => !states.includes(row.status));
+		// uploadFiles.value = uploadFiles.value.filter((row) => !states.includes(row.status));
+		/**
+		 * @description fix: 直接修改 uploadFiles.value 可能会导致 uploadFiles.value 的实际值与修改后的值不一致,具体原因并不清楚,所以改成 splice
+		 * @description uploadFiles.value = [];
+		 * @description 按照直觉来说,这里下面代码打印出来的 uploadFiles.value.length 应该是 0,但是实际上是 大于 0
+		 * @description  console.log('uploadFiles.value', uploadFiles.value.length, states);
+		 *
+		 *  */
+		for (let i = uploadFiles.value.length - 1; i >= 0; i--) {
+			if (states.includes(uploadFiles.value[i].status)) {
+				uploadFiles.value.splice(i, 1);
+			}
+		}
 	}
 
 	const handleError: UploadContentProps['onError'] = (err, rawFile) => {
 		const file = getFile(rawFile);
 		if (!file) return;
-
-		console.error(err);
 		file.status = 'fail';
 		uploadFiles.value.splice(uploadFiles.value.indexOf(file), 1);
 		props.onError(err, file, uploadFiles.value);

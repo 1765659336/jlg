@@ -1,5 +1,5 @@
 <template>
-	<div ref="uploadContentRef" class="jlg-upload-content">
+	<div ref="uploadContentRef" class="jlg-upload-content" :style="{ ...props.wrapStyle }">
 		<div
 			:class="['el-upload', 'el-upload--text', props.drag ? 'is-drag' : '']"
 			tabindex="0"
@@ -7,7 +7,7 @@
 			@keydown.self.enter.space="handleKeydown"
 		>
 			<template v-if="drag">
-				<upload-dragger :disabled="disabled" @file="uploadFiles">
+				<upload-dragger :disabled="disabled" @file="handleUploadFiles">
 					<slot>
 						<div :class="{ 'file-upload-container': true, 'is-disabled': props.disabled }" :style="{ ...props.uploadContentStyle }">
 							<div class="uploader">
@@ -58,12 +58,13 @@ import { Plus } from '@element-plus/icons-vue';
 
 defineOptions({
 	name: 'JlgUploadContent',
+	inheritAttrs: false,
 });
 const props = defineProps(uploadContentProps);
 const disabled = useFormDisabled();
 const requests = shallowRef<Record<string, XMLHttpRequest | Promise<unknown>>>({});
 const inputRef = shallowRef<HTMLInputElement>();
-const uploadFiles = (files: File[]) => {
+const handleUploadFiles = (files: File[]) => {
 	if (files.length === 0) return;
 
 	const { autoUpload, limit, fileList, multiple, onStart, onExceed } = props;
@@ -181,7 +182,7 @@ const doUpload = async (rawFile: UploadRawFile, beforeData?: UploadContentProps[
 const handleChange = (e: Event) => {
 	const files = (e.target as HTMLInputElement).files;
 	if (!files) return;
-	uploadFiles(Array.from(files));
+	handleUploadFiles(Array.from(files));
 };
 
 const handleClick = () => {

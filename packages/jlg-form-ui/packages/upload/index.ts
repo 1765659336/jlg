@@ -23,4 +23,6 @@ JlgUploadFileModel.install = (Vue: App) => {
 	Vue.component('JlgUploadFileModel', JlgUploadFileModel);
 };
 
+export declare type JlgUploadInstance = InstanceType<typeof JlgUpload>;
+
 export { JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod };
