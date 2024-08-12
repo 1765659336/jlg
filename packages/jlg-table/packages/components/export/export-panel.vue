@@ -115,7 +115,6 @@ const confirm = () => {
 		}
 		return false;
 	});
-	console.log('orderByData', orderByData);
 	props.saveExportConfig({
 		data: data,
 		$export,

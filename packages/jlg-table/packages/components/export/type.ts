@@ -1,5 +1,9 @@
-import { UploadProgressEvent } from 'element-plus';
 import { VxeGridInstance } from 'vxe-table';
+import { AxiosProgressEvent } from 'axios';
+
+export interface I_AxiosProgressEvent extends AxiosProgressEvent {
+	percent: number;
+}
 
 export interface I_Table_Export_React_Data {
 	checkAll: boolean;
@@ -12,6 +16,8 @@ export interface I_Table_Export_React_Data {
 	isSaveConfig: boolean;
 	checkedFields: string[];
 	config: I_Table_Export_Config[];
+	// 导出进度
+	progressEvt?: I_AxiosProgressEvent;
 }
 export interface JlgTableExportConstructor {
 	xID: string;
@@ -19,7 +25,6 @@ export interface JlgTableExportConstructor {
 	reactData: I_Table_Export_React_Data;
 	openExportPanel: () => void;
 	cancelExportPanel: () => void;
-	progressEvt?: UploadProgressEvent;
 }
 
 export declare interface I_Table_Export_Panel_Props {
