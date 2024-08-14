@@ -51,7 +51,7 @@
 import { JlgUpload } from '../../../../packages';
 import { reactive, ref } from 'vue';
 import { genFileId } from 'element-plus';
-import { JlgUploadInstance } from '@pac/upload';
+import { JlgUploadInstance } from '@pac';
 defineOptions({
 	name: 'FormBaseUpload',
 });

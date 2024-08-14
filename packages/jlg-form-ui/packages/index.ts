@@ -26,10 +26,11 @@ import { T_Jlg_RadioGroup_Props } from './radio-group/type';
 import { T_Jlg_Radio_Props } from './radio/type';
 import { FormValidatorRules } from './rule';
 export * from './rule';
+export * from './types';
 import './theme.scss';
 import { I_MultipleTypeConfig } from './upload/use-upload';
 import { T_Jlg_Upload_Global_Props } from './upload/types';
-import { JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod } from './upload/index';
+import { JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod, JlgUploadUtils } from './upload/index';
 
 export {
 	JlgForm,
@@ -51,6 +52,7 @@ export {
 	JlgUploadList,
 	JlgUploadFileModel,
 	JlgFileViewerMethod,
+	JlgUploadUtils,
 }; //实现按需引入*
 
 const components = [
@@ -71,7 +73,9 @@ const components = [
 	JlgUploadContent,
 	JlgUploadList,
 	JlgUploadFileModel,
+	JlgUploadUtils,
 ];
+export declare type JlgUploadInstance = InstanceType<typeof JlgUpload>;
 
 type DeepPartial<T> = {
 	[U in keyof T]?: T[U] extends object ? DeepPartial<T[U]> : T[U];

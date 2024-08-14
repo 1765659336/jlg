@@ -5,6 +5,7 @@ import JlgUploadContent from '../upload/components/upload-content.vue';
 import JlgUploadList from '../upload/components/upload-list.vue';
 import JlgUploadFileModel from '../upload/components/upload-file-model.vue';
 import JlgFileViewerMethod from '../upload/components/method';
+import { useUtils as JlgUploadUtils } from './utils';
 import type { App } from 'vue';
 // 注册组件
 JlgUpload.install = (Vue: App) => {
@@ -23,6 +24,4 @@ JlgUploadFileModel.install = (Vue: App) => {
 	Vue.component('JlgUploadFileModel', JlgUploadFileModel);
 };
 
-export declare type JlgUploadInstance = InstanceType<typeof JlgUpload>;
-
-export { JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod };
+export { JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod, JlgUploadUtils };

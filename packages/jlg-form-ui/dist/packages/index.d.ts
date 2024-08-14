@@ -25,10 +25,12 @@ import { T_Jlg_RadioGroup_Props } from './radio-group/type';
 import { T_Jlg_Radio_Props } from './radio/type';
 import { FormValidatorRules } from './rule';
 import { T_Jlg_Upload_Global_Props } from './upload/types';
-import { JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod } from './upload/index';
+import { JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod, JlgUploadUtils } from './upload/index';
 
 export * from './rule';
-export { JlgForm, JlgDatePicker, JlgFormItem, JlgInput, JlgOption, JlgSelect, JlgTimeSelect, JlgInputNumber, JlgTooltip, JlgRate, JlgRadioGroup, JlgRadio, FormValidatorRules, JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod, };
+export * from './types';
+export { JlgForm, JlgDatePicker, JlgFormItem, JlgInput, JlgOption, JlgSelect, JlgTimeSelect, JlgInputNumber, JlgTooltip, JlgRate, JlgRadioGroup, JlgRadio, FormValidatorRules, JlgUpload, JlgFileTypeList, JlgUploadContent, JlgUploadList, JlgUploadFileModel, JlgFileViewerMethod, JlgUploadUtils, };
+export declare type JlgUploadInstance = InstanceType<typeof JlgUpload>;
 type DeepPartial<T> = {
     [U in keyof T]?: T[U] extends object ? DeepPartial<T[U]> : T[U];
 };
