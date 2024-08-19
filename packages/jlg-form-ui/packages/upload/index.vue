@@ -226,6 +226,7 @@ defineExpose({
 const context: FormItemContext | undefined = inject(formItemContextKey);
 const formAddGatherFn: T_Add_Gather_Fn | undefined = inject('formAddGatherFn');
 onMounted(() => {
+	if (!context?.label) return;
 	formAddGatherFn &&
 		formAddGatherFn({
 			formItemLabel: context.label,
