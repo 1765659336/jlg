@@ -519,8 +519,8 @@ const columnDrop2 = () => {
 			//  普通表格
 			const { fullColumn, tableColumn } = $grid.getTableColumn();
 			const wrapperElem = targetThElem.parentNode as HTMLElement;
-			const newColumn = fullColumn[newIndex];
-			const oldColumn = fullColumn[oldIndex];
+			const newColumn = tableColumn[newIndex];
+			const oldColumn = tableColumn[oldIndex];
 			if (newColumn.fixed || oldColumn.fixed) {
 				// 错误的移动
 				const oldThElem = wrapperElem.children[oldIndex] as HTMLElement;

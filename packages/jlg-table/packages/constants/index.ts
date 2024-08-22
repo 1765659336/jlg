@@ -25,7 +25,7 @@ export const SEARCH_TYPES: Record<I_Table_Filter_Item['type'], any> = {
 		{ label: '大于', value: 0 },
 		{ label: '小于', value: 1 },
 		{ label: '等于', value: 2 },
-		{ label: '区间', value: 3 },
+		{ label: '模糊', value: 3 },
 	],
 	select: [
 		{ label: '包含', value: 0 },
