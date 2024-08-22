@@ -118,3 +118,11 @@ export declare interface I_User_Search_Template_Details_Model {
 	// 其他非必要参数
 	[key: string]: unknown;
 }
+
+// 当前点击的查询按钮类型
+export enum SearchType {
+	popoverSearch = 'popoverSearch',
+	quickSearch = 'quickSearch',
+	tagClose = 'tagClose',
+	toggleTemplate = 'toggleTemplate',
+}

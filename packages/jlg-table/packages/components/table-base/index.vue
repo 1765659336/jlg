@@ -55,7 +55,7 @@ import findIndexOf from 'xe-utils/findIndexOf';
 import TableFilter from '../table-filter/index.vue';
 import TableFilterTemplate from '../table-filter/template-index.vue';
 import type { I_Table_Grid_Props, T_Msg, T_RenderCustomTemplate, T_Save_Config_Type, T_Table_Filter, T_Table_Filter_Template } from './type';
-import type { I_Table_Filter_Props, I_User_Search_Template_Model } from '../../components/table-filter/type';
+import { I_Table_Filter_Props, I_User_Search_Template_Model, SearchType } from '../../components/table-filter/type';
 import { computed, nextTick, reactive, Ref, useAttrs } from 'vue';
 import GlobalConfig from '../../../lib/useGlobalConfig';
 import { VxeGridEventProps, VxeGridInstance, VxeGridPropTypes, VxeGridDefines, VxeTableDefines } from 'vxe-table';
@@ -270,7 +270,7 @@ const beforeQuery = async (args) => {
 			tableFilterConfig.value.items = _items;
 			args.form = formData;
 		} else {
-			args.form = tableFilterRef.value.getFormData() || null;
+			args.form = tableFilterRef.value.getFormData(searchBtnType.value) || null;
 		}
 
 		// 设置筛选模板列表数据
@@ -288,7 +288,7 @@ const beforeQuery = async (args) => {
 			args.sorts = defaultSort;
 		}
 	} else {
-		args.form = tableFilterRef.value?.getFormData() || null;
+		args.form = tableFilterRef.value?.getFormData(searchBtnType.value) || null;
 	}
 	let currentTemplateDetails = null;
 	if (tableFilterRef.value && (tableFilterRef.value as T_Table_Filter_Template)?.templateStore) {
@@ -297,6 +297,7 @@ const beforeQuery = async (args) => {
 		const _currentTemplateDetails = _tableFilter?.currentTemplateDetails;
 		currentTemplateDetails = _currentTemplateDetails ?? _newTemplateDetails;
 	}
+	searchBtnType.value = '';
 	args.form = {
 		items: tableFilterConfig.value.items,
 		templateStore: (tableFilterRef.value as T_Table_Filter_Template)?.templateStore,
@@ -592,7 +593,10 @@ function handleFolding(bool: boolean) {
 // 	tableFilterRef.value!.handleFolding(bool);
 // }
 
-function handleFilterSave() {
+// 当前点击的查询按钮的类型
+const searchBtnType = ref<SearchType | ''>('');
+function handleFilterSave(_form, type?: SearchType) {
+	searchBtnType.value = type;
 	commitProxy('query');
 }
 
