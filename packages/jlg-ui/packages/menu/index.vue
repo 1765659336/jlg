@@ -125,11 +125,11 @@ watch(
 function getPopoWidth(firstLevelMenu) {
 	const childMenuLength = firstLevelMenu.children?.length;
 	if (childMenuLength >= 4) {
-		return 800;
+		return 802;
 	} else if (childMenuLength === 0) {
 		return 0;
 	} else {
-		return 20 + 20 + 2 + 190 * childMenuLength;
+		return 20 + 20 + 190 * childMenuLength;
 	}
 }
 </script>
