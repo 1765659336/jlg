@@ -386,7 +386,7 @@ const toggleCorner = (buttons: boolean | T_Buttons[]) => {
 
 const isCustom = ref(false);
 const modalClass = computed(() => {
-	const classes = [];
+	const classes = [attrs?.modalOptions['className']];
 	if (isCustom.value) classes.push('custom-setting');
 	if (isLoading.value) classes.push('is--loading');
 	return classes.join(' ');
