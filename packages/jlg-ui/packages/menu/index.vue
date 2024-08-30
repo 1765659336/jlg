@@ -195,6 +195,15 @@ const menuDataRecordComputed = computed(() => ({
 	},
 	...(props.menuDataRecord ?? {}),
 }));
+const idKey = computed(() => props.idKey || 'id');
+const childKey = computed(() => props.childKey || 'child');
+const parentKey = computed(() => props.parentKey || 'parentId');
+const currentActiveId = ref<any>(null); // 当前所在的菜单
+// 悬浮菜单逻辑
+const showDetailMenu = ref(false); //是否显示悬浮菜单
+const searchMenuText = ref(); // 快捷查询输入框
+const showMenuData = ref(); // 显示的菜单
+const currentMenuData = ref(); // 用于存储所有菜单
 // 处理得到新的格式数据
 function addMenuDataFields(menuData) {
 	return menuData.map((item) => {
@@ -221,7 +230,7 @@ watch(
 	() => props.route!.path,
 	(val) => {
 		const nodesData = findTree(props.menuData as I_JlgMenu_MenuDataItem[], (item) => item.path === val, {
-			children: childKey,
+			children: childKey.value,
 		});
 		if (nodesData) {
 			const nodes = nodesData.nodes;
@@ -254,15 +263,6 @@ function getPopoWidth(firstLevelMenu) {
 		return 20 + 20 + 2 + 190 * childMenuLength;
 	}
 }
-const idKey = computed(() => props.idKey || 'id');
-const childKey = computed(() => props.childKey || 'child');
-const parentKey = computed(() => props.parentKey || 'parentId');
-const currentActiveId = ref<any>(null); // 当前所在的菜单
-// 悬浮菜单逻辑
-const showDetailMenu = ref(false); //是否显示悬浮菜单
-const searchMenuText = ref(); // 快捷查询输入框
-const showMenuData = ref(); // 显示的菜单
-const currentMenuData = ref(); // 用于存储所有菜单
 // 全部菜单查询事件
 function searchMenu(event) {
 	if (event) {

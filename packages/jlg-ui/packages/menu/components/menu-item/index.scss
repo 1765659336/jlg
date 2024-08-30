@@ -56,9 +56,6 @@
             font-size: 14px;
             color: #000000;
         }
-        .default-text.is-active {
-            color: var(--el-color-primary);
-        }
     }
     .level-1 {
         border-bottom: 1px solid var(--el-border-color-light);
@@ -91,6 +88,9 @@
         &:hover {
             background-color: #F6F6FB;
         }
+    }
+    .is-active .three-level-menu-title{
+        color: var(--el-color-primary);
     }
 }
 
