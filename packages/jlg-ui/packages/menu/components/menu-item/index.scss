@@ -1,0 +1,110 @@
+.menu-one-item {
+    display: flex;
+    flex-direction: column;
+    margin-right: 30px;
+    break-inside: avoid;
+
+    .menu-detail-item {
+        box-sizing: border-box;
+        // 文本超出显示省略号
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        .icon-wrap {
+            display: inline-block;
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .title-wrap {
+            display: inline-flex;
+        }
+        .three-level-menu-title {
+            font-size: var(--three-level-menu-title-font-size);
+            color: var(--three-level-menu-title-color);
+            &:hover {
+                cursor: pointer;
+                color: var(--jlg-menu-three-level-hover-bg);
+            }
+            .show-collect {
+                margin-left: 3px;
+                width: 20px;
+            }
+        }
+        .second-level-menu-title {
+            font-size: 14px;
+            color: #070737;
+        }
+        .default-text {
+            font-size: 14px;
+            color: #606266;
+        }
+        .regular-txt {
+            cursor: pointer;
+            &:hover {
+                color: var(--el-color-primary);
+            }
+        }
+
+        .primary-txt {
+            font-weight: bold;
+            font-size: 14px;
+            color: #000000;
+        }
+        .default-text.is-active {
+            color: var(--el-color-primary);
+        }
+    }
+    .level-1 {
+        border-bottom: 1px solid var(--el-border-color-light);
+        .default-text,
+        .title-wrap {
+            vertical-align: sub;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--el-color-primary);
+        }
+        .title-wrap {
+            line-height: 2;
+        }
+    }
+}
+.level-2 {
+    .default-text {
+        line-height: 29px;
+        height: 29px;
+        color: #070737;
+    }
+    .level-2-box{
+        width: 100%;
+    }
+}
+.level-3 {
+    .default-text {
+        line-height: 29px;
+        height: 29px;
+        &:hover {
+            background-color: #F6F6FB;
+        }
+    }
+}
+
+.level-1-box {
+    > :not(:last-child) {
+        .level-box.level-2-box {
+            margin-bottom: 10px;
+        }
+    }
+}
+.level-box{
+    display: flex;
+    flex-direction: column;
+}
+.menu-one-item:last-child {
+    margin-right: 0px;
+}

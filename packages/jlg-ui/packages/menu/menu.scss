@@ -1,0 +1,96 @@
+.jlg-all-menu {
+  width: auto;
+  height: 100%;
+  min-width: 90%;
+  position: absolute;
+  z-index: 200;
+  left: 100%;
+  background-color: #fff;
+  .jlg-all-menu-left-container{
+    border-right: 1px solid #EEEEEE;
+    .jlg-all-menu-left-header{
+      :deep(.el-header){
+        --el-header-padding:0 40px 0 20px;
+      }
+      :deep(.el-input__wrapper){
+        box-shadow: none;
+        border-bottom: 1px solid #EEEEEE;
+      }
+    }
+    .jlg-all-menu-left-main{
+        padding:0 20px;
+     }
+  }
+  .jlg-all-menu-right-container{
+    width: 220px;
+    position: relative;
+    .iconfont {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      font-size: 18px;
+      color: #000;
+      margin-left: 10px;
+    }
+    .jlg-all-menu-right-main{
+        .frequently-used-menus{
+          font-size: 14px;
+          color: rgba(7, 7, 55, 0.7);
+          cursor: pointer;
+          font-family: PingFang SC;
+          margin-bottom: 19px;
+        }
+    }
+  }
+}
+
+// 常用页面摆放位置(唤出菜单组合布局)
+.side-box {
+  display: flex;
+  box-shadow: 0 0 28px #00000029;
+  .el-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .menu-search {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      flex: 1;
+      .el-icon {
+        padding-left: 15px;
+        svg{
+          fill: #404040;
+        }
+      }
+    }
+  }
+  .el-main {
+    padding: 0 20px;
+    .el-main {
+      min-width: 340px;
+      padding: 0 0 15px 0;
+      box-sizing: border-box;
+    }
+  }
+  // 常见菜单部分样式
+  .frequently-used-menus {
+    padding-left: 10px;
+    .text {
+      line-height: 32px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #424242;
+    }
+    .page-title {
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(66, 66, 66, 0.8);
+      line-height: 36px;
+      cursor: pointer;
+      &:hover {
+        color: var(--el-color-primary);
+      }
+    }
+  }
+}
