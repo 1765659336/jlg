@@ -129,7 +129,7 @@ function getPopoWidth(firstLevelMenu) {
 	} else if (childMenuLength === 0) {
 		return 0;
 	} else {
-		return 20 + 20 + 190 * childMenuLength;
+		return 20 + 20 + 2 + 190 * childMenuLength;
 	}
 }
 </script>

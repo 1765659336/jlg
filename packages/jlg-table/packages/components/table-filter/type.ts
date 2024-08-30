@@ -59,6 +59,8 @@ export declare interface I_Table_Filter_Props {
 	// 是否启用筛选方案模式
 	isFilterTemplate?: boolean;
 	items: I_Table_Filter_Item[];
+	// 筛选按钮
+	isBtnOrTemplate?: boolean;
 }
 
 export interface TreeOptionProps {
