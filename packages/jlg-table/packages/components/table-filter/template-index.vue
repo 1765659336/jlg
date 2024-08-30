@@ -31,11 +31,18 @@
 						</el-scrollbar>
 					</div>
 					<div class="filter-panel__button">
+						<el-button v-if="props?.isBtnOrTemplate" class="screen-btn" @click="() => handleFolding(!isFolding)">
+							{{ isFolding ? '展开筛选' : '收起筛选' }}
+							<el-icon class="el-icon--right">
+								<ArrowDown v-if="isFolding" />
+								<ArrowUp v-else />
+							</el-icon>
+						</el-button>
 						<el-button class="save-btn" type="primary" @click="() => handleSave()">查询</el-button>
 						<el-button v-show="!basicTemplateRef?.isShow" class="reset-btn" @click="handleReset">重置</el-button>
 					</div>
 				</div>
-				<div class="jlg-filter-pane__divider">
+				<div v-if="!props?.isBtnOrTemplate" class="jlg-filter-pane__divider">
 					<slot name="filter_divider" :is-folding="isFolding">
 						<el-divider>
 							<div class="table-filter__divider" @click="handleFolding(!isFolding)">

@@ -525,6 +525,7 @@ const gridOptions = reactive<I_Table_Grid_Props<RowVO>>({
 				},
 			},
 		],
+		isBtnOrTemplate: true,
 	},
 	// 操作列配置
 	operationConfig: {
