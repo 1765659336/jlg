@@ -59,6 +59,8 @@ export declare interface I_Table_Filter_Props {
 	// 是否启用筛选方案模式
 	isFilterTemplate?: boolean;
 	items: I_Table_Filter_Item[];
+	// 筛选按钮
+	isBtnOrTemplate?: boolean;
 }
 
 export interface TreeOptionProps {
@@ -117,4 +119,12 @@ export declare interface I_User_Search_Template_Details_Model {
 	defaultValue: string | null;
 	// 其他非必要参数
 	[key: string]: unknown;
+}
+
+// 当前点击的查询按钮类型
+export enum SearchType {
+	popoverSearch = 'popoverSearch',
+	quickSearch = 'quickSearch',
+	tagClose = 'tagClose',
+	toggleTemplate = 'toggleTemplate',
 }

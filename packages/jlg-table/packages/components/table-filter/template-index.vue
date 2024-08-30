@@ -31,11 +31,18 @@
 						</el-scrollbar>
 					</div>
 					<div class="filter-panel__button">
-						<el-button class="save-btn" type="primary" @click="handleSave">查询</el-button>
+						<el-button v-if="props?.isBtnOrTemplate" class="screen-btn" @click="() => handleFolding(!isFolding)">
+							{{ isFolding ? '展开筛选' : '收起筛选' }}
+							<el-icon class="el-icon--right">
+								<ArrowDown v-if="isFolding" />
+								<ArrowUp v-else />
+							</el-icon>
+						</el-button>
+						<el-button class="save-btn" type="primary" @click="() => handleSave()">查询</el-button>
 						<el-button v-show="!basicTemplateRef?.isShow" class="reset-btn" @click="handleReset">重置</el-button>
 					</div>
 				</div>
-				<div class="jlg-filter-pane__divider">
+				<div v-if="!props?.isBtnOrTemplate" class="jlg-filter-pane__divider">
 					<slot name="filter_divider" :is-folding="isFolding">
 						<el-divider>
 							<div class="table-filter__divider" @click="handleFolding(!isFolding)">
@@ -82,7 +89,7 @@
 										v-model="form[item.field]"
 										v-model:search-type="item.searchType"
 										:item="item"
-										:on-enter="handleSave"
+										:on-enter="() => handleSave()"
 									/>
 								</template>
 							</el-form-item>
@@ -128,7 +135,7 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue';
 import { ElConfigProvider, ElOption, ElSelect, ElTooltip, FormInstance } from 'element-plus';
-import { I_Table_Filter_Item, I_Table_Filter_Props, I_User_Search_Template_Model } from './type';
+import { I_Table_Filter_Item, I_Table_Filter_Props, I_User_Search_Template_Model, SearchType } from './type';
 import GlobalConfig from '../../../lib/useGlobalConfig';
 import { usePopover } from './hooks/usePopover';
 import { useBaseData } from './hooks/useBaseData';
@@ -142,6 +149,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 defineOptions({
 	name: 'TableFilterTemplate',
 });
+
 const refForm = ref<FormInstance>();
 const basicTemplateEditRef = ref<InstanceType<typeof BasicTemplateEdit>>();
 const props = withDefaults(defineProps<I_Table_Filter_Props>(), {
@@ -150,7 +158,7 @@ const props = withDefaults(defineProps<I_Table_Filter_Props>(), {
 	folding: () => GlobalConfig.tableFilter.folding,
 });
 const emit = defineEmits<{
-	save: [data: Record<string, any>];
+	save: [data: Record<string, any>, type?: SearchType];
 	reset: [data: Record<string, any>];
 	saveTemplate: [data: I_User_Search_Template_Model, type: 'edit' | 'add' | 'delete'];
 	folding: [bool: boolean];
@@ -243,7 +251,7 @@ const handleSchemeChange = (templateUid?: string) => {
 	isShowQuickSearch.value = false;
 	// templateUid === '' 时代表点击的是 '新增'，不需要触发 save 事件
 	if (templateUid === '') return;
-	emit('save', schemeForm);
+	emit('save', schemeForm, SearchType.toggleTemplate);
 };
 watch(
 	() => templateStore.currentTemplateUId,
@@ -308,7 +316,10 @@ function handleInitialValue() {
 	});
 }
 
-function getFormData() {
+function getFormData(type?: SearchType) {
+	if (type === SearchType.popoverSearch) {
+		return form;
+	}
 	if (basicTemplateRef.value?.isShow && !templateStore.currentTemplateUId) {
 		// 新增且未保存模板，触发查询时，使用当前新增模板表单数据
 		return basicTemplateEditRef.value?.newTemplateDetails.userSearchTemplateDetails.reduce((prev, item) => {
@@ -325,16 +336,17 @@ function onHide() {
 }
 
 /// 查询
-function handleSave() {
+function handleSave(type?: SearchType) {
 	isShowQuickSearch.value = false;
-	const _form = getFormData();
-	emit('save', _form);
+	const _type = type ?? SearchType.quickSearch;
+	const _form = getFormData(type);
+	emit('save', _form, _type);
 }
 
 const handlePopoverSave = () => {
 	isShowQuickSearch.value = false;
 	templateStore.currentTemplateUId = '';
-	emit('save', form);
+	emit('save', form, SearchType.popoverSearch);
 };
 
 /// 重置查询条件
@@ -358,7 +370,7 @@ function handleFolding(bool: boolean) {
 const handleTagClose = (field: string) => {
 	refForm.value?.resetFields([field]);
 	form[field] = null;
-	handleSave();
+	handleSave(SearchType.tagClose);
 };
 
 defineExpose({

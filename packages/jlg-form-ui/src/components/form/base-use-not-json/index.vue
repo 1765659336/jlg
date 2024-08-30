@@ -54,7 +54,7 @@
 			</jlg-grid-cell>
 			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item prop="select.value" label="Select测试placeholder">
-					<jlg-select v-model="formData.select.value" disabled>
+					<jlg-select v-model="formData.select.value" filterable>
 						<jlg-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
 					</jlg-select>
 				</jlg-form-item>
@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { T_JlgForm_Props, E_JlgForm_LabelPosition } from '@pac/form/type';
 import { JlgGridLayout, JlgGridCell } from 'jlg-ui';
 import { E_FormValidatorRulesValidateFunEnum } from '@pac/rule';
@@ -146,14 +146,14 @@ const gridLayoutProps = ref<T_JlgForm_Props['gridLayoutProps']>({
 	border: false,
 });
 
-// const options = computed(() => {
-// 	return new Array(10).fill(0, 0, 10).map((i, index) => {
-// 		return {
-// 			value: index,
-// 			label: 'Option' + index,
-// 		};
-// 	});
-// });
+const options = computed(() => {
+	return new Array(10).fill(0, 0, 10).map((i, index) => {
+		return {
+			value: index,
+			label: 'Option' + index,
+		};
+	});
+});
 
 const valueChange = (v) => {
 	console.log(v);

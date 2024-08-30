@@ -4,8 +4,6 @@ import eslintPlugin from 'vite-plugin-eslint';
 import DefineOptions from 'unplugin-vue-define-options/vite';
 import { resolve } from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import path from 'path';
 import dts from 'vite-plugin-dts';
 import ElementPlus from 'unplugin-element-plus/vite';
@@ -19,11 +17,7 @@ export default defineConfig({
 		AutoImport({
 			imports: ['vue'],
 			dirs: [],
-			resolvers: [ElementPlusResolver()],
 			dts: 'auto-imports.d.ts',
-		}),
-		Components({
-			resolvers: [ElementPlusResolver()],
 		}),
 		eslintPlugin({
 			include: ['src/**/*.ts', 'src/**/*.vue', 'src/*.ts', 'src/*.vue', 'packages/**/*.ts', 'packages/**/*.vue', 'packages/*.ts', 'packages/*.vue'],

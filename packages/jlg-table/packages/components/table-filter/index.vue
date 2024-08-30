@@ -29,12 +29,19 @@
 				</el-form-item>
 			</div>
 			<div v-show="!isFolding && items.length" class="table-filter__card">
+				<el-button v-if="props?.isBtnOrTemplate" class="screen-btn" @click="handleSave">
+					{{ isFolding ? '展开筛选' : '收起筛选' }}
+					<el-icon class="el-icon--right">
+						<ArrowDown v-if="isFolding" />
+						<ArrowUp v-else />
+					</el-icon>
+				</el-button>
 				<el-button class="save-btn" type="primary" @click="handleSave">查询</el-button>
 				<el-button class="reset-btn" @click="handleReset">重置</el-button>
 			</div>
 		</div>
 		<!--  展开/折叠 操作区域   -->
-		<div v-show="items.length > 0" class="table-filter__operation">
+		<div v-show="items.length > 0 && !props?.isBtnOrTemplate" class="table-filter__operation">
 			<slot name="filter_divider" :is-folding="isFolding">
 				<el-divider>
 					<div class="table-filter__divider" @click="handleFolding(!isFolding)">

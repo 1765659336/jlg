@@ -20470,7 +20470,7 @@ const Cl = /* @__PURE__ */ fr(GP, [["__scopeId", "data-v-213072a3"]]), qd = (e) 
     submit: m,
     revokeFileObjectURL: qd
   };
-}, ZP = (e) => (rf("data-v-39c1b596"), e = e(), af(), e), XP = ["data-jlg-form-item"], QP = { class: "w-full flex flex-wrap" }, eM = { class: "modal--header" }, tM = /* @__PURE__ */ ZP(() => /* @__PURE__ */ N("div", { class: "modal--header-title" }, "上传附件", -1)), nM = { class: "modal--header-right" }, oM = ["onClick"], rM = ["data-jlg-form-item"], aM = F({
+}, ZP = (e) => (rf("data-v-75a129b8"), e = e(), af(), e), XP = ["data-jlg-form-item"], QP = { class: "w-full flex flex-wrap" }, eM = { class: "modal--header" }, tM = /* @__PURE__ */ ZP(() => /* @__PURE__ */ N("div", { class: "modal--header-title" }, "上传附件", -1)), nM = { class: "modal--header-right" }, oM = ["onClick"], rM = ["data-jlg-form-item"], aM = F({
   name: "JlgUpload"
 }), lM = /* @__PURE__ */ F({
   ...aM,
@@ -20542,7 +20542,7 @@ const Cl = /* @__PURE__ */ fr(GP, [["__scopeId", "data-v-213072a3"]]), qd = (e) 
     });
     const I = ue(Lt), H = ue("formAddGatherFn");
     return Ae(() => {
-      H && H({
+      I != null && I.label && H && H({
         formItemLabel: I.label,
         fn() {
           return {
@@ -20704,7 +20704,7 @@ const Cl = /* @__PURE__ */ fr(GP, [["__scopeId", "data-v-213072a3"]]), qd = (e) 
     ], 8, rM));
   }
 });
-const ri = /* @__PURE__ */ fr(lM, [["__scopeId", "data-v-39c1b596"]]), sM = /* @__PURE__ */ F({
+const ri = /* @__PURE__ */ fr(lM, [["__scopeId", "data-v-75a129b8"]]), sM = /* @__PURE__ */ F({
   __name: "file-viewer",
   props: {
     urlList: {
