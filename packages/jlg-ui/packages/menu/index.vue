@@ -185,6 +185,7 @@ interface I_Jlg_Menu_Props {
 	defaultActive?: I_JlgMenu_MenuDataItem['key'][];
 	elPopoverProps?: PopoverProps;
 }
+
 const props = withDefaults(defineProps<I_Jlg_Menu_Props>(), {
 	childKey: 'child',
 	transition: 'el-fade-in-linear',
