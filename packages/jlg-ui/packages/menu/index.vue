@@ -137,10 +137,10 @@ import { ClickOutside as vClickOutside, PopoverProps } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';
 import MenuItemComponent from './components/menu-item/index.vue';
 import { computed, nextTick, provide, ref, useSlots, watch } from 'vue';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-unified';
 import { ElPopover, ElScrollbar, ElContainer, ElMain, ElHeader, ElInput } from 'element-plus';
-import { findTree } from 'xe-utils';
-import { RouteLocationNormalizedLoaded } from 'vue-router';
+import findTree from 'xe-utils/findTree';
+import { type RouteLocationNormalizedLoaded } from 'vue-router';
 
 defineOptions({
 	name: 'JlgMenu',
