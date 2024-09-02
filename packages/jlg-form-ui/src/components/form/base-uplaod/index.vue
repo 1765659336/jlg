@@ -103,7 +103,6 @@ const upload = ref<JlgUploadInstance>();
 const formData2 = reactive({
 	fileList: [],
 	handleExceed: (files) => {
-		debugger;
 		const file = files[0];
 		upload.value!.clearFiles();
 		file.$uid = genFileId();

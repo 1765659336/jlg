@@ -16,16 +16,15 @@
 	>
 		<jlg-grid-layout v-bind="gridLayoutProps">
 			<jlg-grid-cell :width="5" :height="1">
-				<jlg-form-item label="Input测试文件上传">
-					<jlg-upload
-						v-model:file-list="formData.fileList"
-						action="http://218.77.107.37:48999/Upload/Sys5011G/File"
-						upload-show-path="http://218.77.107.37:49000/"
-						:on-uploading-status="onUploadingStatus"
-						:show-download="true"
-						:on-success="onSuccess"
-					/>
-				</jlg-form-item>
+				<jlg-form-item label="Input测试文件上传2"> </jlg-form-item>
+				<jlg-upload
+					v-model:file-list="formData.fileList"
+					action="http://218.77.107.37:48999/Upload/Sys5011G/File"
+					upload-show-path="http://218.77.107.37:49000/"
+					:on-uploading-status="onUploadingStatus"
+					:show-download="true"
+					:on-success="onSuccess"
+				/>
 			</jlg-grid-cell>
 			<jlg-grid-cell :width="1" :height="1">
 				<jlg-form-item
@@ -184,8 +183,6 @@ const onUploadingStatus = (v) => {
 	isLoad.value = v;
 };
 const onSuccess = (response: any, uploadFile: I_uploadUserFile, uploadFiles: T_uploadUserFiles) => {
-	debugger;
-	console.log(response, uploadFile, uploadFiles);
 	alert('2');
 };
 // 用于多种类型多个文件上传时（type = 'multiple-type-card'），配置项
