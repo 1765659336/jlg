@@ -21,6 +21,7 @@
 								? 'jlg-menu-first-level-menu-selected'
 								: 'jlg-menu-first-level-menu-no-selected',
 						]"
+						@click="closeMenu"
 					>
 						<div class="jlg-menu-first-level-menu-icon">
 							<slot :name="'first-menu-icon' + firstLevelMenu[menuDataRecordComputed.key]">
@@ -31,6 +32,20 @@
 					</div>
 				</template>
 				<div class="jlg-menu-popover">
+					<div class="jlg-menu-popover-search">
+						<el-autocomplete
+							v-model="searchChildMenuText"
+							popper-class="jlg-menu-popover-search-autocomplete"
+							style="width: 100%"
+							clearable
+							:suffix-icon="Search"
+							:fetch-suggestions="querySearch"
+							:trigger-on-focus="false"
+							value-key="title"
+							placeholder="请输入菜单名称"
+							@select="handleSelect"
+						/>
+					</div>
 					<div
 						v-for="secondLevelMenu in firstLevelMenu[menuDataRecordComputed.children]"
 						:key="secondLevelMenu[menuDataRecordComputed.key]"
@@ -139,8 +154,8 @@ import MenuItemComponent from './components/menu-item/index.vue';
 import { computed, nextTick, provide, ref, useSlots, watch } from 'vue';
 import { cloneDeep } from 'lodash-unified';
 import { ElPopover, ElScrollbar, ElContainer, ElMain, ElHeader, ElInput } from 'element-plus';
-import findTree from 'xe-utils/findTree';
-import { type RouteLocationNormalizedLoaded } from 'vue-router';
+import { findTree, toTreeArray } from 'xe-utils';
+import { RouteLocationNormalizedLoaded } from 'vue-router';
 
 defineOptions({
 	name: 'JlgMenu',
@@ -202,6 +217,7 @@ const currentActiveId = ref<any>(null); // 当前所在的菜单
 // 悬浮菜单逻辑
 const showDetailMenu = ref(false); //是否显示悬浮菜单
 const searchMenuText = ref(); // 快捷查询输入框
+const searchChildMenuText = ref(); // 子菜单快捷查询输入框
 const showMenuData = ref(); // 显示的菜单
 const currentMenuData = ref(); // 用于存储所有菜单
 // 处理得到新的格式数据
@@ -243,12 +259,44 @@ watch(
 		immediate: true,
 	}
 );
+// 完整菜单数据（排除首页等前端维护的菜单）
+const fullMenuData = computed(() => {
+	return props.menuData!.filter((item) => {
+		if (typeof item[idKey.value] === 'number') {
+			return item[idKey.value] > 0;
+		} else {
+			return !!item[idKey.value];
+		}
+	});
+});
+// 子菜单查询
+function querySearch(queryString, cb) {
+	const menuData = toTreeArray(fullMenuData.value, {
+		children: childKey.value,
+	});
+	const results = queryString ? menuData.filter(createFilter(queryString)) : [];
+	// 调用 callback 返回建议列表的数据
+	cb(results);
+}
+/**
+ * 任意二级菜单弹出框的搜索操作
+ * */
+const createFilter = (queryString: string) => {
+	return (item: I_JlgMenu_MenuDataItem) => {
+		return !item[childKey.value]?.length && item.title?.toLowerCase().indexOf(queryString.toLowerCase()) != -1;
+	};
+};
+function handleSelect(item: I_JlgMenu_MenuDataItem) {
+	changeMenuRoute(item);
+}
 const collectClick = (threeLevelMenu) => {
 	emits('collectClick', threeLevelMenu);
 };
 const changeMenuRoute = (threeLevelMenu) => {
 	emits('threeLevelMenuClick', threeLevelMenu);
 	nextTick(() => {
+		searchMenuText.value = '';
+		searchChildMenuText.value = '';
 		showDetailMenu.value = false;
 	});
 };
@@ -281,7 +329,7 @@ const getSearchData = function (menuDatas: I_JlgMenu_MenuDataItem[]): any {
 			const obj: I_JlgMenu_MenuDataItem = {
 				...item,
 				child: childs,
-			};
+			} as I_JlgMenu_MenuDataItem;
 			if (childs && childs.length) {
 				newArr.push(obj);
 			} else if (item.title.includes(searchMenuText.value)) {
@@ -344,7 +392,15 @@ defineExpose({ initMenu, showMenu, closeMenu });
 		flex-wrap: wrap;
 		/* padding-inline-start: 0px; */
 		padding: 12px 20px;
-
+		.jlg-menu-popover-search {
+			width: 100%;
+			margin: 5px 0 30px 0;
+			:deep(.el-input__wrapper) {
+				box-shadow: none;
+				background-color: var(--jlg-menu-popover-bg);
+				border-bottom: 1px solid #394341;
+			}
+		}
 		.second-level-menu {
 			/* margin-left: var(--second-level-menu-margin-left); */
 			color: var(--jlg-menu-popover-color);
@@ -411,4 +467,18 @@ defineExpose({ initMenu, showMenu, closeMenu });
 	}
 }
 @import './menu.scss';
+</style>
+
+<style lang="scss">
+.jlg-menu-popover-search-autocomplete {
+	.el-autocomplete-suggestion {
+		background-color: #081429 !important;
+		li:hover {
+			background-color: rgba(66, 72, 81, 0.5);
+		}
+	}
+	.el-popper__arrow {
+		left: 50%;
+	}
+}
 </style>
