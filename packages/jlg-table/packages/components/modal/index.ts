@@ -9,6 +9,7 @@ import { withInstall } from '../../../lib/install';
 export const dynamicModalStore = reactive<I_Dynamic_Modal_Store>({
 	modals: [],
 	eventType: 'close',
+	isProcessing: false, // 添加标志位
 });
 
 function existModal(options: T_Modal_Params) {
@@ -47,10 +48,16 @@ function openModal(options: T_Modal_Params): Promise<I_Modal_Controller> {
 		}
 		const index = existModal(options);
 		if (index !== -1) {
+			if (dynamicModalStore.isProcessing) {
+				reject('正在处理另一个 modal');
+				return;
+			}
+			dynamicModalStore.isProcessing = true;
 			dynamicModalStore.modals.splice(index, 1);
 			// 这里添加定时器是为了让原modal删除之后，再重新添加一个新的modal
 			setTimeout(() => {
 				addModal();
+				dynamicModalStore.isProcessing = false;
 			}, 0);
 		} else {
 			addModal();

@@ -35,6 +35,8 @@ export interface I_Dynamic_Modal_Store {
 	modals: T_Modal_Params[];
 	// 用来区分是隐藏还是关闭
 	eventType: 'hide' | 'close';
+	// 添加标志位，防止快速点击时加多个相同的 modal，以确保在删除旧的 modal 之前不会添加新的 modal
+	isProcessing: boolean;
 }
 
 export interface I_Modal_Controller {
