@@ -205,7 +205,7 @@ const operationColumn = computed<VxeTableDefines.ColumnOptions>(() => {
 });
 
 const propsColumns = computed(() => {
-	const columns = clone(props.columns, true);
+	const columns = [...props.columns];
 	// 如果存在操作列配置
 	if (props.operationConfig) {
 		columns.push(operationColumn.value);
@@ -238,6 +238,7 @@ const beforeColumn = (args) => {
 };
 const beforeQuery = async (args) => {
 	const getSysConfig = props.proxyConfig?.getSysConfig ? props.proxyConfig.getSysConfig : GlobalConfig.table.proxyConfig.getSysConfig;
+	args.props = props;
 	if (args.isInited && typeof getSysConfig == 'function') {
 		const {
 			defaultSort = [],
@@ -257,8 +258,15 @@ const beforeQuery = async (args) => {
 			});
 			const _merged = merged ? merged : mergedList;
 			const _columns = _merged(flattenArray(propsColumns.value, 'field'), flattenArray(columns, 'field'), fieldList, 'field', 'renderSortNumber');
-			// rawColumns = clone<VxeGridPropTypes.Columns>(_columns, true);
+			// 页面初始化时,如果服务端返回的数据存在组合排序,强制开启多列排序, 判断  props.sortConfig?.multiple 是否为 false 是为了兼容正常的多排序
+			if (defaultSort.length > 0 && props.sortConfig?.multiple === false) {
+				// 直接修改 props 违背了 vue 的单项数据流原则,但是考虑到外部修改参数操作成本较高,暂时先直接修改
+				args.props.sortConfig.multiple = args.$grid.props.sortConfig.multiple = true;
+				args.props.sortConfig.defaultSort = args.$grid.props.sortConfig.defaultSort = defaultSort;
+				args.sorts = defaultSort;
+			}
 			await xGrid.value?.loadColumn(_columns);
+			handleDefaultSort();
 		}
 		if (searchData.length > 0) {
 			const _filterMerged = filterMerged ? filterMerged : mergedList;
@@ -278,14 +286,6 @@ const beforeQuery = async (args) => {
 			if (filterSchemes && (tableFilterRef.value as T_Table_Filter_Template)?.setTemplateList) {
 				await (tableFilterRef.value as T_Table_Filter_Template).setTemplateList(filterSchemes);
 			}
-		}
-
-		// 页面初始化时,如果服务端返回的数据存在组合排序,强制开启多列排序, 判断  props.sortConfig?.multiple 是否为 false 是为了兼容正常的多排序
-		if (defaultSort.length > 0 && props.sortConfig?.multiple === false) {
-			// 直接修改 props 违背了 vue 的单项数据流原则,但是考虑到外部修改参数操作成本较高,暂时先直接修改
-			args.$grid.props.sortConfig.multiple = true;
-			args.$grid.props.sortConfig.defaultSort = defaultSort;
-			args.sorts = defaultSort;
 		}
 	} else {
 		args.form = tableFilterRef.value?.getFormData(searchBtnType.value) || null;
@@ -310,6 +310,7 @@ const beforeQuery = async (args) => {
 		});
 	}
 	reactData.$grid = args.$grid;
+	reactData.props = args.props;
 	reactData.isInited = args.isInited;
 	reactData.isReload = args.isReload;
 	reactData.page = args.page;
@@ -732,6 +733,37 @@ const computeGridProps = computed(() => {
 		sortConfig,
 	});
 });
+
+const handleDefaultSort = () => {
+	const { sortConfig, getRefMaps } = xGrid.value!;
+	const $xeTable = getRefMaps().refTable;
+	if (sortConfig) {
+		const { computeSortOpts } = $xeTable.value.getComputeMaps();
+		const sortOpts = computeSortOpts.value;
+		let { defaultSort } = sortOpts;
+		if (defaultSort) {
+			if (!Array.isArray(defaultSort)) {
+				defaultSort = [defaultSort];
+			}
+			if (defaultSort.length) {
+				(sortConfig.multiple ? defaultSort : defaultSort.slice(0, 1)).forEach((item: any, index: number) => {
+					const { field, order } = item;
+					if (field && order) {
+						const column = $xeTable.value.getColumnByField(field);
+						if (column && column.sortable) {
+							column.order = order;
+							column.sortTime = Date.now() + index;
+						}
+					}
+				});
+				if (!sortOpts.remote) {
+					// updateStyle
+					$xeTable.value.handleTableData(true).then();
+				}
+			}
+		}
+	}
+};
 
 defineExpose({
 	xGrid,
