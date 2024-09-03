@@ -34,6 +34,7 @@ import { ElDatePicker } from 'element-plus';
 import { I_Table_Filter_Item } from '../type';
 import { computed } from 'vue';
 import GlobalConfig from '../../../../lib/useGlobalConfig';
+import dayjs from 'dayjs';
 
 defineOptions({
 	name: 'FilterIndependentDatePicker',
@@ -84,7 +85,12 @@ watch(
 	[startTime, endTime],
 	([newStartTime, newEndTime]) => {
 		const isEmpty = !newStartTime && !newEndTime;
-		modelValue.value = isEmpty ? [] : [newStartTime ?? null, newEndTime ?? null];
+		let _newEndTime = newEndTime;
+		if (newEndTime) {
+			_newEndTime = new Date(new Date(newEndTime).setHours(23, 59, 59, 999));
+			_newEndTime = dayjs(_newEndTime).format('YYYY-MM-DD HH:mm:ss');
+		}
+		modelValue.value = isEmpty ? [] : [newStartTime ?? null, _newEndTime ?? null];
 	},
 	{ deep: true }
 );
