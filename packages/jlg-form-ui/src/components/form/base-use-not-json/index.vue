@@ -24,6 +24,8 @@
 					:on-uploading-status="onUploadingStatus"
 					:show-download="true"
 					:on-success="onSuccess"
+					type="multiple-type-card"
+					:multiple-type-config="multipleTypeConfig"
 				/>
 			</jlg-grid-cell>
 			<jlg-grid-cell :width="1" :height="1">

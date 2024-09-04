@@ -1,7 +1,7 @@
 {
 	"name": "jlg-form-ui",
 	"private": false,
-	"version": "0.1.10",
+	"version": "0.1.11",
 	"type": "commonjs",
 	"scripts": {
 		"dev": "vite",
@@ -10,7 +10,8 @@
 		"prettier:fix": "prettier --write .",
 		"eslint:fix": "eslint --fix .",
 		"pre-commit": "concurrently \"tsc\" \"lint-staged\"",
-		"preinstall": "npx only-allow pnpm"
+		"preinstall": "npx only-allow pnpm",
+		"publishVersion": "npm run build && npm publish --registry=http://10.1.2.9:4873"
 	},
 	"files": [
 		"package.json",
@@ -83,8 +84,8 @@
 		"vite": "^4.4.5",
 		"vite-plugin-dts": "^3.8.3",
 		"vite-plugin-eslint": "^1.8.1",
-		"vue-tsc": "^1.8.5",
-		"vite-svg-loader": "^3.6.0"
+		"vite-svg-loader": "^3.6.0",
+		"vue-tsc": "^1.8.5"
 	},
 	"vetur": {
 		"tags": "tags.json",

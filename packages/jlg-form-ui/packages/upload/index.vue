@@ -7,18 +7,19 @@
 			</el-aside>
 			<el-main :class="{ 'multiple-card-main': props.multipleTypeConfig?.showAside !== false }">
 				<div class="w-full flex flex-wrap">
-					<upload-content
-						v-if="props.showContent !== false"
-						ref="uploadContentRef"
-						v-model:file-list="uploadFiles"
-						:class="{ 'multiple-upload-content': !props.disabled }"
-						:wrap-style="{ marginRight: '12px', marginBottom: '12px' }"
-						:disabled="true"
-						:drag="false"
-						@click.stop="showFileModalFunc"
-					>
-						<slot name="trigger" />
-					</upload-content>
+					<div @click.stop="showFileModalFunc">
+						<upload-content
+							v-if="props.showContent !== false"
+							ref="uploadContentRef"
+							v-model:file-list="uploadFiles"
+							:wrap-class="{ 'multiple-upload-content': !props.disabled }"
+							:wrap-style="{ marginRight: '12px', marginBottom: '12px' }"
+							:disabled="true"
+							:drag="false"
+						>
+							<slot name="trigger" />
+						</upload-content>
+					</div>
 					<template v-if="props.showFileList">
 						<slot name="uploadList" :file-list="siftUploadFiles">
 							<upload-list
@@ -162,6 +163,7 @@ provide(uploadContextKey, {
 const showFileModal = ref(false);
 
 function showFileModalFunc() {
+	debugger;
 	if (!props.disabled) showFileModal.value = true;
 }
 

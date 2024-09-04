@@ -6475,7 +6475,7 @@ const Um = /* @__PURE__ */ qs(Vm), Wm = { class: "jlg-menu" }, Gm = { class: "jl
     };
   }
 });
-const Pn = /* @__PURE__ */ Ut(ry, [["__scopeId", "data-v-2d98917a"]]);
+const Pn = /* @__PURE__ */ Ut(ry, [["__scopeId", "data-v-e6a51d42"]]);
 Pn.install = (e) => {
   e.component(Pn.name, Pn);
 };

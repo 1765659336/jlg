@@ -14,6 +14,7 @@ import {
 	UploadRequestHandler,
 	UploadProgressEvent,
 } from '../types';
+import string from 'async-validator/dist-types/validator/string';
 
 export const uploadBaseProps = {
 	/**
@@ -106,6 +107,10 @@ export const uploadBaseProps = {
 	 * @description maximum number of uploads allowed
 	 */
 	limit: Number,
+	wrapClass: {
+		type: definePropType<string | Record<string, unknown> | Array<string>>(Object),
+		default: {},
+	},
 	wrapStyle: {
 		// type: Object,
 		type: definePropType<Record<string, string>>(Object),

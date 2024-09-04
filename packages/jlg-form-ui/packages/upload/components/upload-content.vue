@@ -1,5 +1,5 @@
 <template>
-	<div ref="uploadContentRef" class="jlg-upload-content" :style="{ ...props.wrapStyle }">
+	<div ref="uploadContentRef" class="jlg-upload-content" :class="props.wrapClass" :style="{ ...props.wrapStyle }">
 		<div
 			:class="['el-upload', 'el-upload--text', props.drag ? 'is-drag' : '']"
 			tabindex="0"
@@ -186,6 +186,7 @@ const handleChange = (e: Event) => {
 };
 
 const handleClick = () => {
+	debugger;
 	if (!disabled.value) {
 		inputRef.value!.value = '';
 		inputRef.value!.click();
