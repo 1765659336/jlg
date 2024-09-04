@@ -618,6 +618,7 @@ function handleEdit(row: RowVO) {
 		// component: BaseModal,
 		component: BaseModal,
 		modalOptions: {
+			id: 'BaseModal',
 			size: 'mini',
 			status: 'error',
 			iconStatus: 'error',
