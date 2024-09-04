@@ -6655,7 +6655,7 @@ const uy = I({
     };
   }
 });
-const Fn = /* @__PURE__ */ Ut(cy, [["__scopeId", "data-v-7f2d4615"]]);
+const Fn = /* @__PURE__ */ Ut(cy, [["__scopeId", "data-v-3a9728eb"]]);
 Fn.install = (e) => {
   e.component(Fn.name, Fn);
 };
