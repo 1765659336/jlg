@@ -74,6 +74,7 @@ defineExpose({
 
 <style scoped lang="scss">
 :deep(.el-collapse-item__header) {
+	width: auto;
 	.el-collapse-item__arrow {
 		display: none;
 		margin-left: 0;
