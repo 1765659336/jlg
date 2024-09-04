@@ -31,7 +31,7 @@ export type JlgGridInstance<T = any> = {
 	customStore: Record<string, any>;
 	commitProxy: (code: string | VxeToolbarPropTypes.ButtonConfig, msg: T_Msg, ...args: any[]) => Promise<any>;
 	refresh: (refreshToFirstPage: boolean) => void;
-	resetCustomEvent: (data: Record<string, any>) => Promise<boolean>;
+	resetCustomEvent: (customColumns: VxeTableDefines.ColumnInfo[]) => Promise<VxeTableDefines.ColumnInfo[]>;
 	saveCustomEvent: (columns: (VxeTableDefines.ColumnOptions<any> | VxeTableDefines.ColumnInfo<any>)[]) => Promise<any>;
 	renderCustomTemplate: T_RenderCustomTemplate;
 	saveConfig: (type?: T_Save_Config_Type) => void;

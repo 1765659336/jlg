@@ -53,7 +53,7 @@
 		<template #footer>
 			<div v-show="!shrinkStore.isShrink" class="modal--footer">
 				<slot name="footer">
-					<el-button v-if="modalOptions.showCancelButton === false" @click="cancel">{{ modalOptions.cancelButtonText }}</el-button>
+					<el-button v-if="modalOptions.showCancelButton === true" @click="cancel">{{ modalOptions.cancelButtonText }}</el-button>
 					<el-button v-if="modalOptions.showConfirmButton === true" type="primary" :loading="btnLoading" @click="confirm">{{
 						modalOptions.confirmButtonText
 					}}</el-button>
@@ -85,14 +85,13 @@ const props = defineProps({
 	confirmButtonText: {
 		type: String,
 	},
-	showConfirmButtonText: {
-		type: String,
-	},
 	showCancelButton: {
 		type: Boolean,
+		default: true,
 	},
 	showConfirmButton: {
 		type: Boolean,
+		default: true,
 	},
 	delay: {
 		type: Number,
@@ -283,8 +282,8 @@ const modalOptions = computed<T_Modal_Options>({
 	get: () => {
 		if (attrs?.modalOptions && typeof attrs.modalOptions === 'object') {
 			const modalOptions = attrs.modalOptions as T_Modal_Options;
-			const showCancelButton = props.showCancelButton ?? modalOptions.showCancelButton;
-			const showConfirmButton = props.showConfirmButton ?? modalOptions.showConfirmButton;
+			const showCancelButton = modalOptions.showCancelButton || props.showCancelButton;
+			const showConfirmButton = modalOptions.showConfirmButton || props.showConfirmButton;
 			const cancelButtonText = props.cancelButtonText ?? modalOptions.cancelButtonText;
 			const confirmButtonText = props.confirmButtonText ?? modalOptions.confirmButtonText;
 			return {

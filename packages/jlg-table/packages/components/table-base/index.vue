@@ -54,7 +54,15 @@ import toArrayTree from 'xe-utils/toArrayTree';
 import findIndexOf from 'xe-utils/findIndexOf';
 import TableFilter from '../table-filter/index.vue';
 import TableFilterTemplate from '../table-filter/template-index.vue';
-import type { I_Table_Grid_Props, T_Msg, T_RenderCustomTemplate, T_Save_Config_Type, T_Table_Filter, T_Table_Filter_Template } from './type';
+import {
+	I_Table_Grid_Props,
+	JlgGridInstance,
+	T_Msg,
+	T_RenderCustomTemplate,
+	T_Save_Config_Type,
+	T_Table_Filter,
+	T_Table_Filter_Template,
+} from './type';
 import { I_Table_Filter_Props, I_User_Search_Template_Model, SearchType } from '../../components/table-filter/type';
 import { computed, nextTick, reactive, Ref, useAttrs } from 'vue';
 import GlobalConfig from '../../../lib/useGlobalConfig';
@@ -205,7 +213,7 @@ const operationColumn = computed<VxeTableDefines.ColumnOptions>(() => {
 });
 
 const propsColumns = computed(() => {
-	const columns = [...props.columns];
+	const columns = clone(props.columns, true);
 	// 如果存在操作列配置
 	if (props.operationConfig) {
 		columns.push(operationColumn.value);
@@ -214,6 +222,8 @@ const propsColumns = computed(() => {
 });
 // 保存原始列配置, 用于恢复
 const rawColumns = clone<VxeGridPropTypes.Columns>(propsColumns.value, true);
+// 保存筛选配置, 用于恢复
+const rawFilterConfig = clone<I_Table_Filter_Props>(tableFilterConfig.value, true);
 //  当前是否存在分组列
 const isColgroup = computed(() => {
 	return rawColumns.some((item) => item.children?.length);
@@ -262,15 +272,15 @@ const beforeQuery = async (args) => {
 			if (defaultSort.length > 0 && props.sortConfig?.multiple === false) {
 				// 直接修改 props 违背了 vue 的单项数据流原则,但是考虑到外部修改参数操作成本较高,暂时先直接修改
 				args.props.sortConfig.multiple = args.$grid.props.sortConfig.multiple = true;
-				args.props.sortConfig.defaultSort = args.$grid.props.sortConfig.defaultSort = defaultSort;
-				args.sorts = defaultSort;
 			}
+			args.props.sortConfig.defaultSort = args.$grid.props.sortConfig.defaultSort = defaultSort;
+			args.sorts = defaultSort;
 			await xGrid.value?.loadColumn(_columns);
 			handleDefaultSort();
 		}
 		if (searchData.length > 0) {
 			const _filterMerged = filterMerged ? filterMerged : mergedList;
-			const _items = _filterMerged(tableFilterConfig.value?.items || [], searchData, ['visible', 'sortNumber'], 'field');
+			const _items = _filterMerged(rawFilterConfig?.items || [], searchData, ['visible', 'sortNumber'], 'field');
 			const formData: any = {};
 			_items.forEach((item) => {
 				formData[item.field] = item.defaultValue;
@@ -655,27 +665,24 @@ function setTableFilterConfig(config: I_Table_Filter_Props) {
 
 /**
  * 设置列配置(用于恢复默认远程配置)
- * @param sysConfigData 服务端返回的列配置
+ * @param customColumns
  * */
-function resetCustomEvent(sysConfigData?: any) {
+const resetCustomEvent: JlgGridInstance['resetCustomEvent'] = (customColumns) => {
 	return new Promise((resolve) => {
-		tableFilterConfig.value.items = [];
-		beforeQuery({
-			...reactData,
-			code: '_init',
-			isInited: true,
-			isReload: false,
-			options: null,
-			sysConfigData: sysConfigData,
-		})
-			.then(() => {
-				resolve(true);
-			})
-			.catch(() => {
-				resolve(false);
-			});
+		const collectColumn = clone(xGrid.value.getTableColumn().collectColumn, true);
+		const _columnsObj: Record<string, VxeTableDefines.ColumnInfo> = collectColumn.reduce((prev, curr) => {
+			prev[curr.field] = curr;
+			return prev;
+		}, {});
+		const result = [];
+		customColumns.forEach((item) => {
+			if (item.field && _columnsObj[item.field]) {
+				result.push(Object.assign({}, _columnsObj[item.field], item));
+			}
+		});
+		resolve(result);
 	});
-}
+};
 
 /**
  * 加载列配置，如果有操作列配置，自动插入操作列

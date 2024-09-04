@@ -163,7 +163,6 @@ provide(uploadContextKey, {
 const showFileModal = ref(false);
 
 function showFileModalFunc() {
-	debugger;
 	if (!props.disabled) showFileModal.value = true;
 }
 

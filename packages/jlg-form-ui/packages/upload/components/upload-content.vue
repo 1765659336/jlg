@@ -186,7 +186,6 @@ const handleChange = (e: Event) => {
 };
 
 const handleClick = () => {
-	debugger;
 	if (!disabled.value) {
 		inputRef.value!.value = '';
 		inputRef.value!.click();
