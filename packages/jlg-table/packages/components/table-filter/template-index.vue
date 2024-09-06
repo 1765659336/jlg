@@ -58,8 +58,8 @@
 						</el-divider>
 					</slot>
 				</div>
-				<el-divider v-show="!isFolding && !basicTemplateRef?.isShow" />
-				<div class="jlg-filter-panel__body" :class="{ isNotFolding: !isFolding && !basicTemplateRef?.isShow }">
+				<el-divider v-show="!isFolding" />
+				<div class="jlg-filter-panel__body" :class="{ isNotFolding: !isFolding }">
 					<div
 						v-show="!isFolding && !basicTemplateRef?.isShow"
 						class="jlg-table-filter__container"
