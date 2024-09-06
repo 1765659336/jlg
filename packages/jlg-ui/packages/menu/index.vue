@@ -43,6 +43,7 @@
 							:trigger-on-focus="false"
 							value-key="title"
 							placeholder="请输入菜单名称"
+							:teleported="false"
 							@select="handleSelect"
 						/>
 					</div>
