@@ -43,6 +43,7 @@
 							:trigger-on-focus="false"
 							value-key="title"
 							placeholder="请输入菜单名称"
+							:teleported="false"
 							@select="handleSelect"
 						/>
 					</div>
@@ -153,7 +154,7 @@ import { Search } from '@element-plus/icons-vue';
 import MenuItemComponent from './components/menu-item/index.vue';
 import { computed, nextTick, provide, ref, useSlots, watch } from 'vue';
 import { cloneDeep } from 'lodash-unified';
-import { ElPopover, ElScrollbar, ElContainer, ElMain, ElHeader, ElInput } from 'element-plus';
+import { ElPopover, ElScrollbar, ElContainer, ElMain, ElHeader, ElInput, ElAutocomplete } from 'element-plus';
 import findTree from 'xe-utils/findTree';
 import toTreeArray from 'xe-utils/toTreeArray';
 import { RouteLocationNormalizedLoaded } from 'vue-router';

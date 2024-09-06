@@ -78,7 +78,6 @@ const props = withDefaults(defineProps<I_Jlg_Menu_Item_Props>(), {
 	childKey: 'child',
 	menuDataRecordKey: 'key',
 });
-console.log(props);
 const { collectClick, changeMenuRoute } = inject('parentInject');
 // 路由跳转
 function addRoute(menuData: I_JlgMenu_MenuDataItem) {
