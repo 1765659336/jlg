@@ -9,7 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     BaseUse: typeof import('./src/components/grid-layout/base-use/index.vue')['default']
     Collapse: typeof import('./src/components/collapse/index.vue')['default']
-    ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     FlexLayout: typeof import('./src/components/flex-layout/index.vue')['default']
