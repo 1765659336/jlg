@@ -24,7 +24,7 @@
 						</template>
 					</el-select>
 					<div class="filter-panel__scrollbar">
-						<div v-if="currentScreeningPlan.length > 0" class="filter-plan-text">
+						<div v-if="currentScreeningPlan.length > 0 && isFolding" class="filter-plan-text">
 							<span v-for="item in currentScreeningPlan" :key="item.dbFieldName"> {{ item.displayName }} : {{ item.defaultValue }}; </span>
 						</div>
 						<el-scrollbar v-show="isFolding && !basicTemplateRef?.isShow">
@@ -222,13 +222,6 @@ const currentScreeningPlan = computed(() => {
 	if (!currentTemplate) return [];
 	return currentTemplate.userSearchTemplateDetails;
 });
-
-watch(
-	() => templateStore.currentTemplateUId,
-	() => {
-		console.log('templateStore', templateStore);
-	}
-);
 
 // 根据模板uid删除模板
 const handleDeleteTemplate = (templateUid: string) => {
