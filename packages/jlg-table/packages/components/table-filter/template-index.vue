@@ -55,6 +55,7 @@
 						</el-divider>
 					</slot>
 				</div>
+				<el-divider />
 				<div class="jlg-filter-panel__body">
 					<div
 						v-show="!isFolding && !basicTemplateRef?.isShow"
