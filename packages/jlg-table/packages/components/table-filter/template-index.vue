@@ -24,6 +24,9 @@
 						</template>
 					</el-select>
 					<div class="filter-panel__scrollbar">
+						<div v-if="currentScreeningPlan.length > 0" class="filter-plan-text">
+							<span v-for="item in currentScreeningPlan" :key="item.dbFieldName"> {{ item.displayName }} : {{ item.defaultValue }}; </span>
+						</div>
 						<el-scrollbar v-show="isFolding && !basicTemplateRef?.isShow">
 							<div class="filter-panel__options">
 								<basic-tag v-for="item in itemsValue" :key="item.field" :item="item" :form="form" @close="handleTagClose" />
@@ -55,8 +58,8 @@
 						</el-divider>
 					</slot>
 				</div>
-				<el-divider />
-				<div class="jlg-filter-panel__body">
+				<el-divider v-show="!isFolding && !basicTemplateRef?.isShow" />
+				<div class="jlg-filter-panel__body" :class="{ isNotFolding: !isFolding && !basicTemplateRef?.isShow }">
 					<div
 						v-show="!isFolding && !basicTemplateRef?.isShow"
 						class="jlg-table-filter__container"
@@ -135,7 +138,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue';
-import { ElConfigProvider, ElOption, ElSelect, ElTooltip, FormInstance } from 'element-plus';
+import { ElConfigProvider, ElOption, ElSelect, ElTooltip, FormInstance, ElDivider } from 'element-plus';
 import { I_Table_Filter_Item, I_Table_Filter_Props, I_User_Search_Template_Model, SearchType } from './type';
 import GlobalConfig from '../../../lib/useGlobalConfig';
 import { usePopover } from './hooks/usePopover';
@@ -213,6 +216,19 @@ const setTemplateList = (list?: I_User_Search_Template_Model[], currentTemplateU
 		});
 	});
 };
+
+const currentScreeningPlan = computed(() => {
+	const currentTemplate = templateStore.loadTemplateList.find((item) => item.templateUid === templateStore.currentTemplateUId);
+	if (!currentTemplate) return [];
+	return currentTemplate.userSearchTemplateDetails;
+});
+
+watch(
+	() => templateStore.currentTemplateUId,
+	() => {
+		console.log('templateStore', templateStore);
+	}
+);
 
 // 根据模板uid删除模板
 const handleDeleteTemplate = (templateUid: string) => {
