@@ -7,7 +7,7 @@ import vueError from './pac/vue_error';
 import rrwebInit, { rrwebEvents } from './col/rrweb';
 import routerChange from './col/router';
 import clickCollected from './col/click';
-import trackerInit, { I_TrackerDetail, I_TrackerOption } from './utils/breadCrumbs';
+import trackerInit, { E_TrackerDetailType, I_TrackerDetail, I_TrackerOption } from './utils/breadCrumbs';
 import { routerTracker } from './col/router';
 import { clickTracker } from './col/click';
 
@@ -132,5 +132,17 @@ export default (option: {
 		});
 	}
 
-	return { ...returnOption, routerTracker, tracker, clickTracker };
+	return {
+		...returnOption,
+		routerTracker,
+		tracker,
+		clickTracker,
+		addCustomTracker: (content: string) => {
+			tracker.addDetail({
+				timestamp: Date.now(),
+				content,
+				type: E_TrackerDetailType.自定义行为,
+			});
+		},
+	};
 };

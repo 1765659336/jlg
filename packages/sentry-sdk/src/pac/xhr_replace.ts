@@ -1,4 +1,4 @@
-import { DetailTracker } from '../utils/breadCrumbs';
+import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import EventEmitter from '../utils/handleEvents';
 import replaceOld from '../utils/replaceOld';
 
@@ -16,17 +16,14 @@ export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: Detail
 
 	const originalXhrProto = XMLHttpRequest.prototype;
 
-	// 记录请求的 method 和 url
 	replaceOld(originalXhrProto, 'open', function (originalOpen: T_VoidFun): T_VoidFun {
 		return function (this: T_SDKDataXMLHttpRequest, method: string, url: string, ...args: any[]): void {
-			// 保存请求的 method 和 url
 			(this as T_SDKDataXMLHttpRequest)._requestMethod = method;
 			(this as T_SDKDataXMLHttpRequest)._requestUrl = url;
 			originalOpen.apply(this, [method, url, ...args]);
 		};
 	});
 
-	// 处理 send 方法
 	replaceOld(originalXhrProto, 'send', function (originalSend: T_VoidFun): T_VoidFun {
 		return function (this: T_SDKDataXMLHttpRequest, requestData?: string): void {
 			this.addEventListener('readystatechange', function () {
@@ -45,7 +42,7 @@ export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: Detail
 					const content = {
 						timestamp: Date.now(),
 						content: JSON.stringify(data),
-						type: 5,
+						type: E_TrackerDetailType.xhr请求错误,
 					};
 
 					eventBus.emit('xhrCallback', content);

@@ -1,6 +1,6 @@
 import replaceOld from '../utils/replaceOld';
 import EventEmitter from '../utils/handleEvents';
-import { DetailTracker } from '../utils/breadCrumbs';
+import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 
 type BodyInit = ReadableStream | XMLHttpRequestBodyInit;
 
@@ -78,25 +78,22 @@ export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: Detail
 
 			const fetchPromise = originalFetch(input, init);
 
+			const content = {
+				timestamp: Date.now(),
+				type: E_TrackerDetailType.fetch请求错误,
+				content: JSON.stringify(data),
+			};
+
 			return fetchPromise
 				.then(async (response) => {
 					if (!response.ok) {
-						const content = {
-							timestamp: Date.now(),
-							type: 7,
-							content: JSON.stringify(data),
-						};
 						eventBus.emit('fetchCallback', content);
 						tracker.addDetail(content);
 					}
 					return response;
 				})
 				.catch((error) => {
-					const content = {
-						timestamp: Date.now(),
-						type: 7,
-						content: JSON.stringify(data),
-					};
+
 					eventBus.emit('fetchCallback', content);
 					tracker.addDetail(content);
 					throw error;

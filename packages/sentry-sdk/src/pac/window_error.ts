@@ -1,4 +1,4 @@
-import { DetailTracker } from '../utils/breadCrumbs';
+import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import EventEmitter from '../utils/handleEvents';
 
 export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: DetailTracker }) => {
@@ -14,7 +14,7 @@ export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: Detail
 			if (err instanceof ErrorEvent && err.target instanceof Element) {
 				const content = {
 					timestamp: Date.now(),
-					type: 4,
+					type: E_TrackerDetailType.资源加载错误,
 					content: JSON.stringify(data),
 				};
 				eventBus.emit('sourceCallback', content);
@@ -22,7 +22,7 @@ export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: Detail
 			} else {
 				const content = {
 					timestamp: Date.now(),
-					type: 3,
+					type: E_TrackerDetailType.js运行错误,
 					content: JSON.stringify(data),
 				};
 				eventBus.emit('jsCallback', content);

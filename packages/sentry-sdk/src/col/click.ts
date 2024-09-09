@@ -1,4 +1,4 @@
-import trackerInit, { DetailTracker, I_TrackerOption } from '../utils/breadCrumbs';
+import trackerInit, { DetailTracker, E_TrackerDetailType, I_TrackerOption } from '../utils/breadCrumbs';
 import EventEmitter from '../utils/handleEvents';
 export let clickTracker: DetailTracker;
 
@@ -18,11 +18,9 @@ export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; 
 	}
 
 	function getPageInfo() {
-		// 网页的宽度和高度
 		const viewportWidth = window.innerWidth;
 		const viewportHeight = window.innerHeight;
 
-		// 滚动条的大小
 		const scrollX = window.scrollX || window.pageXOffset;
 		const scrollY = window.scrollY || window.pageYOffset;
 
@@ -50,7 +48,7 @@ export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; 
 			const id = target.id ? ` id="${target.id}"` : '';
 			const innerText = target.innerText;
 			const dom: string = `<${tagName}${id}${classNames !== '' ? classNames : ''}>${innerText}</${tagName}>`;
-			const content = {
+			const data = {
 				dom: dom,
 				title: document.title,
 				url: window.history.state.current,
@@ -58,10 +56,10 @@ export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; 
 				clientX,
 				clientY,
 			};
-			const detailData = { timestamp: Date.now(), type: 1, content: JSON.stringify(content) };
+			const content = { timestamp: Date.now(), type: E_TrackerDetailType.点击, content: JSON.stringify(data) };
 			eventBus.emit('clickCallback', content);
-			tracker.addDetail(detailData);
-			clickTracker.addDetail(detailData);
+			tracker.addDetail(content);
+			clickTracker.addDetail(content);
 		},
 		true
 	);

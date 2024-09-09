@@ -1,4 +1,4 @@
-import { DetailTracker } from '../utils/breadCrumbs';
+import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import EventEmitter from '../utils/handleEvents';
 
 export default ({ eventBus, vue, tracker }: { eventBus: EventEmitter; vue: any; tracker: DetailTracker }) => {
@@ -11,7 +11,7 @@ export default ({ eventBus, vue, tracker }: { eventBus: EventEmitter; vue: any; 
 
 		const content = {
 			timestamp: Date.now(),
-			type: 8,
+			type: E_TrackerDetailType.vue错误,
 			content: JSON.stringify(data),
 		};
 

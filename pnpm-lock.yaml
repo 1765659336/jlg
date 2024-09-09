@@ -588,8 +588,8 @@ importers:
         specifier: 1.0.0-alpha.4
         version: 1.0.0-alpha.4
       sentry-sdk:
-        specifier: ^0.0.7
-        version: 0.0.7
+        specifier: ^0.0.11
+        version: 0.0.11
       vue:
         specifier: ^3.4.21
         version: 3.4.27(typescript@5.4.5)
@@ -4203,8 +4203,8 @@ packages:
     resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
     engines: {node: '>= 0.8.0'}
 
-  sentry-sdk@0.0.7:
-    resolution: {integrity: sha512-vw5hPs+4im/BJsadBJKT7dhVmxiVz7Ypxu0PeFNXR8Z2ajfg94NEiu3ZGvms7+Xk2/PvshEU0uG/cSGcwT0U2A==}
+  sentry-sdk@0.0.11:
+    resolution: {integrity: sha512-HM09P5fQSUbKsFaa8cMwZzRAUYU3O/f24bUqEc0NxpK2i9vLJPzOYCrpzgTuCvN5GwS9LgRudC0DiF2odd6bwQ==}
 
   serialize-javascript@6.0.2:
     resolution: {integrity: sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==}
@@ -9127,7 +9127,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  sentry-sdk@0.0.7:
+  sentry-sdk@0.0.11:
     dependencies:
       rrweb: 2.0.0-alpha.4
 

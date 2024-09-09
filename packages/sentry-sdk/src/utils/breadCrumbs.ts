@@ -1,6 +1,19 @@
+export enum E_TrackerDetailType {
+	点击 = 1,
+	页面跳转,
+	js运行错误,
+	资源加载错误,
+	xhr请求错误,
+	fetch请求错误,
+	未处理失败promise错误,
+	vue错误,
+	自定义行为,
+}
+
 export declare interface I_TrackerDetail {
 	timestamp: number;
 	content: string;
+	type: E_TrackerDetailType;
 	[k: string]: any;
 }
 
@@ -38,7 +51,7 @@ export class DetailTracker {
 			this.realTimeDatasetOverMaxCallback(this.realTimeDataset);
 			this.flushRealTimeDataset();
 		}
-		this.realTimeDataset.push({ timestamp: detail.timestamp, content: detail.content, ...this.otherOptions });
+		this.realTimeDataset.push({ timestamp: detail.timestamp, content: detail.content, type: detail.type, ...this.otherOptions });
 	}
 
 	private flushRealTimeDataset(): void {
@@ -60,5 +73,5 @@ export class DetailTracker {
 }
 
 export default ({ maxRealTimeLength, backupSize, otherOptions, realTimeDatasetOverMaxCallback }: I_TrackerOption) => {
-	return new DetailTracker(maxRealTimeLength, backupSize, otherOptions ?? {}, realTimeDatasetOverMaxCallback ?? (() => {}));
+	return new DetailTracker(maxRealTimeLength, backupSize, otherOptions ?? {}, realTimeDatasetOverMaxCallback ?? (() => { }));
 };

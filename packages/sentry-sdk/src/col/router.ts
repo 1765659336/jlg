@@ -1,6 +1,6 @@
 import EventEmitter from '../utils/handleEvents';
 import replaceOld from '../utils/replaceOld';
-import trackerInit, { DetailTracker, I_TrackerOption } from '../utils/breadCrumbs';
+import trackerInit, { DetailTracker, E_TrackerDetailType, I_TrackerOption } from '../utils/breadCrumbs';
 
 let lastHref: string = document.location.href;
 let lastHrefTime: number = Date.now();
@@ -47,7 +47,7 @@ export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; 
 						time: nowTime - lastHrefTime,
 					};
 
-					const detailData = { timestamp: nowTime, type: 2, content: JSON.stringify(data) };
+					const detailData = { timestamp: nowTime, type: E_TrackerDetailType.页面跳转, content: JSON.stringify(data) };
 					eventBus.emit('routerChangeCallback', data);
 					tracker.addDetail(detailData);
 					routerTracker.addDetail(detailData);
@@ -61,7 +61,6 @@ export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; 
 		};
 	}
 
-	// 确保 replaceOld 函数的类型正确
 	replaceOld(window.history, 'pushState', historyReplaceFn);
 	replaceOld(window.history, 'replaceState', historyReplaceFn);
 };

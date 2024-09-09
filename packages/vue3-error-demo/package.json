@@ -14,7 +14,7 @@
         "lodash-unified": "^1.0.3",
         "rrweb": "2.0.0-alpha.4",
         "rrweb-player": "1.0.0-alpha.4",
-        "sentry-sdk": "^0.0.7",
+        "sentry-sdk": "^0.0.11",
         "vue": "^3.4.21",
         "vue-router": "4"
     },

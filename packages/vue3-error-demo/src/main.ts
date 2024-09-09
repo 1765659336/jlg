@@ -2,8 +2,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import ElementPlus, { ElMessage } from 'element-plus'
 import 'element-plus/dist/index.css'
-// import sdk from 'sentry-sdk'
-import sdk from '../../sentry-sdk/src/index'
+import sdk from 'sentry-sdk'
+// import sdk from '../../sentry-sdk/src/index'
 
 import { createWebHashHistory, createRouter } from 'vue-router'
 
@@ -15,6 +15,18 @@ import RouterTable from './pages/RouterTable.vue'
 import ViewError from './pages/ViewError.vue'
 import { clickTableData, errorTableData, routerTableData } from './pages/data'
 import axios from 'axios'
+
+export enum E_TrackerDetailType {
+    点击 = 1,
+    页面跳转,
+    js运行错误,
+    资源加载错误,
+    xhr请求错误,
+    fetch请求错误,
+    未处理失败promise错误,
+    vue错误,
+    自定义行为,
+}
 
 const routes = [
     {
@@ -156,7 +168,7 @@ const returnOption = sdk({
 app.use(ElementPlus).use(router).mount('#app')
 
 setInterval(() => {
-    // 模拟js运行报错
+    returnOption.addCustomTracker('测试手动上报一个自定义行为的内容')
     const un = undefined
     un.a = '1'
 }, 10000)
