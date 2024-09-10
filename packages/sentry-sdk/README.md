@@ -1,51 +1,13 @@
-# 错误监控sdk
+# 监控sdk
 
-## 痛点
+## 需求分析
 
 ---
 
 - 用户错误测试环境复现耗时太长或者无法复现只能去用户电脑上查看
-- 用户错误感知不及时，用户发现错误->反馈问题->到达开发之间沟通成本高
+- 用户错误处理不及时，用户发现错误->反馈问题->开发修复 链路过程沟通成本高
 - 帮助开发定位错误、调试代码信息少
-
-## 解决手段
-
----
-
-- 定位源码
-
-   打包生成的source-map源码，将错误信息通过source-map反编译能够得到具体是项目源码中哪个源文件哪行哪列报错
-
-- 播放录屏
-
-   把错误发生前一段时间（时间可自定义）的用户的操作录制下来，然后通过回放来还原错误
-
-```ts
-import * as rrweb from 'rrweb';
-
-// events存储录屏信息
-export const rrwebEvents: any[] = [];
-// record 用于记录DOM中的所有变更
-export default () => {
-	rrweb.record({
-		emit(event, isCheckout) {
-			// isCheckout 是一个标识，告诉你重新制作了快照
-			if (isCheckout) {
-				rrwebEvents.length = 0;
-			}
-			rrwebEvents.push(event);
-		},
-		packFn: rrweb.pack,
-		recordCanvas: true, // 记录 canvas 内容
-		checkoutEveryNms: 10 * 1000, // 每10s重新制作快照
-		checkoutEveryNth: 200, // 每 200 个 event 重新制作快照
-	});
-};
-```
-
-- 记录用户行为
-
-   通过前两种方式可以解决大部分问题，假如用户做了很多操作，操作的间隔超过了单次录屏时长，录制的视频可能是不完整的，此时可以借助用户行为来分析用户的操作（比如用户切换页面、鼠标行为、键盘敲击），帮助复现问题
+- 监控系统的性能和健康度、增强系统的可维护性和健壮性
 
 ## 设计思路
 
@@ -65,10 +27,11 @@ export default () => {
 - 异步错误
 - 静态资源加载错误
 - 接口请求错误
+- 框架报错
 
 #### 错误捕获方式
 
-1）try/catch
+1. try/catch
 
 只能捕获代码常规的运行错误，语法错误和异步错误不能捕获到
 
@@ -102,7 +65,7 @@ try {
 }
 ```
 
-2） window.onerror
+2.  window.onerror
 
 window.onerror 可以捕获常规错误、异步错误，但不能捕获资源错误
 
@@ -144,7 +107,7 @@ script.src = "https://www.test.com/index.js";
 document.body.appendChild(script);
 ```
 
-3） window.addEventListener
+3. window.addEventListener
 
 当静态资源加载失败时，会触发 error 事件， 此时 window.onerror 不能捕获到
 
@@ -175,7 +138,7 @@ document.body.appendChild(script);
 </html>
 ```
 
-4）Promise 错误
+4. Promise 错误
 
 Promise 中抛出的错误，无法被 window.onerror、try/catch、 error 事件捕获到，可通过 unhandledrejection 事件来处理
 
@@ -214,7 +177,7 @@ window.addEventListener('unhandledrejection', function (e) {
 });
 ```
 
-5）Vue错误
+5. Vue错误
 
 ```js
 Vue.config.errorHandler = (err, vm, info) => {
@@ -222,9 +185,42 @@ Vue.config.errorHandler = (err, vm, info) => {
 };
 ```
 
+6. 定位源码
+
+打包生成的source-map源码，将错误信息通过source-map反编译能够得到具体是项目源码中哪个源文件哪行哪列报错
+
+7. 播放录屏
+
+把错误发生前一段时间（时间可自定义）的用户的操作录制下来，然后通过回放来还原错误
+
+```ts
+import * as rrweb from 'rrweb';
+
+// events存储录屏信息
+export const rrwebEvents: any[] = [];
+// record 用于记录DOM中的所有变更
+export default () => {
+	rrweb.record({
+		emit(event, isCheckout) {
+			// isCheckout 是一个标识，告诉你重新制作了快照
+			if (isCheckout) {
+				rrwebEvents.length = 0;
+			}
+			rrwebEvents.push(event);
+		},
+		packFn: rrweb.pack,
+		recordCanvas: true, // 记录 canvas 内容
+		checkoutEveryNms: 10 * 1000, // 每10s重新制作快照
+		checkoutEveryNth: 200, // 每 200 个 event 重新制作快照
+	});
+};
+```
+
 #### 用户行为记录
 
-1）路由页面切换收集
+通过前面的方式可以解决大部分问题，假如用户做了很多操作，操作的间隔超过了单次录屏时长，录制的视频可能是不完整的，此时可以借助用户行为来分析用户的操作（比如用户切换页面、鼠标行为、键盘敲击），帮助复现问题
+
+1. 路由页面切换收集
 
 ```tsx
 import EventEmitter from '../utils/handleEvents';
@@ -296,7 +292,7 @@ export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; 
 };
 ```
 
-2）点击事件收集
+2. 点击事件收集
 
 ```tsx
 import trackerInit, { DetailTracker, I_TrackerOption } from '../utils/breadCrumbs';
@@ -369,11 +365,215 @@ export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; 
 };
 ```
 
-3）接口调用收集
+3. 接口调用收集
+
+#### 性能监控
+
+1. 前端页面DOM渲染时间
+
+   ```tsx
+   routerTracker = trackerInit({
+   		...trackerOption,
+   		realTimeDatasetOverMaxCallback: (val) => {
+   			eventBus.emit('routerRealTimeDatasetOverMaxCallback', val);
+   		},
+   	});
+   	let startTime: number;
+   	let renderingTime: number;
+   
+   	vueRouter.beforeEach(async (...args: any) => {
+   		startTime = Date.now();
+   		vueRouter.routerChange = true;
+   		args[2]();
+   	});
+   
+   	vueRouter.afterEach(async () => {
+   		if (!vueRouter.routerChange) return;
+   		await nextTick();
+   		const endTime = Date.now();
+   		renderingTime = endTime - startTime;
+   		vueRouter.routerChange = false;
+   	});
+   
+   	app.mixin({
+   		mounted() {
+   			// console.log('mixinMounted');
+   		},
+   	});
+   
+   	function historyReplaceFn(originalHistoryFn: HistoryReplaceFn): HistoryReplaceFn {
+   		return function (...args: any[]) {
+   			const url = args.length > 2 ? args[2] : undefined;
+   
+   			if (url) {
+   				const from = lastHref;
+   				const to = String(url);
+   
+   				if (from === to) return;
+   
+   				const oldTitle = document.title;
+   
+   				lastHref = to;
+   
+   				const result = originalHistoryFn.apply(this, args);
+   
+   				setTimeout(() => {
+   					const nowTime = Date.now();
+   
+   					const newTitle = document.title;
+   
+   					const data = {
+   						from: {
+   							path: from,
+   							title: oldTitle,
+   						},
+   						to: {
+   							path: to,
+   							title: newTitle,
+   						},
+   						residenceTime: nowTime - lastHrefTime,
+   						renderingTime,
+   					};
+   
+   					const content = { timestamp: nowTime, type: E_TrackerDetailType.页面跳转, uuid, content: JSON.stringify(data) };
+   					eventBus.emit('routerChangeCallback', content);
+   					tracker.addDetail(content);
+   					routerTracker.addDetail(content);
+   					lastHrefTime = nowTime;
+   				}, 10);
+   
+   				return result;
+   			}
+   
+   			return originalHistoryFn.apply(this, args);
+   		};
+   	}
+   
+   	replaceOld(window.history, 'pushState', historyReplaceFn);
+   	replaceOld(window.history, 'replaceState', historyReplaceFn);
+   };
+   ```
+
+   
+
+2. 接口响应时间
+
+   ```tsx
+   export default ({ eventBus, tracker, requestTracker }: { eventBus: EventEmitter; tracker: DetailTracker; requestTracker: DetailTracker }): void => {
+   	if (typeof window.fetch === 'undefined') {
+   		return;
+   	}
+   
+   	const originalFetch = window.fetch;
+   
+   	window.fetch = (input: Request | string | URL, init?: RequestInit): Promise<Response> => {
+   		const data = {
+   			url: typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
+   			method: init?.method || 'GET',
+   			headers: init?.headers,
+   			body: init?.body,
+   			beginTime: Date.now(),
+   		};
+   
+   		const fetchPromise = originalFetch(input, init);
+   
+   		return fetchPromise
+   			.then(async (response) => {
+   				data.endTime = Date.now();
+   				data.durationTime = data.endTime - data.beginTime;
+   				const content = {
+   					timestamp: Date.now(),
+   					type: response.ok ? E_TrackerDetailType.fetch请求 : E_TrackerDetailType.fetch请求错误,
+   					content: JSON.stringify(data),
+   				};
+   
+   				if (response.ok) {
+   					requestTracker.addDetail(content);
+   				} else {
+   					eventBus.emit('fetchCallback', content);
+   				}
+   
+   				tracker.addDetail(content);
+   
+   				return response;
+   			})
+   			.catch((error) => {
+   				data.endTime = Date.now();
+   				data.durationTime = data.endTime - data.beginTime;
+   				const content = {
+   					timestamp: Date.now(),
+   					type: E_TrackerDetailType.fetch请求错误,
+   					content: JSON.stringify(data),
+   				};
+   
+   				eventBus.emit('fetchCallback', content);
+   				tracker.addDetail(content);
+   
+   				throw error;
+   			});
+   	};
+   };
+   
+   export default ({ eventBus, tracker, requestTracker }: { eventBus: EventEmitter; tracker: DetailTracker; requestTracker: DetailTracker }): void => {
+   	if (typeof XMLHttpRequest === 'undefined') {
+   		return;
+   	}
+   
+   	const originalXhrProto = XMLHttpRequest.prototype;
+   
+   	replaceOld(originalXhrProto, 'open', function (originalOpen: T_VoidFun): T_VoidFun {
+   		return function (this: T_SDKDataXMLHttpRequest, method: string, url: string, ...args: any[]): void {
+   			(this as T_SDKDataXMLHttpRequest)._requestMethod = method;
+   			(this as T_SDKDataXMLHttpRequest)._requestUrl = url;
+   			(this as T_SDKDataXMLHttpRequest)._beginTime = Date.now();
+   			originalOpen.apply(this, [method, url, ...args]);
+   		};
+   	});
+   
+   	replaceOld(originalXhrProto, 'send', function (originalSend: T_VoidFun): T_VoidFun {
+   		return function (this: T_SDKDataXMLHttpRequest, requestData?: string): void {
+   			const handleReadyStateChange = (): void => {
+   				if (this.readyState === XMLHttpRequest.DONE) {
+   					const isFailed = this.status >= 400 || this.status === 0;
+   					const data = {
+   						method: this._requestMethod,
+   						url: this._requestUrl,
+   						requestData: requestData,
+   						status: this.status,
+   						beginTime: this._beginTime,
+   						endTime: Date.now(),
+   						durationTime: Date.now() - this._beginTime,
+   						// response: this.responseText,
+   					};
+   
+   					const content = {
+   						timestamp: Date.now(),
+   						content: JSON.stringify(data),
+   						type: isFailed ? E_TrackerDetailType.xhr请求错误 : E_TrackerDetailType.xhr请求,
+   					};
+   
+   					if (!isFailed) {
+   						requestTracker.addDetail(content);
+   					} else {
+   						eventBus.emit('xhrCallback', content);
+   					}
+   					tracker.addDetail(content);
+   				}
+   			};
+   
+   			this.addEventListener('readystatechange', handleReadyStateChange);
+   
+   			originalSend.call(this, requestData);
+   		};
+   	});
+   };
+   ```
+
+   
 
 ### 数据存储与分析
 
-`将收集错误信息，存储服务端`
+1.将收集错误信息，定义合理的内存大小，减少请求服务器端的频次
 
 ```
 将每一个用户行为和错误当成一个明细，前端使用两个数据集记录这些明细，从内存占用考虑，可以自定义定义合理的数据集长度。一个数据集用来实时记录每一个新产生的明细，当这个数据集的明细达到最大长度时，将所有数据备份到另外一个数据集、上报并清空，如果发生错误时，如果实时的数据集数据不够，可以从备份数据集中取对应条数明细，确保发生错误时，有足够的明细数据协助定位问题。
@@ -446,62 +646,94 @@ export default ({ maxRealTimeLength, backupSize, otherOptions, realTimeDatasetOv
 };
 ```
 
+2. 处理用户刷新系统，导致之前在内存中存储的数据丢失
+
+   **采用sendBeacon技术方案**
+   
+3. 隔离业务，前端使用node另起一个服务，使用kafka队列提交存储数据
+
+4. canvas绘制的伪视频走文件服务上传，数据收集里面只保留url
+
 ### 数据展示
 
 `多端查看（大屏、PC端、手机端）`
 
-`实时通知（邮件Or短信通知）`
+`通知人员（邮件Or短信通知Or接入协作平台）`
 
-`数据实时（socket通信）`
+`数据实时（socket通信Or定时请求）`
+
+`数据安全（设计好如接口响应体，录屏等查看的权限分配问题）`
+
+`远程控制（如系统发生异常，会产生大量错误，此时收集数据频率过高会影响到原系统，sdk需支持远程开启关闭）`
 
 [参考](https://www.webfunny.cn/wf_monitor/home.html)
 
-# 如何使用
+## 如何使用
+
 ```tsx
+const upload = async (longString: string) => {
+    const blob = new Blob([longString], { type: 'text/plain' }); // 'text/plain' 是 MIME 类型，你可以根据需要进行更改
+    const file = new File([blob], 'filename.txt', { type: 'text/plain' }); // 'filename.txt' 是文件名，你可以根据需要进行更改
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await axios.post('http://218.77.107.37:48999/upload/account', formData);
+    return res.data.content.path;
+}
+
 const returnOption = sdk({
-    xhrCallback: (err) => {
-        console.log('xhr请求错误', err);
+    xhrCallback: async (err) => {
         ElMessage.error('xhr请求错误');
+        const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents))
+        errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
     },
-    fetchCallback: (err) => {
-        console.log('fetch请求错误', err);
+    fetchCallback: async (err) => {
         ElMessage.error('fetch请求错误');
+        const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents))
+        errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
     },
-    jsCallback: (err) => {
-        console.log('js错误', err);
+    jsCallback: async (err) => {
+        const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents))
+        errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
     },
-    sourceCallback: (err) => {
-        console.log('文件资源加载错误上报', err);
+    sourceCallback: async (err) => {
         ElMessage.error('文件资源加载错误上报');
+        const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents))
+        errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
     },
-    unHandledRejectionCallback: (event) => {
-        console.log('未处理失败的Promise', event);
+    unHandledRejectionCallback: async (err) => {
         ElMessage.error('未处理失败的Promise');
+        const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents))
+        errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
     },
-    vueErrorOption: {
-        vue: app,
+    vueOption: {
+        app: app,
+        vueRouter: router,
         vueErrorCallback: (err) => {
-            console.log('vue错误', err);
-            console.log(returnOption.rrwebEvents, 'returnOption.rrwebEvents');
-            console.log('returnOption.tracker', returnOption.tracker.getDetailsForErrorReporting(30));
             ElMessage.error('vue错误');
+            errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
         }
     },
     routerChangeCallback: (opt) => {
-        console.log('路由变化', opt);
+        // console.log('路由变化', opt);
         ElMessage.info('路由变化');
     },
     routerRealTimeDatasetOverMaxCallback: (opt) => {
-        console.log('路由变化收集达到阈值', opt);
+        // console.log('路由变化收集达到阈值', opt);
         ElMessage.info('路由变化收集达到阈值');
+        routerTableData.value = [...routerTableData.value, ...opt];
     },
     clickCallback: (opt) => {
-        console.log('点击事件收集', opt);
+        // console.log('点击事件收集', opt);
         ElMessage.info('点击事件收集');
     },
     clickRealTimeDatasetOverMaxCallback: (opt) => {
-        console.log('点击收集达到阈值', opt);
+        // console.log('点击收集达到阈值', opt);
         ElMessage.info('点击收集达到阈值');
+        clickTableData.value = [...clickTableData.value, ...opt];
+    },
+    requestRealTimeDatasetOverMaxCallback: (opt) => {
+        ElMessage.info('接口请求收集达到阈值');
+        requestTableData.value = [...requestTableData.value, ...opt];
     },
     isOpenRrweb: true,
     trackerOption: {
@@ -516,6 +748,10 @@ const returnOption = sdk({
         clickTrackerOption: {
             maxRealTimeLength: 10,
             backupSize: 10,
+        },
+        requestTrackerOption: {
+            maxRealTimeLength: 10,
+            backupSize: 50,
         }
     }
 });

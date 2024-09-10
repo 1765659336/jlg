@@ -517,10 +517,19 @@ importers:
       rrweb:
         specifier: 2.0.0-alpha.4
         version: 2.0.0-alpha.4
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
+      vue:
+        specifier: ^3.4.21
+        version: 3.4.27(typescript@5.4.5)
     devDependencies:
       '@types/node':
         specifier: ^20.8.10
         version: 20.14.1
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.9.1
         version: 6.21.0(@typescript-eslint/parser@7.0.0(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5)
@@ -588,8 +597,8 @@ importers:
         specifier: 1.0.0-alpha.4
         version: 1.0.0-alpha.4
       sentry-sdk:
-        specifier: ^0.0.11
-        version: 0.0.11
+        specifier: ^0.0.12
+        version: 0.0.12(typescript@5.4.5)
       vue:
         specifier: ^3.4.21
         version: 3.4.27(typescript@5.4.5)
@@ -1563,6 +1572,9 @@ packages:
 
   '@types/strip-json-comments@0.0.30':
     resolution: {integrity: sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==}
+
+  '@types/uuid@10.0.0':
+    resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
 
   '@types/web-bluetooth@0.0.16':
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
@@ -4203,8 +4215,8 @@ packages:
     resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
     engines: {node: '>= 0.8.0'}
 
-  sentry-sdk@0.0.11:
-    resolution: {integrity: sha512-HM09P5fQSUbKsFaa8cMwZzRAUYU3O/f24bUqEc0NxpK2i9vLJPzOYCrpzgTuCvN5GwS9LgRudC0DiF2odd6bwQ==}
+  sentry-sdk@0.0.12:
+    resolution: {integrity: sha512-W2ZaN7g0IQ/B3+ucr/BZhm8guCn28Uk2r1rU2o82nvcLau1rbDU8i89Q/+9+5bYHTpQt1zdaRM3F5nanlQjvWQ==}
 
   serialize-javascript@6.0.2:
     resolution: {integrity: sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==}
@@ -4831,6 +4843,10 @@ packages:
   utils-merge@1.0.1:
     resolution: {integrity: sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=}
     engines: {node: '>= 0.4.0'}
+
+  uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
@@ -6198,6 +6214,8 @@ snapshots:
   '@types/strip-bom@3.0.0': {}
 
   '@types/strip-json-comments@0.0.30': {}
+
+  '@types/uuid@10.0.0': {}
 
   '@types/web-bluetooth@0.0.16': {}
 
@@ -9127,9 +9145,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  sentry-sdk@0.0.11:
+  sentry-sdk@0.0.12(typescript@5.4.5):
     dependencies:
       rrweb: 2.0.0-alpha.4
+      uuid: 10.0.0
+      vue: 3.4.27(typescript@5.4.5)
+    transitivePeerDependencies:
+      - typescript
 
   serialize-javascript@6.0.2:
     dependencies:
@@ -9944,6 +9966,8 @@ snapshots:
   util-deprecate@1.0.2: {}
 
   utils-merge@1.0.1: {}
+
+  uuid@10.0.0: {}
 
   uuid@8.3.2: {}
 

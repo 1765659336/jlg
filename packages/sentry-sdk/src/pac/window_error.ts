@@ -1,7 +1,7 @@
 import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import EventEmitter from '../utils/handleEvents';
 
-export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: DetailTracker }) => {
+export default ({ uuid, eventBus, tracker }: { uuid: string; eventBus: EventEmitter; tracker: DetailTracker }) => {
 	window.addEventListener(
 		'error',
 		function (err: ErrorEvent) {
@@ -13,6 +13,7 @@ export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: Detail
 			};
 			if (err instanceof ErrorEvent && err.target instanceof Element) {
 				const content = {
+					uuid,
 					timestamp: Date.now(),
 					type: E_TrackerDetailType.资源加载错误,
 					content: JSON.stringify(data),
@@ -21,6 +22,7 @@ export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: Detail
 				tracker.addDetail(content);
 			} else {
 				const content = {
+					uuid,
 					timestamp: Date.now(),
 					type: E_TrackerDetailType.js运行错误,
 					content: JSON.stringify(data),

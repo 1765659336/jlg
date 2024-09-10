@@ -5,11 +5,22 @@ import replaceOld from '../utils/replaceOld';
 export declare type T_SDKDataXMLHttpRequest = XMLHttpRequest & {
 	_requestMethod: string;
 	_requestUrl: string;
+	_beginTime: number;
 };
 
 export declare type T_VoidFun = (...args: any[]) => void;
 
-export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: DetailTracker }): void => {
+export default ({
+	eventBus,
+	tracker,
+	requestTracker,
+	uuid,
+}: {
+	eventBus: EventEmitter;
+	tracker: DetailTracker;
+	requestTracker: DetailTracker;
+	uuid: string;
+}): void => {
 	if (typeof XMLHttpRequest === 'undefined') {
 		return;
 	}
@@ -20,37 +31,46 @@ export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: Detail
 		return function (this: T_SDKDataXMLHttpRequest, method: string, url: string, ...args: any[]): void {
 			(this as T_SDKDataXMLHttpRequest)._requestMethod = method;
 			(this as T_SDKDataXMLHttpRequest)._requestUrl = url;
+			(this as T_SDKDataXMLHttpRequest)._beginTime = Date.now();
 			originalOpen.apply(this, [method, url, ...args]);
 		};
 	});
 
 	replaceOld(originalXhrProto, 'send', function (originalSend: T_VoidFun): T_VoidFun {
 		return function (this: T_SDKDataXMLHttpRequest, requestData?: string): void {
-			this.addEventListener('readystatechange', function () {
+			const handleReadyStateChange = (): void => {
 				if (this.readyState === XMLHttpRequest.DONE) {
 					const isFailed = this.status >= 400 || this.status === 0;
-					if (!isFailed) return;
-
 					const data = {
-						method: (this as T_SDKDataXMLHttpRequest)._requestMethod,
-						url: (this as T_SDKDataXMLHttpRequest)._requestUrl,
+						method: this._requestMethod,
+						url: this._requestUrl,
 						requestData: requestData,
 						status: this.status,
-						response: this.responseText,
+						beginTime: this._beginTime,
+						endTime: Date.now(),
+						durationTime: Date.now() - this._beginTime,
+						// response: this.responseText,
 					};
 
 					const content = {
+						uuid,
 						timestamp: Date.now(),
 						content: JSON.stringify(data),
-						type: E_TrackerDetailType.xhr请求错误,
+						type: isFailed ? E_TrackerDetailType.xhr请求错误 : E_TrackerDetailType.xhr请求,
 					};
 
-					eventBus.emit('xhrCallback', content);
+					if (!isFailed) {
+						requestTracker.addDetail(content);
+					} else {
+						eventBus.emit('xhrCallback', content);
+					}
 					tracker.addDetail(content);
 				}
-			});
+			};
 
-			originalSend.apply(this, [requestData]);
+			this.addEventListener('readystatechange', handleReadyStateChange);
+
+			originalSend.call(this, requestData);
 		};
 	});
 };

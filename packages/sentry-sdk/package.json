@@ -1,46 +1,49 @@
 {
-    "name": "sentry-sdk",
-    "version": "0.0.11",
-    "description": "",
-    "scripts": {
-        "dev": "ts-node-dev --respawn ./pac/index.ts",
-        "build": "npx webpack",
-        "prettier:fix": "prettier --write ./",
-        "eslint:fix": "eslint fix ./",
-        "pre-commit": "concurrently \"tsc\" \"lint-staged\"",
-        "preinstall": "npx only-allow pnpm"
-    },
-    "main": "dist/bundle.js",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist"
-    ],
-    "keywords": [
-        "sentry",
-        "jlg"
-    ],
-    "author": "LiuJie",
-    "license": "MIT",
-    "dependencies": {
-        "rrweb": "2.0.0-alpha.4"
-    },
-    "devDependencies": {
-        "@types/node": "^20.8.10",
-        "@typescript-eslint/eslint-plugin": "^6.9.1",
-        "clean-webpack-plugin": "^4.0.0",
-        "concurrently": "^8.2.2",
-        "eslint": "^8.52.0",
-        "eslint-config-prettier": "^9.0.0",
-        "eslint-plugin-prettier": "^5.0.1",
-        "husky": "^8.0.3",
-        "lint-staged": "^15.0.2",
-        "only-allow": "^1.2.1",
-        "prettier": "^3.0.3",
-        "ts-loader": "^9.5.1",
-        "ts-node-dev": "^2.0.0",
-        "typescript": "^5.2.2",
-        "webpack": "^5.94.0",
-        "webpack-cli": "^5.1.4",
-        "webpack-dev-server": "^5.1.0"
-    }
+	"name": "sentry-sdk",
+	"version": "0.0.12",
+	"description": "",
+	"scripts": {
+		"dev": "ts-node-dev --respawn ./pac/index.ts",
+		"build": "npx webpack",
+		"prettier:fix": "prettier --write ./",
+		"eslint:fix": "eslint fix ./",
+		"pre-commit": "concurrently \"tsc\" \"lint-staged\"",
+		"preinstall": "npx only-allow pnpm"
+	},
+	"main": "dist/bundle.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"keywords": [
+		"sentry",
+		"jlg"
+	],
+	"author": "LiuJie",
+	"license": "MIT",
+	"dependencies": {
+		"rrweb": "2.0.0-alpha.4",
+		"uuid": "^10.0.0",
+		"vue": "^3.4.21"
+	},
+	"devDependencies": {
+		"@types/node": "^20.8.10",
+		"@types/uuid": "^10.0.0",
+		"@typescript-eslint/eslint-plugin": "^6.9.1",
+		"clean-webpack-plugin": "^4.0.0",
+		"concurrently": "^8.2.2",
+		"eslint": "^8.52.0",
+		"eslint-config-prettier": "^9.0.0",
+		"eslint-plugin-prettier": "^5.0.1",
+		"husky": "^8.0.3",
+		"lint-staged": "^15.0.2",
+		"only-allow": "^1.2.1",
+		"prettier": "^3.0.3",
+		"ts-loader": "^9.5.1",
+		"ts-node-dev": "^2.0.0",
+		"typescript": "^5.2.2",
+		"webpack": "^5.94.0",
+		"webpack-cli": "^5.1.4",
+		"webpack-dev-server": "^5.1.0"
+	}
 }

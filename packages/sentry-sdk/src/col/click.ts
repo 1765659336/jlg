@@ -2,7 +2,17 @@ import trackerInit, { DetailTracker, E_TrackerDetailType, I_TrackerOption } from
 import EventEmitter from '../utils/handleEvents';
 export let clickTracker: DetailTracker;
 
-export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; trackerOption: I_TrackerOption; tracker: DetailTracker }) => {
+export default ({
+	uuid,
+	eventBus,
+	trackerOption,
+	tracker,
+}: {
+	uuid: string;
+	eventBus: EventEmitter;
+	trackerOption: I_TrackerOption;
+	tracker: DetailTracker;
+}) => {
 	clickTracker = trackerInit({
 		...trackerOption,
 		realTimeDatasetOverMaxCallback: (val) => {
@@ -56,7 +66,7 @@ export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; 
 				clientX,
 				clientY,
 			};
-			const content = { timestamp: Date.now(), type: E_TrackerDetailType.点击, content: JSON.stringify(data) };
+			const content = { uuid, timestamp: Date.now(), type: E_TrackerDetailType.点击, content: JSON.stringify(data) };
 			eventBus.emit('clickCallback', content);
 			tracker.addDetail(content);
 			clickTracker.addDetail(content);

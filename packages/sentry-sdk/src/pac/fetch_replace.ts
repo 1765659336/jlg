@@ -59,45 +59,71 @@ export declare interface RequestInit {
 }
 export type T_FetchCallbackParams = { args: [input: Request | string | URL, init?: RequestInit]; response: Promise<Response> };
 
-export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: DetailTracker }): void => {
+export default ({
+	uuid,
+	eventBus,
+	tracker,
+	requestTracker,
+}: {
+	uuid: string;
+	eventBus: EventEmitter;
+	tracker: DetailTracker;
+	requestTracker: DetailTracker;
+}): void => {
 	if (typeof window.fetch === 'undefined') {
 		return;
 	}
 
-	replaceOld(window, 'fetch', function (originalFetch: (input: Request | string | URL, init?: RequestInit) => Promise<Response>): (
-		input: Request | string | URL,
-		init?: RequestInit
-	) => Promise<Response> {
-		return (input: Request | string | URL, init?: RequestInit) => {
-			const data = {
-				url: typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
-				method: init?.method || 'GET',
-				headers: init?.headers,
-				body: init?.body,
-			};
+	const originalFetch = window.fetch;
 
-			const fetchPromise = originalFetch(input, init);
-
-			const content = {
-				timestamp: Date.now(),
-				type: E_TrackerDetailType.fetch请求错误,
-				content: JSON.stringify(data),
-			};
-
-			return fetchPromise
-				.then(async (response) => {
-					if (!response.ok) {
-						eventBus.emit('fetchCallback', content);
-						tracker.addDetail(content);
-					}
-					return response;
-				})
-				.catch((error) => {
-
-					eventBus.emit('fetchCallback', content);
-					tracker.addDetail(content);
-					throw error;
-				});
+	window.fetch = (input: Request | string | URL, init?: RequestInit): Promise<Response> => {
+		const data = {
+			url: typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
+			method: init?.method || 'GET',
+			headers: init?.headers,
+			body: init?.body,
+			beginTime: Date.now(),
+			endTime: 0,
+			durationTime: 0,
 		};
-	});
+
+		const fetchPromise = originalFetch(input, init);
+
+		return fetchPromise
+			.then(async (response) => {
+				data.endTime = Date.now();
+				data.durationTime = data.endTime - data.beginTime;
+				const content = {
+					uuid,
+					timestamp: Date.now(),
+					type: response.ok ? E_TrackerDetailType.fetch请求 : E_TrackerDetailType.fetch请求错误,
+					content: JSON.stringify(data),
+				};
+
+				if (response.ok) {
+					requestTracker.addDetail(content);
+				} else {
+					eventBus.emit('fetchCallback', content);
+				}
+
+				tracker.addDetail(content);
+
+				return response;
+			})
+			.catch((error) => {
+				data.endTime = Date.now();
+				data.durationTime = data.endTime - data.beginTime;
+				const content = {
+					uuid,
+					timestamp: Date.now(),
+					type: E_TrackerDetailType.fetch请求错误,
+					content: JSON.stringify(data),
+				};
+
+				eventBus.emit('fetchCallback', content);
+				tracker.addDetail(content);
+
+				throw error;
+			});
+	};
 };

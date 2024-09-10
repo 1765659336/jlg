@@ -10,22 +10,30 @@ import clickCollected from './col/click';
 import trackerInit, { E_TrackerDetailType, I_TrackerDetail, I_TrackerOption } from './utils/breadCrumbs';
 import { routerTracker } from './col/router';
 import { clickTracker } from './col/click';
+import { v4 as uuidv4 } from 'uuid';
 
 export default (option: {
-	trackerOption: { trackerOption: I_TrackerOption; routerTrackerOption: I_TrackerOption; clickTrackerOption: I_TrackerOption };
+	trackerOption: {
+		trackerOption: I_TrackerOption;
+		routerTrackerOption: I_TrackerOption;
+		clickTrackerOption: I_TrackerOption;
+		requestTrackerOption: I_TrackerOption;
+	};
+	vueOption: {
+		vueRouter: any;
+		vueErrorCallback: (err: Error) => void;
+		app: any;
+	};
 	xhrCallback?: (xhr: T_SDKDataXMLHttpRequest) => void;
 	fetchCallback?: (data: T_FetchCallbackParams) => void;
 	jsCallback?: (err: Error) => void;
 	sourceCallback?: (err: Error) => void;
 	unHandledRejectionCallback?: (err: PromiseRejectionEvent) => void;
-	vueErrorOption?: {
-		vue: any;
-		vueErrorCallback: (err: Error) => void;
-	};
 	routerChangeCallback?: (option: any) => void;
 	routerRealTimeDatasetOverMaxCallback?: (val: I_TrackerDetail[]) => void;
 	clickCallback?: (option: any) => void;
 	clickRealTimeDatasetOverMaxCallback?: (val: I_TrackerDetail[]) => void;
+	requestRealTimeDatasetOverMaxCallback?: (val: I_TrackerDetail[]) => void;
 	isOpenRrweb?: boolean;
 }) => {
 	const {
@@ -34,17 +42,24 @@ export default (option: {
 		jsCallback,
 		sourceCallback,
 		unHandledRejectionCallback,
-		vueErrorOption,
+		vueOption,
 		isOpenRrweb,
 		routerChangeCallback,
 		clickCallback,
 		trackerOption,
 		routerRealTimeDatasetOverMaxCallback,
 		clickRealTimeDatasetOverMaxCallback,
+		requestRealTimeDatasetOverMaxCallback,
 	} = option;
 	const eventBus = new EventEmitter();
 	const tracker = trackerInit(trackerOption.trackerOption);
-
+	const requestTracker = trackerInit({
+		...trackerOption.requestTrackerOption,
+		realTimeDatasetOverMaxCallback: (val) => {
+			eventBus.emit('requestRealTimeDatasetOverMaxCallback', val);
+		},
+	});
+	const uuid = uuidv4();
 	const returnOption: {
 		rrwebEvents: string[];
 	} = {
@@ -58,6 +73,8 @@ export default (option: {
 		xhrReplace({
 			eventBus,
 			tracker,
+			requestTracker,
+			uuid,
 		});
 	}
 
@@ -65,7 +82,7 @@ export default (option: {
 		eventBus.on('fetchCallback', (data: T_FetchCallbackParams) => {
 			fetchCallback?.(data);
 		});
-		fetchReplace({ eventBus, tracker });
+		fetchReplace({ uuid, eventBus, tracker, requestTracker });
 	}
 
 	if (jsCallback || sourceCallback) {
@@ -77,7 +94,7 @@ export default (option: {
 			eventBus.on('sourceCallback', (err) => {
 				sourceCallback(err);
 			});
-		windowError({ eventBus, tracker });
+		windowError({ uuid, eventBus, tracker });
 	}
 
 	if (unHandledRejectionCallback) {
@@ -85,18 +102,20 @@ export default (option: {
 			unHandledRejectionCallback(err);
 		});
 		unHandledRejection({
+			uuid,
 			eventBus,
 			tracker,
 		});
 	}
 
-	if (vueErrorOption && vueErrorOption.vue) {
+	if (vueOption && vueOption.app) {
 		eventBus.on('vueErrorCallback', (option) => {
-			vueErrorOption.vueErrorCallback(option);
+			vueOption.vueErrorCallback(option);
 		});
 		vueError({
+			uuid,
 			eventBus,
-			vue: vueErrorOption.vue,
+			app: vueOption.app,
 			tracker,
 		});
 	}
@@ -110,7 +129,7 @@ export default (option: {
 		eventBus.on('routerChangeCallback', (option) => {
 			routerChangeCallback(option);
 		});
-		routerChange({ eventBus, trackerOption: trackerOption.routerTrackerOption, tracker });
+		routerChange({ eventBus, trackerOption: trackerOption.routerTrackerOption, tracker, uuid, vueRouter: vueOption.vueRouter, app: vueOption.app });
 	}
 
 	if (routerRealTimeDatasetOverMaxCallback) {
@@ -123,7 +142,7 @@ export default (option: {
 		eventBus.on('clickCallback', (option) => {
 			clickCallback(option);
 		});
-		clickCollected({ eventBus, tracker, trackerOption: trackerOption.clickTrackerOption });
+		clickCollected({ uuid, eventBus, tracker, trackerOption: trackerOption.clickTrackerOption });
 	}
 
 	if (clickRealTimeDatasetOverMaxCallback) {
@@ -132,16 +151,23 @@ export default (option: {
 		});
 	}
 
+	if (requestRealTimeDatasetOverMaxCallback) {
+		eventBus.on('requestRealTimeDatasetOverMaxCallback', (option) => {
+			requestRealTimeDatasetOverMaxCallback(option);
+		});
+	}
+
 	return {
 		...returnOption,
 		routerTracker,
 		tracker,
 		clickTracker,
-		addCustomTracker: (content: string) => {
+		addCustomTracker: (content: string, type?: E_TrackerDetailType) => {
 			tracker.addDetail({
 				timestamp: Date.now(),
 				content,
-				type: E_TrackerDetailType.自定义行为,
+				uuid,
+				type: type ?? E_TrackerDetailType.自定义行为,
 			});
 		},
 	};

@@ -1,6 +1,26 @@
 <template>
-	<div>
+	<div style="min-width: 50vw">
+		<el-row>
+			<el-col :span="12">
+				<el-card>
+					<h3>页面使用量(PV)</h3>
+					<div class="data-value">{{ routerTableData.length }}</div>
+				</el-card>
+			</el-col>
+			<el-col :span="12">
+				<el-card>
+					<h3>系统使用量(UV)</h3>
+					<div class="data-value">{{ new Set(routerTableData.map((i) => i.uuid)).size }}</div>
+				</el-card>
+			</el-col>
+		</el-row>
+		<br />
 		<el-table :data="routerTableData.sort((a, b) => b.timestamp - a.timestamp)" style="width: 100%">
+			<el-table-column prop="uuid" label="uuid">
+				<template #default="{ row }">
+					{{ row.uuid }}
+				</template>
+			</el-table-column>
 			<el-table-column prop="timestamp" label="Timestamp" width="180">
 				<template #default="{ row }">
 					{{ formatTimestamp(row.timestamp) }}
@@ -19,7 +39,8 @@
 							{{ parseContent(row.content).from.title }} ({{ parseContent(row.content).from.path }})
 						</p>
 						<p><strong>To:</strong> {{ parseContent(row.content).to.title }} ({{ parseContent(row.content).to.path }})</p>
-						<p><strong>Time:</strong> {{ parseContent(row.content).time }} ms</p>
+						<p><strong>停留时间:</strong> {{ parseContent(row.content).residenceTime }} ms</p>
+						<p><strong>渲染DOM时间:</strong> {{ parseContent(row.content).renderingTime }} ms</p>
 					</div>
 				</template>
 			</el-table-column>
@@ -48,6 +69,10 @@ const parseContent = (content: string) => {
 </script>
   
   <style scoped>
-/* 自定义样式 */
+.data-value {
+	font-size: 24px;
+	font-weight: bold;
+	margin-top: 10px;
+}
 </style>
   

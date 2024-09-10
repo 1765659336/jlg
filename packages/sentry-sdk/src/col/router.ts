@@ -1,19 +1,57 @@
 import EventEmitter from '../utils/handleEvents';
 import replaceOld from '../utils/replaceOld';
 import trackerInit, { DetailTracker, E_TrackerDetailType, I_TrackerOption } from '../utils/breadCrumbs';
+import { nextTick } from 'vue';
 
 let lastHref: string = document.location.href;
 let lastHrefTime: number = Date.now();
 type HistoryReplaceFn = (this: typeof window.history, ...args: any[]) => void;
 export let routerTracker: DetailTracker;
 
-export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; trackerOption: I_TrackerOption; tracker: DetailTracker }) => {
+export default ({
+	eventBus,
+	trackerOption,
+	tracker,
+	uuid,
+	vueRouter,
+	app,
+}: {
+	eventBus: EventEmitter;
+	trackerOption: I_TrackerOption;
+	tracker: DetailTracker;
+	uuid: string;
+	vueRouter: any;
+	app: any;
+}) => {
 	routerTracker = trackerInit({
 		...trackerOption,
 		realTimeDatasetOverMaxCallback: (val) => {
 			eventBus.emit('routerRealTimeDatasetOverMaxCallback', val);
 		},
 	});
+	let startTime: number;
+	let renderingTime: number;
+
+	vueRouter.beforeEach(async (...args: any) => {
+		startTime = Date.now();
+		vueRouter.routerChange = true;
+		args[2]();
+	});
+
+	vueRouter.afterEach(async () => {
+		if (!vueRouter.routerChange) return;
+		await nextTick();
+		const endTime = Date.now();
+		renderingTime = endTime - startTime;
+		vueRouter.routerChange = false;
+	});
+
+	app.mixin({
+		mounted() {
+			// console.log('mixinMounted');
+		},
+	});
+
 	function historyReplaceFn(originalHistoryFn: HistoryReplaceFn): HistoryReplaceFn {
 		return function (...args: any[]) {
 			const url = args.length > 2 ? args[2] : undefined;
@@ -44,13 +82,14 @@ export default ({ eventBus, trackerOption, tracker }: { eventBus: EventEmitter; 
 							path: to,
 							title: newTitle,
 						},
-						time: nowTime - lastHrefTime,
+						residenceTime: nowTime - lastHrefTime,
+						renderingTime,
 					};
 
-					const detailData = { timestamp: nowTime, type: E_TrackerDetailType.页面跳转, content: JSON.stringify(data) };
-					eventBus.emit('routerChangeCallback', data);
-					tracker.addDetail(detailData);
-					routerTracker.addDetail(detailData);
+					const content = { timestamp: nowTime, type: E_TrackerDetailType.页面跳转, uuid, content: JSON.stringify(data) };
+					eventBus.emit('routerChangeCallback', content);
+					tracker.addDetail(content);
+					routerTracker.addDetail(content);
 					lastHrefTime = nowTime;
 				}, 10);
 
