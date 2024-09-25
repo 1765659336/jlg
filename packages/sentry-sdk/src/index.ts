@@ -24,7 +24,10 @@ export default (option: {
 		vueErrorCallback: (err: Error) => void;
 		app: any;
 	};
-	xhrCallback?: (xhr: T_SDKDataXMLHttpRequest) => void;
+	xhrOption?: {
+		requestValidator?: (xhr: T_SDKDataXMLHttpRequest) => boolean;
+		xhrCallback?: (xhr: T_SDKDataXMLHttpRequest) => void;
+	};
 	fetchCallback?: (data: T_FetchCallbackParams) => void;
 	jsCallback?: (err: Error) => void;
 	sourceCallback?: (err: Error) => void;
@@ -35,9 +38,10 @@ export default (option: {
 	clickRealTimeDatasetOverMaxCallback?: (val: I_TrackerDetail[]) => void;
 	requestRealTimeDatasetOverMaxCallback?: (val: I_TrackerDetail[]) => void;
 	isOpenRrweb?: boolean;
+	ignoreRequestUrls?: string[];
 }) => {
 	const {
-		xhrCallback,
+		xhrOption,
 		fetchCallback,
 		jsCallback,
 		sourceCallback,
@@ -50,6 +54,7 @@ export default (option: {
 		routerRealTimeDatasetOverMaxCallback,
 		clickRealTimeDatasetOverMaxCallback,
 		requestRealTimeDatasetOverMaxCallback,
+		ignoreRequestUrls = [],
 	} = option;
 	const eventBus = new EventEmitter();
 	const tracker = trackerInit(trackerOption.trackerOption);
@@ -66,15 +71,17 @@ export default (option: {
 		rrwebEvents: [],
 	};
 
-	if (xhrCallback) {
+	if (xhrOption && xhrOption.xhrCallback) {
 		eventBus.on('xhrCallback', (xhr: T_SDKDataXMLHttpRequest) => {
-			xhrCallback?.(xhr);
+			xhrOption.xhrCallback?.(xhr);
 		});
 		xhrReplace({
 			eventBus,
 			tracker,
 			requestTracker,
 			uuid,
+			ignoreRequestUrls,
+			requestValidator: xhrOption.requestValidator,
 		});
 	}
 
@@ -82,7 +89,7 @@ export default (option: {
 		eventBus.on('fetchCallback', (data: T_FetchCallbackParams) => {
 			fetchCallback?.(data);
 		});
-		fetchReplace({ uuid, eventBus, tracker, requestTracker });
+		fetchReplace({ uuid, eventBus, tracker, requestTracker, ignoreRequestUrls });
 	}
 
 	if (jsCallback || sourceCallback) {

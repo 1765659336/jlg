@@ -15,11 +15,15 @@ export default ({
 	tracker,
 	requestTracker,
 	uuid,
+	ignoreRequestUrls,
+	requestValidator,
 }: {
 	eventBus: EventEmitter;
 	tracker: DetailTracker;
 	requestTracker: DetailTracker;
 	uuid: string;
+	ignoreRequestUrls: string[];
+	requestValidator?: (xhr: T_SDKDataXMLHttpRequest) => boolean;
 }): void => {
 	if (typeof XMLHttpRequest === 'undefined') {
 		return;
@@ -39,8 +43,8 @@ export default ({
 	replaceOld(originalXhrProto, 'send', function (originalSend: T_VoidFun): T_VoidFun {
 		return function (this: T_SDKDataXMLHttpRequest, requestData?: string): void {
 			const handleReadyStateChange = (): void => {
-				if (this.readyState === XMLHttpRequest.DONE) {
-					const isFailed = this.status >= 400 || this.status === 0;
+				if (this.readyState === XMLHttpRequest.DONE && !ignoreRequestUrls.includes(this._requestUrl)) {
+					const isFailed = (requestValidator && !requestValidator(this)) || this.status >= 400 || this.status === 0;
 					const data = {
 						method: this._requestMethod,
 						url: this._requestUrl,

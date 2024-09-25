@@ -12,10 +12,12 @@ import '../styles/index.scss';
 import ModalTemplate from '../packages/components/modal/modal-template.vue';
 import { globalSetup } from '../lib/config';
 // ModalTempate 设置为全局组件
+import { JlgGrid } from 'jlg-table';
 
 function useTable(app) {
 	app.component(ModalTemplate.name, ModalTemplate);
 	app.use(VXETable);
+	app.component('JlgGrid', JlgGrid);
 	globalSetup();
 }
 

@@ -11,6 +11,7 @@
 					<router-link to="/" class="btn btn-primary">模拟业务页面1</router-link>
 					<router-link to="/about" class="btn btn-secondary">模拟业务页面2</router-link>
 					<router-link to="/error" class="btn btn-danger">模拟制造一些错误</router-link>
+					<!-- <router-link to="/new-ui-view" class="btn btn-secondary">新版组件库页面</router-link> -->
 					<router-link to="/lager-view" class="btn btn-danger">卡顿页面</router-link>
 					<router-link to="/click-table" class="btn btn-secondary">用户点击行为记录</router-link>
 					<router-link to="/router-table" class="btn btn-secondary">查看页面使用情况</router-link>

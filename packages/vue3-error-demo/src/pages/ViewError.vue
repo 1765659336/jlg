@@ -100,6 +100,10 @@ const openBehaviorTable = (data: any) => {
 	dialogVisibleTable.value = true;
 	behaviorTableData.value = data;
 };
+
+setInterval(() => {
+	console.log(errorTableData);
+}, 5000);
 </script>
     
     <style scoped>

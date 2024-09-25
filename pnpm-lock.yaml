@@ -581,12 +581,18 @@ importers:
 
   packages/vue3-error-demo:
     dependencies:
+      '@element-plus/icons-vue':
+        specifier: ^2.3.1
+        version: 2.3.1(vue@3.4.27(typescript@5.4.5))
       axios:
         specifier: ^1.7.2
         version: 1.7.2
       element-plus:
         specifier: ^2.7.5
         version: 2.8.2(vue@3.4.27(typescript@5.4.5))
+      jlg-table:
+        specifier: ^0.2.14
+        version: 0.2.14(@element-plus/icons-vue@2.3.1(vue@3.4.27(typescript@5.4.5)))(@types/sortablejs@1.15.8)(dayjs@1.11.11)(element-plus@2.8.2(vue@3.4.27(typescript@5.4.5)))(sortablejs@1.15.2)(vue@3.4.27(typescript@5.4.5))(vxe-table@4.6.17(vue@3.4.27(typescript@5.4.5)))(xe-utils@3.5.26)
       lodash-unified:
         specifier: ^1.0.3
         version: 1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.17.21)(lodash@4.17.21)
@@ -605,6 +611,12 @@ importers:
       vue-router:
         specifier: '4'
         version: 4.3.2(vue@3.4.27(typescript@5.4.5))
+      vxe-table:
+        specifier: ^4.6.9
+        version: 4.6.17(vue@3.4.27(typescript@5.4.5))
+      xe-utils:
+        specifier: ^3.5.26
+        version: 3.5.26
     devDependencies:
       '@types/node':
         specifier: ^22.5.4
@@ -3325,6 +3337,18 @@ packages:
 
   jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
+
+  jlg-table@0.2.14:
+    resolution: {integrity: sha512-jlB0DEX0aiNDuM3g3b0093FzxMr2RDdEOK0Utl1/p3pZrXGyBYnpzu86jqOZFwnsRu/O1hi3fK0xdIctlJ+u7g==}
+    peerDependencies:
+      '@element-plus/icons-vue': ^2.3.1
+      '@types/sortablejs': ^1.15.8
+      dayjs: ^1.11.3
+      element-plus: ^2.7.0
+      sortablejs: ^1.15.2
+      vue: ^3.4.21
+      vxe-table: ^4.0.0
+      xe-utils: ^3.5.26
 
   jlg-ui@0.0.20:
     resolution: {integrity: sha512-q1RBENV5j5uUmAo9gLVkWReYhIsx+CH2Nws2hlKpYTx7yCOIwbFDBxWV5CE9TdFfdG+g5ankke8IQhiSd8Mv0A==}
@@ -8264,6 +8288,17 @@ snapshots:
   jiti@1.21.0: {}
 
   jju@1.4.0: {}
+
+  jlg-table@0.2.14(@element-plus/icons-vue@2.3.1(vue@3.4.27(typescript@5.4.5)))(@types/sortablejs@1.15.8)(dayjs@1.11.11)(element-plus@2.8.2(vue@3.4.27(typescript@5.4.5)))(sortablejs@1.15.2)(vue@3.4.27(typescript@5.4.5))(vxe-table@4.6.17(vue@3.4.27(typescript@5.4.5)))(xe-utils@3.5.26):
+    dependencies:
+      '@element-plus/icons-vue': 2.3.1(vue@3.4.27(typescript@5.4.5))
+      '@types/sortablejs': 1.15.8
+      dayjs: 1.11.11
+      element-plus: 2.8.2(vue@3.4.27(typescript@5.4.5))
+      sortablejs: 1.15.2
+      vue: 3.4.27(typescript@5.4.5)
+      vxe-table: 4.6.17(vue@3.4.27(typescript@5.4.5))
+      xe-utils: 3.5.26
 
   jlg-ui@0.0.20(typescript@5.4.5):
     dependencies:

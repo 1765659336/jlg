@@ -6,7 +6,7 @@ module.exports = {
 	output: {
 		filename: 'bundle.js',
 		path: path.resolve(__dirname, 'dist'),
-		library: 'sentry-sdk',
+		library: 'jlg-sentry-sdk',
 		libraryTarget: 'umd',
 		globalObject: 'this',
 	},

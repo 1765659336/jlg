@@ -64,11 +64,13 @@ export default ({
 	eventBus,
 	tracker,
 	requestTracker,
+	ignoreRequestUrls,
 }: {
 	uuid: string;
 	eventBus: EventEmitter;
 	tracker: DetailTracker;
 	requestTracker: DetailTracker;
+	ignoreRequestUrls: string[];
 }): void => {
 	if (typeof window.fetch === 'undefined') {
 		return;
@@ -87,10 +89,17 @@ export default ({
 			durationTime: 0,
 		};
 
+		const parsedUrl = new URL(data.url);
+		parsedUrl.search = '';
+		const parsedUrlStr = parsedUrl.toString();
+
 		const fetchPromise = originalFetch(input, init);
 
 		return fetchPromise
 			.then(async (response) => {
+				if (ignoreRequestUrls.includes(parsedUrlStr)) {
+					return response;
+				}
 				data.endTime = Date.now();
 				data.durationTime = data.endTime - data.beginTime;
 				const content = {
@@ -111,6 +120,9 @@ export default ({
 				return response;
 			})
 			.catch((error) => {
+				if (ignoreRequestUrls.includes(parsedUrlStr)) {
+					throw error;
+				}
 				data.endTime = Date.now();
 				data.durationTime = data.endTime - data.beginTime;
 				const content = {
