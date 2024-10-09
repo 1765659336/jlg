@@ -765,21 +765,51 @@ export default ({ maxRealTimeLength, backupSize, otherOptions, realTimeDatasetOv
 
 ### 数据模型
 
-| uuid(前端唯一id) | timestamp(时间戳) | type(类型)               | content(内容)                                                |
-| ---------------- | ----------------- | ------------------------ | ------------------------------------------------------------ |
-|                  |                   | 1(点击)                  | {<br/>    "dom": "<button>按钮 3</button>",<br/>    "title": "Vite + Vue + TS",<br/>    "url": "/",<br/>    "viewportWidth": 697,<br/>    "viewportHeight": 631,<br/>    "scrollX": 0,<br/>    "scrollY": 316.5,<br/>    "clientX": 310,<br/>    "clientY": 353<br/>} |
-|                  |                   | 2(页面跳转)              | {<br/>    "from": {<br/>        "path": "#/",<br/>        "title": "Vite + Vue + TS"<br/>    },<br/>    "to": {<br/>        "path": "#/error",<br/>        "title": "Vite + Vue + TS"<br/>    },<br/>    "residenceTime": 5432,<br/>    "renderingTime": 4<br/>} |
-|                  |                   | 3(js运行错误)            | {<br/>    "filename": "http://localhost:5174/node_modules/.vite/deps/chunk-5TAEXZSR.js?v=4d696d9e",<br/>    "colno": 7,<br/>    "lineno": 1729,<br/>    "error": "Uncaught ReferenceError: rrwebUrl is not defined"<br/>} |
-|                  |                   | 4(资源加载错误)          | {<br/>    "src": "http://localhost:5173/invalid-script.js"<br/>} |
-|                  |                   | 5(xhr请求)               | {<br/>     "method":"GET",<br/>     "url":"https://api.oioweb.cn/api/SimpWords",<br/>     "requestData":null,<br/>     "status":200,<br/>     "beginTime":1727228859319,<br/>     "endTime":1727228859499,<br/>     "durationTime":180<br/>} |
-|                  |                   | 6(xhr请求错误)           | {<br/>    "method": "GET",<br/>    "url": "http://localhost:3000/api/error?a=1",<br/>    "requestData": null,<br/>    "status": 0,<br/>    "beginTime": 1727228896918,<br/>    "endTime": 1727228899318,<br/>    "durationTime": 2400<br/>} |
-|                  |                   | 7(fetch请求)             | {<br/>    "url": "https://api.oioweb.cn/api/weather/GetWeather",<br/>    "method": "GET",<br/>    "beginTime": 1726648279648,<br/>    "endTime": 1726648279982,<br/>    "durationTime": 334<br/>} |
+| uuid(前端唯一id) | timestamp(时间戳) | type(类型)               | content(内容)                                                                                                                                                                                                                                                                                         |
+| ---------------- | ----------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|                  |                   | 1(点击)                  | {<br/>    "dom": "<button>按钮 3</button>",<br/>    "title": "Vite + Vue + TS",<br/>    "url": "/",<br/>    "viewportWidth": 697,<br/>    "viewportHeight": 631,<br/>    "scrollX": 0,<br/>    "scrollY": 316.5,<br/>    "clientX": 310,<br/>    "clientY": 353<br/>}                                 |
+|                  |                   | 2(页面跳转)              | {<br/>    "from": {<br/>        "path": "#/",<br/>        "title": "Vite + Vue + TS"<br/>    },<br/>    "to": {<br/>        "path": "#/error",<br/>        "title": "Vite + Vue + TS"<br/>    },<br/>    "residenceTime": 5432,<br/>    "renderingTime": 4<br/>}                                      |
+|                  |                   | 3(js运行错误)            | {<br/>    "filename": "http://localhost:5174/node_modules/.vite/deps/chunk-5TAEXZSR.js?v=4d696d9e",<br/>    "colno": 7,<br/>    "lineno": 1729,<br/>    "error": "Uncaught ReferenceError: rrwebUrl is not defined"<br/>}                                                                             |
+|                  |                   | 4(资源加载错误)          | {<br/>    "src": "http://localhost:5173/invalid-script.js"<br/>}                                                                                                                                                                                                                                      |
+|                  |                   | 5(xhr请求)               | {<br/>     "method":"GET",<br/>     "url":"https://api.oioweb.cn/api/SimpWords",<br/>     "requestData":null,<br/>     "status":200,<br/>     "beginTime":1727228859319,<br/>     "endTime":1727228859499,<br/>     "durationTime":180<br/>}                                                          |
+|                  |                   | 6(xhr请求错误)           | {<br/>    "method": "GET",<br/>    "url": "http://localhost:3000/api/error?a=1",<br/>    "requestData": null,<br/>    "status": 0,<br/>    "beginTime": 1727228896918,<br/>    "endTime": 1727228899318,<br/>    "durationTime": 2400<br/>}                                                           |
+|                  |                   | 7(fetch请求)             | {<br/>    "url": "https://api.oioweb.cn/api/weather/GetWeather",<br/>    "method": "GET",<br/>    "beginTime": 1726648279648,<br/>    "endTime": 1726648279982,<br/>    "durationTime": 334<br/>}                                                                                                     |
 |                  |                   | 8(fetch请求错误)         | {<br/>    "url": "https://example.com/api/endpoint",<br/>    "method": "POST",<br/>    "headers": {<br/>        "Content-Type": "application/json"<br/>    },<br/>    "body": "{\"test\":2}",<br/>    "beginTime": 1726648273203,<br/>    "endTime": 1726648273728,<br/>    "durationTime": 525<br/>} |
-|                  |                   | 9(未处理失败promise错误) | {<br/>    "reason": "失败",<br/>    "promise": {}<br/>}      |
-|                  |                   | 10(vue错误)              | {<br/>    "error": "rrwebUrl is not defined",<br/>    "component": "ElButton",<br/>    "info": "native event handler"<br/>} |
-|                  |                   | 11(自定义行为)           | 自定义json                                                   |
+|                  |                   | 9(未处理失败promise错误) | {<br/>    "reason": "失败",<br/>    "promise": {}<br/>}                                                                                                                                                                                                                                               |
+|                  |                   | 10(vue错误)              | {<br/>    "error": "rrwebUrl is not defined",<br/>    "component": "ElButton",<br/>    "info": "native event handler"<br/>}                                                                                                                                                                           |
+|                  |                   | 11(自定义行为)           | 自定义json                                                                                                                                                                                                                                                                                            |
+
+### 数据上报
+1. xhr 接口请求
+   
+```
+采用接口请求的方式是最简单的，类比于请求其他业务接口，只不过上传的是埋点数据。一般情况下，公司处理埋点的服务器和业务逻辑的服务器可能不是同一台，可能产生跨域问题。另一方面，如果在上报的过程中刷新或者重新打开新页面，可能会造成埋点数据的缺失，所以传统的 xhr 接口请求并不难很好的适应埋点的需求。
+```
 
 
+2. img 标签（使用GIF上报）
+
+```
+img 是通过将埋点数据伪装为图片 URL 的请求方式避免跨域问题。但浏览器对于 URL 的长度会有限制，所以 img 上报不适合大数据量上报的场景。同时也会存在刷新或者打开页面的时候上报数据丢失。
+防止跨域
+一般来说，打点域名都不是当前的域名，所以几乎所有接口的请求都会构成跨域。而跨域请求很容易由于配置不当被浏览器拦截报错。但图片的 src 属性并不会跨域，并且同样跨域发起请求。
+防止阻塞页面加载，影响用户体验
+一般创建资源节点后只有将对象注入到浏览器 DOM 树后，浏览器才会实际发送资源请求。反复操作 DOM 容易引发性能问题，而且加载 JS/CSS 子资源还会阻塞页面渲染，影响用户体验。
+使用图片打点不用插入 DOM ，只要在 JS 中 new 出 Image 对象就能发送请求，而且还没有阻塞问题。在没有 JS 的浏览器环境中也可以通过 img 标签正常打点，这是其他类型的资源请求所做不到。
+相比PNG/JPG，GIF的体积最小
+BMP：74字节；PNG：67字节；GIF：43字节；
+据统计，同样的响应 GIF 可以比 BMP 节约41%的流量，比 PNG 节约35%的流量。
+1*1像素是最小的合法图片。通过图片打点，一般来说，图片最好是透明的，不影响页面本身的渲染效果，同时表示图片透明只要使用一个二进制位标记图片是透明色即可，不用存储色彩空间数据，节约体积。
+```
+
+3. sendBeacon()
+```
+sendBeacon() 方法用于将数据异步传输到服务器，通常用于收集用户行为数据或跟踪用户活动。该方法可以确保数据在页面关闭或刷新之前发送给服务器，从而避免数据丢失。
+sendBeacon() 方法接受两个参数：一个包含要发送的数据的字符串，以及一个可选的 URL，表示要将数据发送到哪个服务器。如果未指定 URL，数据将发送到当前页面的 URL。缺点就是在某些浏览器上存在兼容性问题。
+```
+```js
+navigator.sendBeacon('http://127.0.0.1:5500/data',data);
+```
 
 ### 数据展示
 

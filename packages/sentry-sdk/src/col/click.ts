@@ -1,25 +1,17 @@
-import trackerInit, { DetailTracker, E_TrackerDetailType, I_TrackerOption } from '../utils/breadCrumbs';
+import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import EventEmitter from '../utils/handleEvents';
-export let clickTracker: DetailTracker;
 
 export default ({
 	uuid,
 	eventBus,
-	trackerOption,
 	tracker,
+	clickTracker,
 }: {
 	uuid: string;
 	eventBus: EventEmitter;
-	trackerOption: I_TrackerOption;
 	tracker: DetailTracker;
+	clickTracker: DetailTracker;
 }) => {
-	clickTracker = trackerInit({
-		...trackerOption,
-		realTimeDatasetOverMaxCallback: (val) => {
-			eventBus.emit('clickRealTimeDatasetOverMaxCallback', val);
-		},
-	});
-
 	let clientX: number, clientY: number;
 
 	function getMousePosition(event: MouseEvent) {

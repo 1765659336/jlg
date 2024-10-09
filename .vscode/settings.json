@@ -4,6 +4,7 @@
         "commitlint",
         "iconfont",
         "preinstall",
+        "rrweb",
         "stylelint",
         "subtags",
         "vetur"

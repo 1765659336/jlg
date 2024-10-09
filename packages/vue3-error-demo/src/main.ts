@@ -133,7 +133,7 @@ const upload = (longString: string) => {
 			return res.data.content.path;
 		})
 		.catch((err) => {
-			console.log(err);
+			//console.log(err);
 		});
 };
 
@@ -141,79 +141,90 @@ const returnOption = sdk({
 	xhrOption: {
 		xhrCallback: async (err) => {
 			ElMessage.error('xhr请求错误');
-			console.log(err);
+			//console.log(err);
 			const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents));
 			errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
 		},
 	},
 	fetchCallback: async (err) => {
 		ElMessage.error('fetch请求错误');
-		console.log(err);
+		//console.log(err);
 		const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents));
 		errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
 	},
 	jsCallback: async (err) => {
-		console.log(err);
+		//console.log(err);
 		const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents));
 		errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
 	},
 	sourceCallback: async (err) => {
 		ElMessage.error('文件资源加载错误上报');
-		console.log(err);
+		//console.log(err);
 		const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents));
 		errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
 	},
 	unHandledRejectionCallback: async (err) => {
 		ElMessage.error('未处理失败的Promise');
-		console.log(err);
+		//console.log(err);
 		const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents));
 		errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
 	},
 	vueOption: {
 		app: app,
 		vueRouter: router,
-		vueErrorCallback: (err) => {
-			console.log(err);
+		vueErrorCallback: async (err) => {
+			// console.log(err);
 			ElMessage.error('vue错误');
+			const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents));
 			errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
 		},
 	},
 	routerChangeCallback: (opt) => {
 		ElMessage.info('路由变化');
 	},
-	routerRealTimeDatasetOverMaxCallback: (opt) => {
-		ElMessage.info('路由变化收集达到阈值');
-		routerTableData.value = [...routerTableData.value, ...opt];
-	},
 	clickCallback: (opt) => {
 		ElMessage.info('点击事件收集');
 	},
-	clickRealTimeDatasetOverMaxCallback: (opt) => {
-		ElMessage.info('点击收集达到阈值');
-		clickTableData.value = [...clickTableData.value, ...opt];
+	rrwebOption: {
+		// checkoutEveryNth 大小
+		// checkoutEveryNms 时间
 	},
-	requestRealTimeDatasetOverMaxCallback: (opt) => {
-		console.log(opt);
-		ElMessage.info('接口请求收集达到阈值');
-		requestTableData.value = [...requestTableData.value, ...opt];
-	},
-	isOpenRrweb: true,
 	trackerOption: {
 		trackerOption: {
-			maxRealTimeLength: 10,
+			maxRealTimeLength: 50,
 			backupSize: 50,
+			otherOptions: {
+				sysCode: 'sysCode',
+				userCode: 'userCode',
+			},
+			realTimeDatasetOverMaxCallback: (opt) => {
+				console.log(opt);
+			},
 		},
 		routerTrackerOption: {
 			maxRealTimeLength: 10,
 			backupSize: 10,
+			realTimeDatasetOverMaxCallback: (opt) => {
+				ElMessage.info('路由变化收集达到阈值');
+				routerTableData.value = [...routerTableData.value, ...opt];
+			},
 		},
 		clickTrackerOption: {
 			maxRealTimeLength: 10,
 			backupSize: 10,
+			realTimeDatasetOverMaxCallback: (opt) => {
+				ElMessage.info('点击收集达到阈值');
+				clickTableData.value = [...clickTableData.value, ...opt];
+			},
 		},
 		requestTrackerOption: {
 			maxRealTimeLength: 10,
 			backupSize: 50,
+			realTimeDatasetOverMaxCallback: (opt) => {
+				//console.log(opt);
+				ElMessage.info('接口请求收集达到阈值');
+				requestTableData.value = [...requestTableData.value, ...opt];
+			},
 		},
 	},
 	ignoreRequestUrls: ['http://218.77.107.37:48999/upload/account'],

@@ -1,3 +1,7 @@
+import { browserName } from '../col/browser';
+import { deviceInfo } from '../col/device';
+import { networkType } from '../col/network';
+
 export enum E_TrackerDetailType {
 	点击 = 1,
 	页面跳转,
@@ -54,7 +58,13 @@ export class DetailTracker {
 			this.realTimeDatasetOverMaxCallback(this.realTimeDataset);
 			this.flushRealTimeDataset();
 		}
-		this.realTimeDataset.push({ ...detail, ...this.otherOptions });
+		this.realTimeDataset.push({
+			...detail,
+			...this.otherOptions,
+			networkType: networkType.value,
+			deviceInfo: deviceInfo.value,
+			browserName: browserName.value,
+		});
 	}
 
 	private flushRealTimeDataset(): void {

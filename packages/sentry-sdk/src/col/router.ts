@@ -1,34 +1,27 @@
 import EventEmitter from '../utils/handleEvents';
 import replaceOld from '../utils/replaceOld';
-import trackerInit, { DetailTracker, E_TrackerDetailType, I_TrackerOption } from '../utils/breadCrumbs';
+import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import { nextTick } from 'vue';
 
 let lastHref: string = document.location.href;
 let lastHrefTime: number = Date.now();
 type HistoryReplaceFn = (this: typeof window.history, ...args: any[]) => void;
-export let routerTracker: DetailTracker;
 
 export default ({
 	eventBus,
-	trackerOption,
 	tracker,
 	uuid,
 	vueRouter,
 	app,
+	routerTracker,
 }: {
 	eventBus: EventEmitter;
-	trackerOption: I_TrackerOption;
 	tracker: DetailTracker;
 	uuid: string;
 	vueRouter: any;
 	app: any;
+	routerTracker: DetailTracker;
 }) => {
-	routerTracker = trackerInit({
-		...trackerOption,
-		realTimeDatasetOverMaxCallback: (val) => {
-			eventBus.emit('routerRealTimeDatasetOverMaxCallback', val);
-		},
-	});
 	let startTime: number;
 	let renderingTime: number;
 

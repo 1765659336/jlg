@@ -524,6 +524,9 @@ importers:
         specifier: ^3.4.21
         version: 3.4.27(typescript@5.4.5)
     devDependencies:
+      '@rrweb/types':
+        specifier: 2.0.0-alpha.17
+        version: 2.0.0-alpha.17
       '@types/node':
         specifier: ^20.8.10
         version: 20.14.1
