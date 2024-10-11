@@ -4,6 +4,7 @@ import ElementPlus, { ElMessage } from 'element-plus';
 import 'element-plus/dist/index.css';
 // import sdk from 'sentry-sdk'
 import sdk from '../../sentry-sdk/src/index';
+import pako from 'pako';
 
 import { createWebHashHistory, createRouter } from 'vue-router';
 
@@ -123,7 +124,8 @@ const app = createApp(App);
 // };
 
 const upload = (longString: string) => {
-	const blob = new Blob([longString], { type: 'text/plain' }); // 'text/plain' 是 MIME 类型，你可以根据需要进行更改
+	const str = JSON.stringify(pako.gzip(longString));
+	const blob = new Blob([str], { type: 'text/plain' }); // 'text/plain' 是 MIME 类型，你可以根据需要进行更改
 	const file = new File([blob], 'filename.txt', { type: 'text/plain' }); // 'filename.txt' 是文件名，你可以根据需要进行更改
 	const formData = new FormData();
 	formData.append('file', file);
@@ -143,12 +145,16 @@ const returnOption = sdk({
 			ElMessage.error('xhr请求错误');
 			//console.log(err);
 			const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents));
+			console.log({
+				rrwebUrl,
+				uuid: err.uuid,
+			});
 			errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
 		},
 	},
 	fetchCallback: async (err) => {
 		ElMessage.error('fetch请求错误');
-		//console.log(err);
+		console.log(err);
 		const rrwebUrl = await upload(JSON.stringify(returnOption.rrwebEvents));
 		errorTableData.value.push({ ...err, behavior: returnOption.tracker.getDetailsForErrorReporting(50), rrwebUrl });
 	},
@@ -191,19 +197,39 @@ const returnOption = sdk({
 	},
 	trackerOption: {
 		trackerOption: {
-			maxRealTimeLength: 50,
+			maxRealTimeLength: 10,
 			backupSize: 50,
+			backupTime: 60000,
 			otherOptions: {
 				sysCode: 'sysCode',
 				userCode: 'userCode',
 			},
 			realTimeDatasetOverMaxCallback: (opt) => {
-				console.log(opt);
+				const compressedData = pako.gzip(new TextEncoder().encode(JSON.stringify(opt)));
+				const str = JSON.stringify(compressedData);
+				if (compressedData.length < 16384) {
+					if (navigator && navigator.sendBeacon) {
+						navigator.sendBeacon('http://localhost:49034/sentry/kafka', str);
+					} else {
+						const img = new Image();
+						img.src = `http://localhost:49034/sentry/kafka.gif?data=${str}`;
+					}
+				} else {
+					axios
+						.post('http://localhost:49034/sentry/kafka', str)
+						.then((res) => {
+							// console.log(res);
+						})
+						.catch((err) => {
+							//console.log(err);
+						});
+				}
 			},
 		},
 		routerTrackerOption: {
 			maxRealTimeLength: 10,
 			backupSize: 10,
+			backupTime: 60000,
 			realTimeDatasetOverMaxCallback: (opt) => {
 				ElMessage.info('路由变化收集达到阈值');
 				routerTableData.value = [...routerTableData.value, ...opt];
@@ -212,6 +238,7 @@ const returnOption = sdk({
 		clickTrackerOption: {
 			maxRealTimeLength: 10,
 			backupSize: 10,
+			backupTime: 60000,
 			realTimeDatasetOverMaxCallback: (opt) => {
 				ElMessage.info('点击收集达到阈值');
 				clickTableData.value = [...clickTableData.value, ...opt];
@@ -220,6 +247,7 @@ const returnOption = sdk({
 		requestTrackerOption: {
 			maxRealTimeLength: 10,
 			backupSize: 50,
+			backupTime: 60000,
 			realTimeDatasetOverMaxCallback: (opt) => {
 				//console.log(opt);
 				ElMessage.info('接口请求收集达到阈值');
@@ -227,7 +255,7 @@ const returnOption = sdk({
 			},
 		},
 	},
-	ignoreRequestUrls: ['http://218.77.107.37:48999/upload/account'],
+	ignoreRequestUrls: ['http://218.77.107.37:48999/upload/account', 'http://localhost:49034/sentry/kafka'],
 });
 
 app.use(ElementPlus).use(router).mount('#app');

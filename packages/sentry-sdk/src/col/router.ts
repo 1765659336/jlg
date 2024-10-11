@@ -2,6 +2,7 @@ import EventEmitter from '../utils/handleEvents';
 import replaceOld from '../utils/replaceOld';
 import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import { nextTick } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 
 let lastHref: string = document.location.href;
 let lastHrefTime: number = Date.now();
@@ -10,14 +11,12 @@ type HistoryReplaceFn = (this: typeof window.history, ...args: any[]) => void;
 export default ({
 	eventBus,
 	tracker,
-	uuid,
 	vueRouter,
 	app,
 	routerTracker,
 }: {
 	eventBus: EventEmitter;
 	tracker: DetailTracker;
-	uuid: string;
 	vueRouter: any;
 	app: any;
 	routerTracker: DetailTracker;
@@ -79,7 +78,7 @@ export default ({
 						renderingTime,
 					};
 
-					const content = { timestamp: nowTime, type: E_TrackerDetailType.页面跳转, uuid, content: JSON.stringify(data) };
+					const content = { timestamp: nowTime, type: E_TrackerDetailType.页面跳转, uuid: uuidv4(), content: JSON.stringify(data) };
 					eventBus.emit('routerChangeCallback', content);
 					tracker.addDetail(content);
 					routerTracker.addDetail(content);

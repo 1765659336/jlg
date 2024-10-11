@@ -3,10 +3,12 @@
         "axios",
         "commitlint",
         "iconfont",
+        "pako",
         "preinstall",
         "rrweb",
         "stylelint",
         "subtags",
+        "ungzip",
         "vetur"
     ],
     "editor.formatOnSave": true,

@@ -8,10 +8,10 @@ import rrwebInit, { rrwebEvents, T_RrwebOption } from './col/rrweb';
 import routerChange from './col/router';
 import clickCollected from './col/click';
 import trackerInit, { E_TrackerDetailType, I_TrackerOption } from './utils/breadCrumbs';
-import { v4 as uuidv4 } from 'uuid';
 import networkTypeInit from './col/network';
 import deviceInit from './col/device';
 import browserInit from './col/browser';
+import { v4 as uuidv4 } from 'uuid';
 
 export default (option: {
 	trackerOption: {
@@ -59,12 +59,10 @@ export default (option: {
 
 	browserInit();
 
-	const tracker = trackerInit(trackerOption.trackerOption);
-	const requestTracker = trackerInit(trackerOption.requestTrackerOption);
-	const clickTracker = trackerInit(trackerOption.clickTrackerOption);
-	const routerTracker = trackerInit(trackerOption.routerTrackerOption);
-
-	const uuid = uuidv4();
+	const tracker = trackerInit({ ...{ sessionKey: 'tracker' }, ...trackerOption.trackerOption });
+	const requestTracker = trackerInit({ ...{ sessionKey: 'requestTracker' }, ...trackerOption.requestTrackerOption });
+	const clickTracker = trackerInit({ ...{ sessionKey: 'clickTracker' }, ...trackerOption.clickTrackerOption });
+	const routerTracker = trackerInit({ ...{ sessionKey: 'routerTracker' }, ...trackerOption.routerTrackerOption });
 
 	const returnOption: {
 		rrwebEvents: string[];
@@ -80,7 +78,6 @@ export default (option: {
 			eventBus,
 			tracker,
 			requestTracker,
-			uuid,
 			ignoreRequestUrls,
 			requestValidator: xhrOption.requestValidator,
 		});
@@ -90,7 +87,7 @@ export default (option: {
 		eventBus.on('fetchCallback', (data: T_FetchCallbackParams) => {
 			fetchCallback?.(data);
 		});
-		fetchReplace({ uuid, eventBus, tracker, requestTracker, ignoreRequestUrls });
+		fetchReplace({ eventBus, tracker, requestTracker, ignoreRequestUrls });
 	}
 
 	if (jsCallback || sourceCallback) {
@@ -102,7 +99,7 @@ export default (option: {
 			eventBus.on('sourceCallback', (err) => {
 				sourceCallback(err);
 			});
-		windowError({ uuid, eventBus, tracker });
+		windowError({ eventBus, tracker });
 	}
 
 	if (unHandledRejectionCallback) {
@@ -110,7 +107,6 @@ export default (option: {
 			unHandledRejectionCallback(err);
 		});
 		unHandledRejection({
-			uuid,
 			eventBus,
 			tracker,
 		});
@@ -121,7 +117,6 @@ export default (option: {
 			vueOption.vueErrorCallback(option);
 		});
 		vueError({
-			uuid,
 			eventBus,
 			app: vueOption.app,
 			tracker,
@@ -137,14 +132,14 @@ export default (option: {
 		eventBus.on('routerChangeCallback', (option) => {
 			routerChangeCallback(option);
 		});
-		routerChange({ eventBus, tracker, routerTracker, uuid, vueRouter: vueOption.vueRouter, app: vueOption.app });
+		routerChange({ eventBus, tracker, routerTracker, vueRouter: vueOption.vueRouter, app: vueOption.app });
 	}
 
 	if (clickCallback) {
 		eventBus.on('clickCallback', (option) => {
 			clickCallback(option);
 		});
-		clickCollected({ uuid, eventBus, tracker, clickTracker });
+		clickCollected({ eventBus, tracker, clickTracker });
 	}
 
 	return {
@@ -156,7 +151,7 @@ export default (option: {
 			tracker.addDetail({
 				timestamp: Date.now(),
 				content,
-				uuid,
+				uuid: uuidv4(),
 				type: type ?? E_TrackerDetailType.自定义行为,
 			});
 		},

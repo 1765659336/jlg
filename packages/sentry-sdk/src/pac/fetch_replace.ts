@@ -1,6 +1,85 @@
-import replaceOld from '../utils/replaceOld';
 import EventEmitter from '../utils/handleEvents';
 import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
+import { v4 as uuidv4 } from 'uuid';
+
+export default ({
+	eventBus,
+	tracker,
+	requestTracker,
+	ignoreRequestUrls,
+}: {
+	eventBus: EventEmitter;
+	tracker: DetailTracker;
+	requestTracker: DetailTracker;
+	ignoreRequestUrls: string[];
+}): void => {
+	if (typeof window.fetch === 'undefined') {
+		return;
+	}
+
+	const originalFetch = window.fetch;
+
+	window.fetch = (input: Request | string | URL, init?: RequestInit): Promise<Response> => {
+		const data = {
+			url: typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
+			method: init?.method || 'GET',
+			headers: init?.headers,
+			body: init?.body,
+			beginTime: Date.now(),
+			endTime: 0,
+			durationTime: 0,
+		};
+
+		const parsedUrl = new URL(data.url);
+		parsedUrl.search = '';
+		const parsedUrlStr = parsedUrl.toString();
+		const fetchPromise = originalFetch(input, init);
+		const uuid = uuidv4();
+
+		return fetchPromise
+			.then(async (response) => {
+				if (ignoreRequestUrls.includes(parsedUrlStr)) {
+					return response;
+				}
+				data.endTime = Date.now();
+				data.durationTime = data.endTime - data.beginTime;
+				const content = {
+					uuid,
+					timestamp: Date.now(),
+					type: response.ok ? E_TrackerDetailType.fetch请求 : E_TrackerDetailType.fetch请求错误,
+					content: JSON.stringify(data),
+				};
+
+				if (response.ok) {
+					requestTracker.addDetail(content);
+				} else {
+					eventBus.emit('fetchCallback', content);
+				}
+
+				tracker.addDetail(content);
+
+				return response;
+			})
+			.catch((error) => {
+				if (ignoreRequestUrls.includes(parsedUrlStr)) {
+					throw error;
+				}
+				data.endTime = Date.now();
+				data.durationTime = data.endTime - data.beginTime;
+				const content = {
+					uuid,
+					timestamp: Date.now(),
+					type: E_TrackerDetailType.fetch请求错误,
+					content: JSON.stringify(data),
+				};
+
+				eventBus.emit('fetchCallback', content);
+				tracker.addDetail(content);
+
+				throw error;
+			});
+	};
+};
 
 type BodyInit = ReadableStream | XMLHttpRequestBodyInit;
 
@@ -58,84 +137,3 @@ export declare interface RequestInit {
 	window?: null;
 }
 export type T_FetchCallbackParams = { args: [input: Request | string | URL, init?: RequestInit]; response: Promise<Response> };
-
-export default ({
-	uuid,
-	eventBus,
-	tracker,
-	requestTracker,
-	ignoreRequestUrls,
-}: {
-	uuid: string;
-	eventBus: EventEmitter;
-	tracker: DetailTracker;
-	requestTracker: DetailTracker;
-	ignoreRequestUrls: string[];
-}): void => {
-	if (typeof window.fetch === 'undefined') {
-		return;
-	}
-
-	const originalFetch = window.fetch;
-
-	window.fetch = (input: Request | string | URL, init?: RequestInit): Promise<Response> => {
-		const data = {
-			url: typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
-			method: init?.method || 'GET',
-			headers: init?.headers,
-			body: init?.body,
-			beginTime: Date.now(),
-			endTime: 0,
-			durationTime: 0,
-		};
-
-		const parsedUrl = new URL(data.url);
-		parsedUrl.search = '';
-		const parsedUrlStr = parsedUrl.toString();
-
-		const fetchPromise = originalFetch(input, init);
-
-		return fetchPromise
-			.then(async (response) => {
-				if (ignoreRequestUrls.includes(parsedUrlStr)) {
-					return response;
-				}
-				data.endTime = Date.now();
-				data.durationTime = data.endTime - data.beginTime;
-				const content = {
-					uuid,
-					timestamp: Date.now(),
-					type: response.ok ? E_TrackerDetailType.fetch请求 : E_TrackerDetailType.fetch请求错误,
-					content: JSON.stringify(data),
-				};
-
-				if (response.ok) {
-					requestTracker.addDetail(content);
-				} else {
-					eventBus.emit('fetchCallback', content);
-				}
-
-				tracker.addDetail(content);
-
-				return response;
-			})
-			.catch((error) => {
-				if (ignoreRequestUrls.includes(parsedUrlStr)) {
-					throw error;
-				}
-				data.endTime = Date.now();
-				data.durationTime = data.endTime - data.beginTime;
-				const content = {
-					uuid,
-					timestamp: Date.now(),
-					type: E_TrackerDetailType.fetch请求错误,
-					content: JSON.stringify(data),
-				};
-
-				eventBus.emit('fetchCallback', content);
-				tracker.addDetail(content);
-
-				throw error;
-			});
-	};
-};

@@ -60,8 +60,9 @@ import { ref } from 'vue';
 import rrwebPlayer from 'rrweb-player';
 import 'rrweb-player/dist/style.css';
 import axios from 'axios';
-import { isArray } from 'lodash-unified';
+import { isObject } from 'lodash-unified';
 import { E_TrackerDetailType } from '../main';
+import pako from 'pako';
 
 const player = ref<HTMLDivElement | null>(null);
 
@@ -82,12 +83,12 @@ const openRrwebUrl = async (url: string) => {
 	});
 
 	// 获取文本内容
-	const text = response.data;
+	const value = JSON.parse(response.data);
 
-	if (player.value && text && isArray(JSON.parse(text))) {
+	if (player.value && value && isObject(value)) {
 		new rrwebPlayer({
-			target: player.value, // 回放所需要的HTML元素
-			data: { events: JSON.parse(text) },
+			target: player.value,
+			data: { events: JSON.parse(pako.ungzip(value, { to: 'string' })) },
 		});
 	}
 };

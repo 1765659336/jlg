@@ -1,17 +1,8 @@
 import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import EventEmitter from '../utils/handleEvents';
+import { v4 as uuidv4 } from 'uuid';
 
-export default ({
-	uuid,
-	eventBus,
-	tracker,
-	clickTracker,
-}: {
-	uuid: string;
-	eventBus: EventEmitter;
-	tracker: DetailTracker;
-	clickTracker: DetailTracker;
-}) => {
+export default ({ eventBus, tracker, clickTracker }: { eventBus: EventEmitter; tracker: DetailTracker; clickTracker: DetailTracker }) => {
 	let clientX: number, clientY: number;
 
 	function getMousePosition(event: MouseEvent) {
@@ -58,7 +49,7 @@ export default ({
 				clientX,
 				clientY,
 			};
-			const content = { uuid, timestamp: Date.now(), type: E_TrackerDetailType.点击, content: JSON.stringify(data) };
+			const content = { uuid: uuidv4(), timestamp: Date.now(), type: E_TrackerDetailType.点击, content: JSON.stringify(data) };
 			eventBus.emit('clickCallback', content);
 			tracker.addDetail(content);
 			clickTracker.addDetail(content);

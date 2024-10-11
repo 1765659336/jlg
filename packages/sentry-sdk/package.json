@@ -1,6 +1,6 @@
 {
 	"name": "jlg-sentry-sdk",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "",
 	"scripts": {
 		"dev": "ts-node-dev --respawn ./pac/index.ts",
@@ -22,6 +22,7 @@
 	"author": "LiuJie",
 	"license": "MIT",
 	"dependencies": {
+		"pako": "^2.1.0",
 		"rrweb": "2.0.0-alpha.4",
 		"uuid": "^10.0.0",
 		"vue": "^3.4.21"
@@ -29,6 +30,7 @@
 	"devDependencies": {
 		"@rrweb/types": "2.0.0-alpha.17",
 		"@types/node": "^20.8.10",
+		"@types/pako": "^2.0.3",
 		"@types/uuid": "^10.0.0",
 		"@typescript-eslint/eslint-plugin": "^6.9.1",
 		"clean-webpack-plugin": "^4.0.0",

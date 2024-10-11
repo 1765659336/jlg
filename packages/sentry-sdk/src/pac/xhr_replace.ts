@@ -1,6 +1,7 @@
 import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import EventEmitter from '../utils/handleEvents';
 import replaceOld from '../utils/replaceOld';
+import { v4 as uuidv4 } from 'uuid';
 
 export declare type T_SDKDataXMLHttpRequest = XMLHttpRequest & {
 	_requestMethod: string;
@@ -14,14 +15,12 @@ export default ({
 	eventBus,
 	tracker,
 	requestTracker,
-	uuid,
 	ignoreRequestUrls,
 	requestValidator,
 }: {
 	eventBus: EventEmitter;
 	tracker: DetailTracker;
 	requestTracker: DetailTracker;
-	uuid: string;
 	ignoreRequestUrls: string[];
 	requestValidator?: (xhr: T_SDKDataXMLHttpRequest) => boolean;
 }): void => {
@@ -48,7 +47,7 @@ export default ({
 					const data = {
 						method: this._requestMethod,
 						url: this._requestUrl,
-						requestData: requestData,
+						requestData: requestData ?? '',
 						status: this.status,
 						beginTime: this._beginTime,
 						endTime: Date.now(),
@@ -57,7 +56,7 @@ export default ({
 					};
 
 					const content = {
-						uuid,
+						uuid: uuidv4(),
 						timestamp: Date.now(),
 						content: JSON.stringify(data),
 						type: isFailed ? E_TrackerDetailType.xhr请求错误 : E_TrackerDetailType.xhr请求,

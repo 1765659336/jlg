@@ -1,7 +1,8 @@
 import { DetailTracker, E_TrackerDetailType } from '../utils/breadCrumbs';
 import EventEmitter from '../utils/handleEvents';
+import { v4 as uuidv4 } from 'uuid';
 
-export default ({ uuid, eventBus, tracker }: { uuid: string; eventBus: EventEmitter; tracker: DetailTracker }) => {
+export default ({ eventBus, tracker }: { eventBus: EventEmitter; tracker: DetailTracker }) => {
 	window.addEventListener(
 		'error',
 		function (err: ErrorEvent) {
@@ -11,6 +12,8 @@ export default ({ uuid, eventBus, tracker }: { uuid: string; eventBus: EventEmit
 				lineno: err.lineno,
 				error: err.message,
 			};
+			const uuid = uuidv4();
+
 			if (err.target instanceof HTMLScriptElement || err.target instanceof HTMLLinkElement) {
 				const content = {
 					uuid,
