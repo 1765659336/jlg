@@ -1,3 +1,0 @@
-{
-	"packages/**/*.{ts,vue}": ["prettier --write", "eslint --fix"]
-}
